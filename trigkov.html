@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trigonometri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300..700&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-deep:#0E2430;
+    --bg-mid:#123244;
+    --chalk:#F2EEE4;
+    --chalk-dim:#B9C7CC;
+    --gold:#E7B24C;
+    --teal:#6FD9C6;
+    --coral:#E8794F;
+    --line:rgba(242,238,228,0.16);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    width:100%;
+    height:100%;
+    background:var(--bg-deep);
+  }
+  body{
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    font-family:"Space Grotesk", sans-serif;
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    height:100vh;
+    height:100dvh;
+    background:
+      radial-gradient(ellipse 900px 600px at 82% 18%, rgba(111,217,198,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 12% 88%, rgba(231,121,79,0.10), transparent 60%),
+      linear-gradient(160deg, var(--bg-deep) 0%, var(--bg-mid) 55%, var(--bg-deep) 100%);
+  }
+
+  /* subtle grid, like graph paper on a chalkboard */
+  .grid{
+    position:absolute;
+    inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.35;
+    mask-image:radial-gradient(ellipse 90% 80% at 50% 45%, black 30%, transparent 90%);
+  }
+
+  svg{ position:absolute; }
+
+  .wave-svg{
+    left:0; top:0; width:100%; height:100%;
+    opacity:0.9;
+  }
+
+  .circle-group{
+    right:4%; top:50%;
+    transform:translateY(-50%);
+    width:min(52vw, 620px);
+    height:min(52vw, 620px);
+  }
+
+  .formula-float{
+    position:absolute;
+    font-family:"JetBrains Mono", monospace;
+    color:var(--chalk-dim);
+    opacity:0.5;
+    letter-spacing:0.02em;
+    user-select:none;
+    pointer-events:none;
+  }
+
+  .content{
+    position:relative;
+    z-index:5;
+    width:min(1100px, 90vw);
+    padding: 0 6vw 0 7vw;
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:18px;
+  }
+
+  .eyebrow{
+    font-family:"JetBrains Mono", monospace;
+    font-size:clamp(13px,1.4vw,16px);
+    color:var(--teal);
+    letter-spacing:0.06em;
+  }
+
+  h1{
+    margin:0;
+    font-family:"Fraunces", serif;
+    font-weight:600;
+    font-optical-sizing:auto;
+    font-size:clamp(52px, 10vw, 132px);
+    line-height:0.96;
+    color:var(--chalk);
+    position:relative;
+  }
+  h1 .accent{
+    color:var(--gold);
+    font-style:italic;
+    font-weight:400;
+  }
+
+  .subline{
+    max-width:520px;
+    font-size:clamp(15px,1.6vw,19px);
+    color:var(--chalk-dim);
+    line-height:1.55;
+    font-weight:400;
+  }
+
+  .identity-row{
+    margin-top:8px;
+    display:flex;
+    gap:28px;
+    flex-wrap:wrap;
+    font-family:"JetBrains Mono", monospace;
+    font-size:clamp(13px,1.3vw,16px);
+    color:var(--chalk);
+  }
+  .identity-row span{
+    display:inline-flex;
+    align-items:baseline;
+    gap:8px;
+    padding:8px 16px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:rgba(242,238,228,0.03);
+  }
+  .identity-row .sym{ color:var(--coral); }
+
+  @media (max-width: 760px){
+    .circle-group{ opacity:0.35; right:-6%; }
+    .content{ padding-left:8vw; }
+    .identity-row{ gap:14px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference){
+    .draw-path{
+      stroke-dasharray:2000;
+      stroke-dashoffset:2000;
+      animation:draw 2.6s ease forwards;
+    }
+    .circle-draw{
+      stroke-dasharray:1000;
+      stroke-dashoffset:1000;
+      animation:draw 1.8s ease forwards;
+      animation-delay:0.2s;
+    }
+    .fade-up{
+      opacity:0;
+      transform:translateY(14px);
+      animation:fadeUp 0.9s ease forwards;
+    }
+  }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes fadeUp{ to{ opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="grid"></div>
+
+  <!-- Sine / cosine wave weaving across full width -->
+  <svg class="wave-svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <path class="draw-path" d="M -50 560 C 150 380, 300 380, 450 560 C 600 740, 750 740, 900 560 C 1050 380, 1200 380, 1350 560 C 1500 740, 1600 740, 1700 560"
+          fill="none" stroke="var(--gold)" stroke-width="2.5" opacity="0.55"/>
+    <path class="draw-path" d="M -50 640 C 150 460, 300 460, 450 640 C 600 820, 750 820, 900 640 C 1050 460, 1200 460, 1350 640 C 1500 820, 1600 820, 1700 640"
+          fill="none" stroke="var(--teal)" stroke-width="2" opacity="0.32" style="animation-delay:0.3s"/>
+    <path class="draw-path" d="M -50 340 C 150 160, 300 160, 450 340 C 600 520, 750 520, 900 340 C 1050 160, 1200 160, 1350 340 C 1500 520, 1600 520, 1700 340"
+          fill="none" stroke="var(--coral)" stroke-width="1.5" opacity="0.22" style="animation-delay:0.5s"/>
+  </svg>
+
+  <!-- Unit circle with angle + sin/cos projection -->
+  <svg class="circle-group" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="300" cy="300" r="220" fill="none" stroke="var(--line)" stroke-width="1"/>
+    <line x1="40" y1="300" x2="560" y2="300" stroke="var(--line)" stroke-width="1"/>
+    <line x1="300" y1="40" x2="300" y2="560" stroke="var(--line)" stroke-width="1"/>
+
+    <circle class="circle-draw" cx="300" cy="300" r="220" fill="none" stroke="var(--chalk)" stroke-width="1.5" opacity="0.75"/>
+
+    <!-- angle arc -->
+    <path d="M 380 300 A 80 80 0 0 0 320.5 224.4" fill="none" stroke="var(--gold)" stroke-width="2.5"/>
+    <text x="352" y="272" font-family="JetBrains Mono, monospace" font-size="18" fill="var(--gold)">θ</text>
+
+    <!-- radius to point on circle at ~55deg -->
+    <line x1="300" y1="300" x2="426" y2="120" stroke="var(--gold)" stroke-width="2.5"/>
+    <circle cx="426" cy="120" r="6" fill="var(--gold)"/>
+
+    <!-- cos projection -->
+    <line x1="300" y1="300" x2="426" y2="300" stroke="var(--coral)" stroke-width="2.5"/>
+    <line x1="426" y1="300" x2="426" y2="120" stroke="var(--coral)" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7"/>
+    <text x="345" y="322" font-family="JetBrains Mono, monospace" font-size="16" fill="var(--coral)">cos θ</text>
+
+    <!-- sin projection -->
+    <line x1="426" y1="300" x2="426" y2="120" stroke="var(--teal)" stroke-width="2.5"/>
+    <text x="438" y="215" font-family="JetBrains Mono, monospace" font-size="16" fill="var(--teal)">sin θ</text>
+  </svg>
+
+  <!-- floating formula fragments -->
+  <div class="formula-float" style="left:6%; top:14%; font-size:clamp(13px,1.5vw,18px);">sin²θ + cos²θ = 1</div>
+  <div class="formula-float" style="left:9%; top:82%; font-size:clamp(12px,1.3vw,15px);">tan θ = sin θ / cos θ</div>
+  <div class="formula-float" style="right:6%; top:10%; font-size:clamp(12px,1.3vw,15px);">π / 2</div>
+  <div class="formula-float" style="right:10%; bottom:12%; font-size:clamp(12px,1.3vw,15px);">0°, 30°, 45°, 60°, 90°</div>
+
+  <div class="content">
+    <div class="eyebrow fade-up" style="animation-delay:0.4s;">Sudut &middot; Rasio &middot; Fungsi Periodik</div>
+    <h1 class="fade-up" style="animation-delay:0.5s;">Trigono<span class="accent">metri</span></h1>
+    <p class="subline fade-up" style="animation-delay:0.6s;">Menjelajahi hubungan antara sudut dan sisi segitiga melalui sinus, cosinus, dan tangen.</p>
+    <div class="identity-row fade-up" style="animation-delay:0.7s;">
+      <span><span class="sym">sin</span> = depan/miring</span>
+      <span><span class="sym">cos</span> = samping/miring</span>
+      <span><span class="sym">tan</span> = depan/samping</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
