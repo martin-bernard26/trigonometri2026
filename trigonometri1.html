@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sudut, Derajat, Radian &amp; Perbandingan Trigonometri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #16202B;
+    --bg-alt: #1D2B39;
+    --panel: #223141;
+    --panel-2: #27394B;
+    --line: rgba(237,234,224,0.10);
+    --ink: #EDEAE0;
+    --ink-dim: #AEB9C4;
+    --ink-faint: #7C8A97;
+    --gold: #F0B65E;
+    --gold-dim: #C9964A;
+    --green: #7FCB9C;
+    --blue: #6FB3E0;
+    --coral: #E38B76;
+    --radius-s: 8px;
+    --radius-m: 14px;
+    --serif: 'Fraunces', 'Iowan Old Style', 'Georgia', serif;
+    --sans: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg: #16202B;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg: #16202B;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--line) 1px, transparent 1px) 0 0/38px 38px,
+      linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0/38px 38px,
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection{ background: var(--gold); color: #1B2430; }
+
+  a{ color: var(--gold); }
+
+  .wrap{
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ---------- Focus ---------- */
+  button:focus-visible, input:focus-visible, [tabindex]:focus-visible{
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  /* ---------- Hero ---------- */
+  header.hero{
+    padding: 72px 0 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-grid{
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 36px;
+    align-items: center;
+  }
+  @media (max-width: 760px){
+    .hero-grid{ grid-template-columns: 1fr; }
+  }
+  .kicker{
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--gold-dim);
+    letter-spacing: 0.02em;
+    margin: 0 0 14px;
+  }
+  h1{
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(2.1rem, 5vw, 3.1rem);
+    line-height: 1.08;
+    margin: 0 0 18px;
+    color: var(--ink);
+  }
+  h1 em{
+    font-style: italic;
+    color: var(--gold);
+  }
+  .lede{
+    font-size: 1.08rem;
+    color: var(--ink-dim);
+    max-width: 46ch;
+    margin: 0;
+  }
+  .hero-figure{
+    display:flex; align-items:center; justify-content:center;
+  }
+
+  section{
+    padding: 54px 0;
+    border-top: 1px solid var(--line);
+  }
+  .section-head{
+    display:flex;
+    gap: 18px;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .section-num{
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    color: var(--gold-dim);
+    white-space: nowrap;
+    padding-top: 6px;
+  }
+  h2{
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3vw, 1.9rem);
+    margin: 0;
+    color: var(--ink);
+  }
+  .section-body{ margin-top: 22px; }
+  p{ color: var(--ink-dim); margin: 0 0 14px; max-width: 68ch; }
+  strong{ color: var(--ink); font-weight: 600; }
+
+  .callout{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 20px 22px;
+    margin: 20px 0;
+  }
+  .callout .formula{
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.25rem;
+    color: var(--gold);
+    margin: 6px 0;
+  }
+
+  .two-col{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin: 22px 0;
+  }
+  @media (max-width: 700px){ .two-col{ grid-template-columns: 1fr; } }
+  .fact-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 20px;
+  }
+  .fact-card h3{
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 0.98rem;
+    margin: 0 0 8px;
+    color: var(--gold);
+  }
+  .fact-card p{ margin: 0; font-size: 0.95rem; }
+
+  /* ---------- Interactive panel shell ---------- */
+  .panel{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 26px;
+    margin: 24px 0;
+  }
+  .panel-grid{
+    display:grid;
+    grid-template-columns: minmax(0,340px) 1fr;
+    gap: 30px;
+    align-items: center;
+  }
+  @media (max-width: 700px){
+    .panel-grid{ grid-template-columns: 1fr; }
+  }
+
+  .stage{
+    display:flex;
+    justify-content:center;
+  }
+  svg{ max-width: 100%; height: auto; overflow: visible; }
+
+  .readout{
+    display:flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin: 18px 0 6px;
+  }
+  .readout .chip{
+    flex: 1 1 130px;
+    background: var(--panel-2);
+    border-radius: var(--radius-s);
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+  }
+  .readout .chip .label{
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  .readout .chip .value{
+    font-family: var(--serif);
+    font-size: 1.35rem;
+    color: var(--ink);
+  }
+  .readout .chip .value.accent{ color: var(--gold); }
+
+  .slider-row{ margin: 20px 0 4px; }
+  .slider-row label{
+    display:flex; justify-content: space-between;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    margin-bottom: 8px;
+  }
+  input[type="range"]{
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--line);
+    border-radius: 3px;
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--gold-dim);
+    cursor: pointer;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 1px var(--gold-dim);
+    cursor: pointer;
+  }
+
+  .toggle-row{
+    display:flex; gap: 8px; margin-bottom: 6px;
+  }
+  .toggle-btn{
+    font-family: var(--mono);
+    font-size: 0.76rem;
+    color: var(--ink-dim);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 14px;
+    cursor: pointer;
+  }
+  .toggle-btn[aria-pressed="true"]{
+    background: var(--gold);
+    color: #1B2430;
+    border-color: var(--gold);
+  }
+
+  .ratio-list{
+    margin-top: 18px;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 480px){ .ratio-list{ grid-template-columns: 1fr 1fr; } }
+  .ratio-item{
+    background: var(--panel-2);
+    border-radius: var(--radius-s);
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+  }
+  .ratio-item .name{
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+  }
+  .ratio-item .expr{
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.92rem;
+    color: var(--ink-dim);
+    margin: 2px 0;
+  }
+  .ratio-item .num{
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    color: var(--gold);
+  }
+
+  /* ---------- table ---------- */
+  table{
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.94rem;
+  }
+  caption{
+    text-align:left;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+  }
+  th, td{
+    text-align: left;
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink-dim);
+    white-space: nowrap;
+  }
+  th{
+    font-family: var(--mono);
+    font-weight: 500;
+    font-size: 0.74rem;
+    color: var(--ink-faint);
+  }
+  tr.hi td{ color: var(--gold); background: rgba(240,182,94,0.06); }
+  .tbl-scroll{ overflow-x: auto; }
+
+  /* ---------- quiz ---------- */
+  .quiz-card{
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-m);
+    padding: 22px;
+    margin: 18px 0;
+  }
+  .quiz-q{
+    font-family: var(--serif);
+    font-size: 1.08rem;
+    color: var(--ink);
+    margin: 0 0 14px;
+  }
+  .quiz-opts{
+    display:grid;
+    gap: 8px;
+  }
+  .quiz-opt{
+    text-align:left;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-s);
+    padding: 11px 14px;
+    color: var(--ink-dim);
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    cursor: pointer;
+  }
+  .quiz-opt:hover{ border-color: var(--gold-dim); }
+  .quiz-opt.correct{ background: rgba(127,203,156,0.15); border-color: var(--green); color: var(--ink); }
+  .quiz-opt.wrong{ background: rgba(227,139,118,0.15); border-color: var(--coral); color: var(--ink); }
+  .quiz-fb{
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: var(--ink-dim);
+    min-height: 1.2em;
+  }
+  .quiz-score{
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    text-align: right;
+    margin-top: 8px;
+  }
+
+  footer{
+    padding: 40px 0 60px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-faint);
+    font-size: 0.85rem;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-grid">
+      <div>
+        <p class="kicker">TRIGONOMETRI &middot; PENDIDIKAN MATEMATIKA</p>
+        <h1>Sudut: dari <em>putaran penuh</em> ke rasio segitiga siku&#8209;siku</h1>
+        <p class="lede">Materi interaktif tentang dua cara mengukur sudut &mdash; derajat dan radian &mdash; serta bagaimana sebuah sudut tunggal melahirkan enam perbandingan trigonometri pada segitiga siku-siku. Geser, amati, dan bandingkan.</p>
+      </div>
+      <div class="hero-figure">
+        <svg id="heroSvg" viewBox="0 0 260 260" width="260" height="260" aria-hidden="true">
+          <circle cx="130" cy="130" r="98" fill="none" stroke="var(--line)" stroke-width="1"/>
+          <line x1="130" y1="130" x2="228" y2="130" stroke="var(--ink-faint)" stroke-width="1"/>
+          <path id="heroArc" d="" fill="none" stroke="var(--gold)" stroke-width="3" stroke-linecap="round"/>
+          <line id="heroRay" x1="130" y1="130" x2="228" y2="130" stroke="var(--gold)" stroke-width="2.5"/>
+          <circle id="heroDot" cx="228" cy="130" r="5" fill="var(--gold)"/>
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 -->
+  <section id="s1">
+    <div class="section-head">
+      <span class="section-num">01</span>
+      <h2>Dua cara mengukur sudut yang sama</h2>
+    </div>
+    <div class="section-body">
+      <p>Sebuah sudut menyatakan besarnya putaran dari satu sinar ke sinar lain yang bertitik pangkal sama. <strong>Derajat</strong> membagi satu putaran penuh menjadi 360 bagian yang sama &mdash; warisan sistem basis-60 Babilonia. <strong>Radian</strong> mengukur sudut dari perbandingan panjang busur terhadap jari-jari lingkaran, sehingga bersifat alami secara geometris: satu radian adalah sudut pusat yang busurnya sama panjang dengan jari-jari.</p>
+
+      <div class="callout">
+        <p style="margin-bottom:2px; color:var(--ink-faint); font-family:var(--mono); font-size:0.76rem;">DEFINISI RADIAN</p>
+        <p class="formula">&theta; (dalam radian) = panjang busur &divide; jari-jari = s / r</p>
+        <p style="margin:0;">Karena keliling lingkaran penuh adalah 2&pi;r, maka satu putaran penuh sama dengan 2&pi; radian.</p>
+      </div>
+
+      <div class="two-col">
+        <div class="fact-card">
+          <h3>Hubungan dasar</h3>
+          <p>360&deg; = 2&pi; rad, sehingga 180&deg; = &pi; rad. Dari sinilah semua konversi diturunkan.</p>
+        </div>
+        <div class="fact-card">
+          <h3>Konversi derajat &rarr; radian</h3>
+          <p>Kalikan dengan &pi;/180. Contoh: 90&deg; &times; &pi;/180 = &pi;/2 rad.</p>
+        </div>
+        <div class="fact-card">
+          <h3>Konversi radian &rarr; derajat</h3>
+          <p>Kalikan dengan 180/&pi;. Contoh: &pi;/3 rad &times; 180/&pi; = 60&deg;.</p>
+        </div>
+        <div class="fact-card">
+          <h3>Kenapa radian penting?</h3>
+          <p>Dalam kalkulus dan fisika, rumus turunan serta panjang busur (s = r&theta;) hanya berlaku rapi bila &theta; dalam radian.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section id="s2">
+    <div class="section-head">
+      <span class="section-num">02</span>
+      <h2>Eksplorasi: putar sudutnya, lihat dua satuannya</h2>
+    </div>
+    <div class="section-body">
+      <p>Geser penggeser di bawah untuk memutar sinar sekeliling lingkaran satuan. Busur berwarna menunjukkan sudut yang terbentuk; kedua satuan &mdash; derajat dan radian &mdash; diperbarui secara bersamaan karena keduanya mengukur putaran yang sama.</p>
+
+      <div class="panel">
+        <div class="panel-grid">
+          <div class="stage">
+            <svg viewBox="0 0 320 320" width="320" height="320" role="img" aria-label="Diagram lingkaran satuan dengan sudut yang dapat diubah">
+              <circle cx="160" cy="160" r="120" fill="none" stroke="var(--line)" stroke-width="1"/>
+              <line x1="40" y1="160" x2="280" y2="160" stroke="var(--line)" stroke-width="1"/>
+              <line x1="160" y1="40" x2="160" y2="280" stroke="var(--line)" stroke-width="1"/>
+              <path id="circArc" d="" fill="none" stroke="var(--gold)" stroke-width="3"/>
+              <!-- radius laid on arc, illustrating radian definition -->
+              <path id="radUnit" d="" fill="none" stroke="var(--blue)" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+              <line x1="160" y1="160" x2="280" y2="160" stroke="var(--ink-faint)" stroke-width="1.4"/>
+              <line id="circRay" x1="160" y1="160" x2="280" y2="160" stroke="var(--gold)" stroke-width="2.5"/>
+              <circle cx="160" cy="160" r="2.5" fill="var(--ink-dim)"/>
+              <circle id="circDot" cx="280" cy="160" r="6" fill="var(--gold)"/>
+              <text x="160" y="160" text-anchor="middle" dy="-130" font-family="var(--mono)" font-size="11" fill="var(--ink-faint)">r = jari-jari</text>
+            </svg>
+          </div>
+          <div>
+            <div class="readout">
+              <div class="chip">
+                <div class="label">DERAJAT</div>
+                <div class="value accent" id="valDeg">0&deg;</div>
+              </div>
+              <div class="chip">
+                <div class="label">RADIAN</div>
+                <div class="value accent" id="valRad">0.00 rad</div>
+              </div>
+              <div class="chip">
+                <div class="label">DALAM &pi;</div>
+                <div class="value" id="valPi">0&pi;</div>
+              </div>
+            </div>
+
+            <div class="slider-row">
+              <label for="angleSlider"><span>Sudut &theta;</span><span id="angleSliderLabel">0&deg;</span></label>
+              <input type="range" id="angleSlider" min="0" max="360" step="1" value="0">
+            </div>
+            <p style="font-size:0.86rem; margin-top:14px;">Segmen biru menunjukkan panjang <strong>satu jari-jari</strong> yang dibaringkan pada busur &mdash; setiap kali segmen ini "muat" tepat satu kali pada busur, sudutnya bertambah tepat <strong>1 radian</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section id="s3">
+    <div class="section-head">
+      <span class="section-num">03</span>
+      <h2>Satu sudut, enam perbandingan</h2>
+    </div>
+    <div class="section-body">
+      <p>Pada segitiga siku-siku, pilih salah satu sudut lancip &theta; sebagai acuan. Ketiga sisinya lalu punya nama berdasarkan posisinya terhadap &theta;: <strong>sisi depan</strong> (di seberang &theta;), <strong>sisi samping</strong> (mengapit &theta;, bukan sisi miring), dan <strong>sisi miring</strong> (di depan sudut siku-siku, selalu yang terpanjang).</p>
+
+      <div class="callout">
+        <p style="margin-bottom:2px; color:var(--ink-faint); font-family:var(--mono); font-size:0.76rem;">MNEMONIK</p>
+        <p class="formula">SOHCAHTOA</p>
+        <p style="margin:0;">sin &theta; = depan/miring &nbsp;&middot;&nbsp; cos &theta; = samping/miring &nbsp;&middot;&nbsp; tan &theta; = depan/samping</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section id="s4">
+    <div class="section-head">
+      <span class="section-num">04</span>
+      <h2>Segitiga interaktif</h2>
+    </div>
+    <div class="section-body">
+      <p>Geser sudut &theta; dan perhatikan bagaimana panjang sisi depan &amp; sisi samping berubah, sementara sisi miring tetap. Keenam rasio trigonometri dihitung ulang secara langsung.</p>
+
+      <div class="panel">
+        <div class="panel-grid">
+          <div class="stage">
+            <svg viewBox="0 0 340 260" width="340" height="260" role="img" aria-label="Segitiga siku-siku dengan sudut theta yang dapat diubah">
+              <line x1="40" y1="220" x2="300" y2="220" stroke="var(--line)" stroke-width="1"/>
+              <polygon id="triPoly" points="" fill="rgba(240,182,94,0.08)" stroke="none"/>
+              <line id="triAdj" x1="40" y1="220" x2="220" y2="220" stroke="var(--green)" stroke-width="3.5" stroke-linecap="round"/>
+              <line id="triOpp" x1="220" y1="220" x2="220" y2="80" stroke="var(--coral)" stroke-width="3.5" stroke-linecap="round"/>
+              <line id="triHyp" x1="40" y1="220" x2="220" y2="80" stroke="var(--blue)" stroke-width="3.5" stroke-linecap="round"/>
+              <path id="rightMark" d="" fill="none" stroke="var(--ink-faint)" stroke-width="1.5"/>
+              <path id="thetaArc" d="" fill="none" stroke="var(--gold)" stroke-width="2.5"/>
+              <text id="thetaLabel" x="70" y="205" font-family="var(--serif)" font-style="italic" font-size="16" fill="var(--gold)">&theta;</text>
+              <text id="oppLabel" font-family="var(--mono)" font-size="12" fill="var(--coral)"></text>
+              <text id="adjLabel" font-family="var(--mono)" font-size="12" fill="var(--green)"></text>
+              <text id="hypLabel" font-family="var(--mono)" font-size="12" fill="var(--blue)"></text>
+            </svg>
+          </div>
+          <div>
+            <div class="slider-row">
+              <label for="thetaSlider"><span>Sudut &theta;</span><span id="thetaSliderLabel">40&deg;</span></label>
+              <input type="range" id="thetaSlider" min="5" max="85" step="1" value="40">
+            </div>
+
+            <div class="readout">
+              <div class="chip">
+                <div class="label" style="color:var(--coral)">DEPAN (a)</div>
+                <div class="value" id="valOpp">&mdash;</div>
+              </div>
+              <div class="chip">
+                <div class="label" style="color:var(--green)">SAMPING (b)</div>
+                <div class="value" id="valAdj">&mdash;</div>
+              </div>
+              <div class="chip">
+                <div class="label" style="color:var(--blue)">MIRING (c)</div>
+                <div class="value" id="valHyp">&mdash;</div>
+              </div>
+            </div>
+
+            <div class="ratio-list">
+              <div class="ratio-item"><div class="name">sin &theta;</div><div class="expr">a / c</div><div class="num" id="rSin">&mdash;</div></div>
+              <div class="ratio-item"><div class="name">cos &theta;</div><div class="expr">b / c</div><div class="num" id="rCos">&mdash;</div></div>
+              <div class="ratio-item"><div class="name">tan &theta;</div><div class="expr">a / b</div><div class="num" id="rTan">&mdash;</div></div>
+              <div class="ratio-item"><div class="name">csc &theta;</div><div class="expr">c / a</div><div class="num" id="rCsc">&mdash;</div></div>
+              <div class="ratio-item"><div class="name">sec &theta;</div><div class="expr">c / b</div><div class="num" id="rSec">&mdash;</div></div>
+              <div class="ratio-item"><div class="name">cot &theta;</div><div class="expr">b / a</div><div class="num" id="rCot">&mdash;</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tbl-scroll">
+        <table>
+          <caption>SUDUT-SUDUT ISTIMEWA &mdash; baris menyala saat penggeser mendekati nilai ini</caption>
+          <thead>
+            <tr><th>&theta;</th><th>Radian</th><th>sin &theta;</th><th>cos &theta;</th><th>tan &theta;</th></tr>
+          </thead>
+          <tbody id="specialTable">
+            <tr data-deg="0"><td>0&deg;</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+            <tr data-deg="30"><td>30&deg;</td><td>&pi;/6</td><td>1/2</td><td>&radic;3/2</td><td>&radic;3/3</td></tr>
+            <tr data-deg="45"><td>45&deg;</td><td>&pi;/4</td><td>&radic;2/2</td><td>&radic;2/2</td><td>1</td></tr>
+            <tr data-deg="60"><td>60&deg;</td><td>&pi;/3</td><td>&radic;3/2</td><td>1/2</td><td>&radic;3</td></tr>
+            <tr data-deg="90"><td>90&deg;</td><td>&pi;/2</td><td>1</td><td>0</td><td>tak terdefinisi</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section id="s5">
+    <div class="section-head">
+      <span class="section-num">05</span>
+      <h2>Uji pemahaman</h2>
+    </div>
+    <div class="section-body">
+      <p>Empat pertanyaan singkat untuk memeriksa pemahaman sebelum lanjut ke latihan soal.</p>
+      <div id="quizContainer"></div>
+      <div class="quiz-score" id="quizScore"></div>
+    </div>
+  </section>
+
+  <footer>
+    Materi interaktif Trigonometri &mdash; Sudut (Derajat &amp; Radian) dan Perbandingan Trigonometri pada Segitiga Siku-Siku.
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const DEG2RAD = Math.PI/180;
+
+  /* ---------------- Hero decorative arc (slow, fixed, no user trigger needed—static-ish) ---------------- */
+  (function heroDraw(){
+    const svg = document.getElementById('heroSvg');
+    const cx=130, cy=130, r=98;
+    let deg = 50;
+    function polar(a){
+      const rad = (a-0)*DEG2RAD;
+      return [cx + r*Math.cos(rad), cy - r*Math.sin(rad)];
+    }
+    function draw(){
+      const [x,y] = polar(deg);
+      const large = deg > 180 ? 1 : 0;
+      document.getElementById('heroArc').setAttribute('d', `M ${cx+r} ${cy} A ${r} ${r} 0 ${large} 0 ${x} ${y}`);
+      document.getElementById('heroRay').setAttribute('x2', x);
+      document.getElementById('heroRay').setAttribute('y2', y);
+      document.getElementById('heroDot').setAttribute('cx', x);
+      document.getElementById('heroDot').setAttribute('cy', y);
+    }
+    draw();
+  })();
+
+  /* ---------------- Section 02: angle explorer ---------------- */
+  const angleSlider = document.getElementById('angleSlider');
+  const cx=160, cy=160, r=120;
+
+  function polarCirc(a){
+    const rad = a*DEG2RAD;
+    return [cx + r*Math.cos(rad), cy - r*Math.sin(rad)];
+  }
+
+  function gcd(a,b){ return b===0? a : gcd(b, a%b); }
+
+  function updateAngleExplorer(){
+    const deg = parseInt(angleSlider.value,10);
+    const rad = deg*DEG2RAD;
+    const [x,y] = polarCirc(deg);
+    const large = deg > 180 ? 1 : 0;
+
+    document.getElementById('circArc').setAttribute('d', `M ${cx+r} ${cy} A ${r} ${r} 0 ${large} 0 ${x} ${y}`);
+    document.getElementById('circRay').setAttribute('x2', x);
+    document.getElementById('circRay').setAttribute('y2', y);
+    document.getElementById('circDot').setAttribute('cx', x);
+    document.getElementById('circDot').setAttribute('cy', y);
+
+    // radius-on-arc unit marker: draw arc of length r starting at angle 0, up to min(deg, 57.2958*n)
+    // show as many "radius lengths" as fit, but keep it simple: draw one radius-length arc segment repeating pattern up to current angle
+    const oneRadDeg = 180/Math.PI; // approx 57.2958
+    let path = "";
+    let remaining = deg;
+    let startDeg = 0;
+    while(remaining > 0){
+      const seg = Math.min(oneRadDeg, remaining);
+      const a0 = startDeg;
+      const a1 = startDeg + seg;
+      const [sx,sy] = polarCirc(a0);
+      const [ex,ey] = polarCirc(a1);
+      const largeSeg = seg > 180 ? 1 : 0;
+      path += `M ${sx} ${sy} A ${r} ${r} 0 ${largeSeg} 0 ${ex} ${ey} `;
+      startDeg += oneRadDeg;
+      remaining -= oneRadDeg;
+    }
+    document.getElementById('radUnit').setAttribute('d', path);
+
+    document.getElementById('valDeg').textContent = deg + '\u00B0';
+    document.getElementById('valRad').textContent = rad.toFixed(2) + ' rad';
+
+    // pi fraction display, simplified
+    const num = deg, den = 180;
+    const g = gcd(num, den) || 1;
+    const sn = num/g, sd = den/g;
+    let piStr;
+    if(sn === 0) piStr = '0';
+    else if(sd === 1) piStr = (sn===1? '' : sn) + '\u03C0';
+    else piStr = (sn===1? '' : sn) + '\u03C0/' + sd;
+    document.getElementById('valPi').textContent = piStr;
+
+    document.getElementById('angleSliderLabel').textContent = deg + '\u00B0';
+  }
+  angleSlider.addEventListener('input', updateAngleExplorer);
+  updateAngleExplorer();
+
+  /* ---------------- Section 04: right triangle ---------------- */
+  const thetaSlider = document.getElementById('thetaSlider');
+  const baseX = 40, baseY = 220, hypLenPx = 200; // fixed on-screen hypotenuse scale reference length (visual only)
+  const HYP_VALUE = 10; // "units" assigned to hypotenuse for numeric side lengths
+
+  function fmt(n){
+    if(!isFinite(n)) return 'tak terdefinisi';
+    return n.toFixed(2);
+  }
+
+  function updateTriangle(){
+    const deg = parseInt(thetaSlider.value,10);
+    const rad = deg*DEG2RAD;
+
+    // numeric side lengths (units), hyp fixed at HYP_VALUE
+    const opp = HYP_VALUE*Math.sin(rad);
+    const adj = HYP_VALUE*Math.cos(rad);
+
+    // on-screen pixel geometry: right angle vertex at (vx, baseY), apex at (vx, apexY)
+    const vx = baseX + 180*Math.cos(rad); // horizontal extent shrinks a bit as theta grows for nicer framing
+    const apexY = baseY - 180*Math.sin(rad)*1.05;
+
+    document.getElementById('triPoly').setAttribute('points', `${baseX},${baseY} ${vx},${baseY} ${vx},${apexY}`);
+    document.getElementById('triAdj').setAttribute('x2', vx);
+    document.getElementById('triAdj').setAttribute('y2', baseY);
+    document.getElementById('triOpp').setAttribute('x1', vx); document.getElementById('triOpp').setAttribute('y1', baseY);
+    document.getElementById('triOpp').setAttribute('x2', vx); document.getElementById('triOpp').setAttribute('y2', apexY);
+    document.getElementById('triHyp').setAttribute('x2', vx);
+    document.getElementById('triHyp').setAttribute('y2', apexY);
+
+    // right angle mark at (vx, baseY)
+    const m = 14;
+    document.getElementById('rightMark').setAttribute('d', `M ${vx-m} ${baseY} L ${vx-m} ${baseY-m} L ${vx} ${baseY-m}`);
+
+    // theta arc at base vertex
+    const arcR = 30;
+    const [ax, ay] = [baseX + arcR, baseY];
+    const hx = baseX + arcR*Math.cos(rad);
+    const hy = baseY - arcR*Math.sin(rad);
+    document.getElementById('thetaArc').setAttribute('d', `M ${ax} ${ay} A ${arcR} ${arcR} 0 0 0 ${hx} ${hy}`);
+    document.getElementById('thetaLabel').setAttribute('x', baseX + 40);
+    document.getElementById('thetaLabel').setAttribute('y', baseY - 10);
+
+    document.getElementById('oppLabel').textContent = 'a = ' + fmt(opp);
+    document.getElementById('oppLabel').setAttribute('x', vx+8);
+    document.getElementById('oppLabel').setAttribute('y', (baseY+apexY)/2);
+
+    document.getElementById('adjLabel').textContent = 'b = ' + fmt(adj);
+    document.getElementById('adjLabel').setAttribute('x', (baseX+vx)/2 - 20);
+    document.getElementById('adjLabel').setAttribute('y', baseY+20);
+
+    document.getElementById('hypLabel').textContent = 'c = ' + fmt(HYP_VALUE);
+    document.getElementById('hypLabel').setAttribute('x', (baseX+vx)/2 - 30);
+    document.getElementById('hypLabel').setAttribute('y', (baseY+apexY)/2 - 10);
+
+    document.getElementById('valOpp').textContent = fmt(opp);
+    document.getElementById('valAdj').textContent = fmt(adj);
+    document.getElementById('valHyp').textContent = fmt(HYP_VALUE);
+
+    const sinV = opp/HYP_VALUE, cosV = adj/HYP_VALUE, tanV = opp/adj;
+    document.getElementById('rSin').textContent = fmt(sinV);
+    document.getElementById('rCos').textContent = fmt(cosV);
+    document.getElementById('rTan').textContent = fmt(tanV);
+    document.getElementById('rCsc').textContent = fmt(1/sinV);
+    document.getElementById('rSec').textContent = fmt(1/cosV);
+    document.getElementById('rCot').textContent = fmt(1/tanV);
+
+    document.getElementById('thetaSliderLabel').textContent = deg + '\u00B0';
+
+    // highlight special row if close
+    document.querySelectorAll('#specialTable tr').forEach(function(tr){
+      const d = parseInt(tr.getAttribute('data-deg'),10);
+      tr.classList.toggle('hi', Math.abs(d-deg) <= 1);
+    });
+  }
+  thetaSlider.addEventListener('input', updateTriangle);
+  updateTriangle();
+
+  /* ---------------- Section 05: quiz ---------------- */
+  const questions = [
+    {
+      q: "180\u00B0 sama dengan berapa radian?",
+      opts: ["\u03C0/2 rad", "\u03C0 rad", "2\u03C0 rad", "90 rad"],
+      correct: 1,
+      fb: "180\u00B0 adalah setengah putaran, dan satu putaran penuh = 2\u03C0 rad, sehingga setengahnya = \u03C0 rad."
+    },
+    {
+      q: "Pada segitiga siku-siku dengan sudut acuan \u03B8, sisi yang berhadapan langsung dengan sudut siku-siku disebut...",
+      opts: ["Sisi depan", "Sisi samping", "Sisi miring (hipotenusa)", "Sisi acuan"],
+      correct: 2,
+      fb: "Sisi miring (hipotenusa) selalu berada di seberang sudut 90\u00B0 dan merupakan sisi terpanjang."
+    },
+    {
+      q: "Jika sin \u03B8 = 3/5, berapakah nilai csc \u03B8?",
+      opts: ["3/5", "5/3", "4/5", "5/4"],
+      correct: 1,
+      fb: "csc \u03B8 adalah kebalikan dari sin \u03B8, yaitu miring/depan = 5/3."
+    },
+    {
+      q: "Sudut manakah yang memiliki nilai sin \u03B8 = cos \u03B8?",
+      opts: ["30\u00B0", "45\u00B0", "60\u00B0", "90\u00B0"],
+      correct: 1,
+      fb: "Pada 45\u00B0, sisi depan dan sisi samping sama panjang, sehingga sin 45\u00B0 = cos 45\u00B0 = \u221A2/2."
+    }
+  ];
+
+  let score = 0;
+  let answered = new Array(questions.length).fill(false);
+  const quizContainer = document.getElementById('quizContainer');
+
+  questions.forEach(function(item, qi){
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+
+    const qEl = document.createElement('p');
+    qEl.className = 'quiz-q';
+    qEl.textContent = (qi+1) + '. ' + item.q;
+    card.appendChild(qEl);
+
+    const optsEl = document.createElement('div');
+    optsEl.className = 'quiz-opts';
+
+    const fbEl = document.createElement('div');
+    fbEl.className = 'quiz-fb';
+
+    item.opts.forEach(function(optText, oi){
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt';
+      btn.type = 'button';
+      btn.textContent = optText;
+      btn.addEventListener('click', function(){
+        if(answered[qi]) return;
+        answered[qi] = true;
+        const allBtns = optsEl.querySelectorAll('.quiz-opt');
+        allBtns.forEach(function(b, bi){
+          if(bi === item.correct) b.classList.add('correct');
+          else if(bi === oi) b.classList.add('wrong');
+        });
+        if(oi === item.correct) score++;
+        fbEl.textContent = (oi === item.correct ? 'Benar. ' : 'Kurang tepat. ') + item.fb;
+        updateScore();
+      });
+      optsEl.appendChild(btn);
+    });
+
+    card.appendChild(optsEl);
+    card.appendChild(fbEl);
+    quizContainer.appendChild(card);
+  });
+
+  function updateScore(){
+    const answeredCount = answered.filter(Boolean).length;
+    document.getElementById('quizScore').textContent = 'Skor: ' + score + ' / ' + answeredCount + ' terjawab (' + questions.length + ' soal)';
+  }
+  updateScore();
+
+})();
+</script>
+</body>
+</html>
