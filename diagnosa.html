@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tes Diagnostik Kemampuan Trigonometri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['$', '$']] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" defer></script>
+<style>
+  :root{
+    --paper:#EEF1F5;
+    --card:#FFFFFF;
+    --ink:#1B2430;
+    --ink-dim:#5B6672;
+    --line:#D7DEE3;
+    --primary:#2F5D62;
+    --primary-dark:#1E3E41;
+    --primary-tint:#E4EDEC;
+    --good:#3C8361;
+    --good-tint:#E4F0E9;
+    --mid:#B9862A;
+    --mid-tint:#F5EBD8;
+    --low:#B23A3A;
+    --low-tint:#F5E1E1;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    padding:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Sans", sans-serif;
+    padding-top:env(safe-area-inset-top, 0px);
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+  }
+  h1,h2,h3{
+    font-family:"Newsreader", serif;
+    font-weight:600;
+    margin:0;
+  }
+  .wrap{
+    max-width:880px;
+    margin:0 auto;
+    padding:28px 20px 60px;
+  }
+
+  /* ---------- header ---------- */
+  .masthead{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px;
+    padding-bottom:18px;
+    border-bottom:2px solid var(--ink);
+    margin-bottom:26px;
+    flex-wrap:wrap;
+  }
+  .masthead .title-block h1{
+    font-size:clamp(26px,4vw,34px);
+    line-height:1.15;
+  }
+  .masthead .title-block p{
+    margin:6px 0 0;
+    color:var(--ink-dim);
+    font-size:14.5px;
+  }
+  .masthead .badge{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:12px;
+    letter-spacing:0.04em;
+    color:var(--primary-dark);
+    background:var(--primary-tint);
+    border:1px solid var(--primary);
+    padding:6px 12px;
+    white-space:nowrap;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:3px;
+    padding:26px 24px;
+    margin-bottom:20px;
+  }
+
+  /* ---------- bio screen ---------- */
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    margin-bottom:16px;
+  }
+  .field label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--ink-dim);
+    text-transform:uppercase;
+    letter-spacing:0.05em;
+  }
+  .field input, .field select{
+    font-family:"IBM Plex Sans", sans-serif;
+    font-size:16px;
+    padding:11px 13px;
+    border:1px solid var(--line);
+    border-radius:2px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .field input:focus, .field select:focus{
+    outline:2px solid var(--primary);
+    outline-offset:1px;
+    background:#fff;
+  }
+  .info-line{
+    display:flex;
+    gap:10px;
+    font-size:13.5px;
+    color:var(--ink-dim);
+    background:var(--primary-tint);
+    border-left:3px solid var(--primary);
+    padding:12px 14px;
+    margin-bottom:20px;
+    line-height:1.5;
+  }
+
+  button{
+    font-family:"IBM Plex Sans", sans-serif;
+    font-weight:600;
+    font-size:15px;
+    cursor:pointer;
+    border:none;
+    border-radius:2px;
+    padding:13px 22px;
+    transition:transform 0.12s ease, background 0.15s ease;
+  }
+  button:active{ transform:translateY(1px); }
+  button:disabled{ opacity:0.45; cursor:not-allowed; }
+  .btn-primary{ background:var(--primary); color:#fff; }
+  .btn-primary:hover:not(:disabled){ background:var(--primary-dark); }
+  .btn-ghost{ background:transparent; color:var(--primary-dark); border:1px solid var(--line); }
+  .btn-ghost:hover:not(:disabled){ border-color:var(--primary); }
+  .btn-row{ display:flex; gap:12px; justify-content:flex-end; flex-wrap:wrap; }
+
+  /* ---------- progress ---------- */
+  .progress-shell{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:var(--paper);
+    padding:14px 0 10px;
+  }
+  .progress-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:8px;
+    font-family:"IBM Plex Mono", monospace;
+    font-size:13px;
+    color:var(--ink-dim);
+  }
+  .progress-top .topic-now{ color:var(--primary-dark); font-weight:500; }
+  .progress-track{
+    height:6px;
+    background:var(--line);
+    border-radius:3px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--primary);
+    width:0%;
+    transition:width 0.3s ease;
+  }
+
+  /* ---------- question ---------- */
+  .q-topic-tag{
+    display:inline-block;
+    font-family:"IBM Plex Mono", monospace;
+    font-size:11.5px;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--primary-dark);
+    background:var(--primary-tint);
+    padding:4px 10px;
+    margin-bottom:14px;
+  }
+  .q-text{
+    font-size:19px;
+    line-height:1.5;
+    margin-bottom:20px;
+  }
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .opt{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px 15px;
+    border:1.5px solid var(--line);
+    border-radius:2px;
+    cursor:pointer;
+    background:var(--paper);
+  }
+  .opt:hover{ border-color:var(--primary); }
+  .opt.selected{
+    border-color:var(--primary);
+    background:var(--primary-tint);
+  }
+  .opt .marker{
+    width:20px; height:20px;
+    border-radius:50%;
+    border:1.5px solid var(--ink-dim);
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .opt.selected .marker{
+    border-color:var(--primary);
+    background:var(--primary);
+  }
+  .opt.selected .marker::after{
+    content:"";
+    width:8px; height:8px;
+    border-radius:50%;
+    background:#fff;
+  }
+  .opt .opt-text{ font-size:16px; }
+
+  .nav-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:22px;
+  }
+
+  /* ---------- results ---------- */
+  .result-hero{
+    text-align:center;
+    padding:10px 0 4px;
+  }
+  .result-hero .score-num{
+    font-family:"Newsreader", serif;
+    font-size:64px;
+    font-weight:700;
+    color:var(--primary-dark);
+    line-height:1;
+  }
+  .result-hero .score-den{
+    font-family:"IBM Plex Mono", monospace;
+    color:var(--ink-dim);
+    font-size:15px;
+    margin-top:4px;
+  }
+  .diagnosis-pill{
+    display:inline-block;
+    margin-top:14px;
+    padding:7px 18px;
+    border-radius:20px;
+    font-weight:600;
+    font-size:14px;
+  }
+
+  .topic-bars{ margin-top:10px; }
+  .topic-bar-row{
+    display:grid;
+    grid-template-columns:1fr 90px;
+    gap:14px;
+    align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid var(--line);
+  }
+  .topic-bar-row:last-child{ border-bottom:none; }
+  .topic-bar-label{
+    font-size:14.5px;
+  }
+  .topic-bar-track{
+    height:9px;
+    background:var(--line);
+    border-radius:5px;
+    margin-top:6px;
+    overflow:hidden;
+  }
+  .topic-bar-fill{ height:100%; border-radius:5px; }
+  .topic-bar-score{
+    font-family:"IBM Plex Mono", monospace;
+    font-size:13.5px;
+    text-align:right;
+    color:var(--ink-dim);
+  }
+
+  .diagnosis-note{
+    font-size:14.5px;
+    line-height:1.6;
+    color:var(--ink);
+    background:var(--paper);
+    border-left:3px solid var(--primary);
+    padding:14px 16px;
+    margin-top:18px;
+  }
+  .diagnosis-note b{ color:var(--primary-dark); }
+
+  .submit-status{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-size:14px;
+    margin-top:18px;
+    padding:12px 14px;
+    border-radius:2px;
+  }
+  .submit-status.sending{ background:var(--primary-tint); color:var(--primary-dark); }
+  .submit-status.ok{ background:var(--good-tint); color:var(--good); }
+  .submit-status.err{ background:var(--low-tint); color:var(--low); }
+  .submit-status.idle{ background:var(--mid-tint); color:var(--mid); }
+
+  .dot{
+    width:8px; height:8px; border-radius:50%; background:currentColor; flex:0 0 auto;
+  }
+  @media (prefers-reduced-motion: no-preference){
+    .sending .dot{ animation:pulse 1s ease-in-out infinite; }
+  }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+  /* ---------- guide accordion ---------- */
+  .guide{
+    border:1px dashed var(--line);
+    background:var(--card);
+  }
+  .guide-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:16px 20px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .guide-head h3{ font-size:16px; }
+  .guide-head .chevron{
+    font-family:"IBM Plex Mono", monospace;
+    color:var(--ink-dim);
+    transition:transform 0.2s ease;
+  }
+  .guide.open .chevron{ transform:rotate(180deg); }
+  .guide-body{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.3s ease;
+    padding:0 20px;
+  }
+  .guide.open .guide-body{
+    max-height:1400px;
+    padding:0 20px 20px;
+  }
+  .guide-body ol{
+    padding-left:20px;
+    line-height:1.7;
+    font-size:14.5px;
+  }
+  .guide-body li{ margin-bottom:10px; }
+  .guide-body code{
+    font-family:"IBM Plex Mono", monospace;
+    background:var(--paper);
+    padding:2px 6px;
+    border-radius:3px;
+    font-size:13px;
+  }
+  .guide-body pre{
+    background:var(--primary-dark);
+    color:#EAF1F0;
+    padding:14px 16px;
+    border-radius:3px;
+    overflow-x:auto;
+    font-family:"IBM Plex Mono", monospace;
+    font-size:12.5px;
+    line-height:1.6;
+  }
+
+  footer{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--ink-dim);
+    margin-top:40px;
+  }
+
+  .hidden{ display:none !important; }
+
+  @media (max-width:600px){
+    .topic-bar-row{ grid-template-columns:1fr 70px; }
+    .btn-row{ justify-content:stretch; }
+    .btn-row button{ flex:1; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="masthead">
+    <div class="title-block">
+      <h1>Tes Diagnostik Kemampuan Trigonometri</h1>
+      <p>Program Studi Pendidikan Matematika — untuk memetakan penguasaan konsep dasar sebelum perkuliahan lanjut</p>
+    </div>
+    <div class="badge">20 SOAL · 5 INDIKATOR</div>
+  </div>
+
+  <!-- ===================== SCREEN 1: BIODATA ===================== -->
+  <section id="screen-bio">
+    <div class="info-line">
+      Tes ini bersifat <b>diagnostik</b>, bukan penilaian akhir. Hasilnya digunakan untuk mengetahui indikator trigonometri mana yang sudah dikuasai dan mana yang masih perlu diperkuat. Jawab sesuai kemampuan Anda saat ini, tanpa membuka catatan.
+    </div>
+    <div class="card">
+      <div class="field">
+        <label for="inp-nama">Nama Lengkap</label>
+        <input type="text" id="inp-nama" placeholder="Nama sesuai KRS">
+      </div>
+      <div class="field">
+        <label for="inp-nim">NIM / NPM</label>
+        <input type="text" id="inp-nim" placeholder="Contoh: 22221001">
+      </div>
+      <div class="field">
+        <label for="inp-kelas">Kelas / Offering</label>
+        <input type="text" id="inp-kelas" placeholder="Contoh: 2B Pendidikan Matematika">
+      </div>
+      <div class="btn-row">
+        <button class="btn-primary" id="btn-start">Mulai Tes →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 2: TES ===================== -->
+  <section id="screen-test" class="hidden">
+    <div class="progress-shell">
+      <div class="progress-top">
+        <span>Soal <span id="prog-current">1</span> / <span id="prog-total">20</span></span>
+        <span class="topic-now" id="prog-topic">Konsep Dasar</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    </div>
+    <div class="card">
+      <div class="q-topic-tag" id="q-tag">Konsep Dasar</div>
+      <div class="q-text" id="q-text">Soal</div>
+      <div class="options" id="q-options"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-ghost" id="btn-prev">← Sebelumnya</button>
+      <button class="btn-primary" id="btn-next" disabled>Selanjutnya →</button>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN 3: HASIL ===================== -->
+  <section id="screen-result" class="hidden">
+    <div class="card result-hero">
+      <div class="score-num" id="res-score">0</div>
+      <div class="score-den">dari 20 soal terjawab benar (<span id="res-percent">0%</span>)</div>
+      <div class="diagnosis-pill" id="res-pill">—</div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:14px; font-size:17px;">Rincian per Indikator</h3>
+      <div class="topic-bars" id="res-bars"></div>
+      <div class="diagnosis-note" id="res-note"></div>
+    </div>
+
+    <div class="card">
+      <div id="submit-status" class="submit-status idle">
+        <span class="dot"></span>
+        <span id="submit-status-text">Menyiapkan pengiriman hasil ke Google Sheet…</span>
+      </div>
+      <div class="btn-row" style="margin-top:16px;">
+        <button class="btn-ghost" id="btn-copy">Salin Ringkasan Hasil</button>
+        <button class="btn-ghost" id="btn-retry-submit">Kirim Ulang ke Sheet</button>
+        <button class="btn-primary" id="btn-restart">Ulangi Tes</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PANDUAN SETUP ===================== -->
+  <div class="guide" id="guide">
+    <div class="guide-head" id="guide-head">
+      <h3>Panduan: Menghubungkan Tes Ini ke Google Form &amp; Google Sheet</h3>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="guide-body">
+      <ol>
+        <li>Buat <b>Google Form</b> baru berisi field <i>short answer</i> dengan urutan berikut: Nama, NIM, Kelas, Skor Total, Persentase, Diagnosis, lalu satu field skor untuk tiap indikator (Konsep Dasar, Sudut Istimewa, Kuadran &amp; Relasi Sudut, Identitas Trigonometri, Grafik &amp; Persamaan), dan satu field terakhir untuk Detail Jawaban.</li>
+        <li>Hubungkan form tersebut ke <b>Google Sheet</b> melalui tab <i>Responses</i> → ikon Sheets di Google Form.</li>
+        <li>Untuk mendapatkan <code>entry ID</code> tiap field: buka form, klik menu titik tiga → <i>Get pre-filled link</i>, isi setiap field dengan teks unik (misalnya "TESNAMA"), klik <i>Get link</i>, lalu buka link tersebut dan cari pola <code>entry.123456789=TESNAMA</code> di URL untuk setiap field.</li>
+        <li>Ambil URL pengiriman form: dari halaman form yang sedang dibuka (mode isi form), lihat elemen <code>&lt;form action="https://docs.google.com/forms/d/e/XXXX/formResponse"&gt;</code> melalui "Lihat Sumber Laman" (View Page Source), atau salin URL form lalu ganti akhiran <code>/viewform</code> menjadi <code>/formResponse</code>.</li>
+        <li>Buka bagian <code>&lt;script&gt;</code> di file HTML ini, cari objek <code>GOOGLE_FORM_CONFIG</code>, lalu isi <code>formActionUrl</code> dan setiap <code>entries.*</code> dengan nilai yang sudah didapat. Contoh:
+          <pre>const GOOGLE_FORM_CONFIG = {
+  formActionUrl: "https://docs.google.com/forms/d/e/1FAI.../formResponse",
+  entries: {
+    nama: "entry.111111111",
+    nim: "entry.222222222",
+    kelas: "entry.333333333",
+    skorTotal: "entry.444444444",
+    persentase: "entry.555555555",
+    diagnosis: "entry.666666666",
+    skorKonsepDasar: "entry.777777777",
+    skorSudutIstimewa: "entry.888888888",
+    skorKuadran: "entry.999999999",
+    skorIdentitas: "entry.101010101",
+    skorGrafik: "entry.121212121",
+    detailJawaban: "entry.131313131"
+  }
+};</pre>
+        </li>
+        <li>Simpan file, buka kembali di browser, selesaikan satu kali tes uji coba, lalu periksa Google Sheet yang terhubung — baris respons baru akan muncul secara otomatis.</li>
+        <li>Karena permintaan dikirim dengan mode <code>no-cors</code> (batasan keamanan Google Form terhadap domain luar), halaman ini tidak bisa membaca status sukses secara pasti dari Google — jadi verifikasi akhir tetap dilakukan dengan mengecek Sheet secara langsung.</li>
+      </ol>
+    </div>
+  </div>
+
+  <footer>Martin Bernard, M.Pd. — IKIP Siliwangi, Program Studi Pendidikan Matematika</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =========================================================
+     KONFIGURASI GOOGLE FORM — isi sesuai panduan di bawah halaman
+  ========================================================= */
+  const GOOGLE_FORM_CONFIG = {
+    formActionUrl: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSfpaVbq5h3xLeHZdWff72Xq4_hx1Q9TeSXn3lc3YgDw08PtIQ/formResponse",
+    entries: {
+      nama:             "entry.457534427",
+      nim:              "entry.1536050730",
+      kelas:            "entry.1027709689",
+      skorTotal:        "entry.1334228718",
+      persentase:       "entry.1569138858",
+      diagnosis:        "entry.1391433352",
+      skorKonsepDasar:  "entry.630257862",
+      skorSudutIstimewa:"entry.595965344",
+      skorKuadran:      "entry.304344385",
+      skorIdentitas:    "entry.1497875711",
+      skorGrafik:       "entry.2082898246",
+      detailJawaban:    "entry.177054503"
+    }
+  };
+
+  const TOPICS = {
+    dasar:    "Konsep Dasar & Perbandingan Trigonometri",
+    sudut:    "Sudut Istimewa",
+    kuadran:  "Kuadran & Relasi Sudut",
+    identitas:"Identitas Trigonometri",
+    grafik:   "Grafik & Persamaan Trigonometri"
+  };
+
+  const QUESTIONS = [
+    // --- Konsep Dasar & Perbandingan Trigonometri ---
+    { topic:"dasar", text:"Pada segitiga siku-siku, sisi di depan sudut $\\theta$ panjangnya 3, sisi samping 4, dan sisi miring 5. Berapa nilai $\\sin \\theta$?",
+      options:["$\\frac{3}{5}$","$\\frac{4}{5}$","$\\frac{3}{4}$","$\\frac{4}{3}$"], correct:0 },
+    { topic:"dasar", text:"Pada segitiga siku-siku, sisi samping sudut $\\theta$ = 5 dan sisi miring = 13. Berapa nilai $\\sin \\theta$?",
+      options:["$\\frac{12}{13}$","$\\frac{5}{13}$","$\\frac{12}{5}$","$\\frac{5}{12}$"], correct:0 },
+    { topic:"dasar", text:"Jika $\\tan \\theta = \\frac{3}{4}$ pada suatu segitiga siku-siku, maka nilai $\\sin \\theta$ adalah…",
+      options:["$\\frac{3}{5}$","$\\frac{4}{5}$","$\\frac{3}{4}$","$\\frac{4}{3}$"], correct:0 },
+    { topic:"dasar", text:"$\\csc \\theta$ merupakan kebalikan (resiprokal) dari…",
+      options:["$\\sin \\theta$","$\\cos \\theta$","$\\tan \\theta$","$\\cot \\theta$"], correct:0 },
+
+    // --- Sudut Istimewa ---
+    { topic:"sudut", text:"Nilai $\\sin 30^\\circ$ adalah…",
+      options:["$\\frac{1}{2}$","$\\frac{\\sqrt{2}}{2}$","$\\frac{\\sqrt{3}}{2}$","$1$"], correct:0 },
+    { topic:"sudut", text:"Nilai $\\cos 45^\\circ$ adalah…",
+      options:["$\\frac{1}{2}$","$\\frac{\\sqrt{2}}{2}$","$\\frac{\\sqrt{3}}{2}$","$0$"], correct:1 },
+    { topic:"sudut", text:"Nilai $\\tan 60^\\circ$ adalah…",
+      options:["$1$","$\\sqrt{3}$","$\\frac{\\sqrt{3}}{3}$","$\\frac{1}{2}$"], correct:1 },
+    { topic:"sudut", text:"Nilai $\\sin 90^\\circ$ adalah…",
+      options:["$0$","$1$","$-1$","$\\frac{1}{2}$"], correct:1 },
+
+    // --- Kuadran & Relasi Sudut ---
+    { topic:"kuadran", text:"Di kuadran II, nilai $\\sin \\theta$ bertanda…",
+      options:["Positif","Negatif","Nol","Tidak terdefinisi"], correct:0 },
+    { topic:"kuadran", text:"$\\sin(180^\\circ - \\theta)$ senilai dengan…",
+      options:["$\\sin \\theta$","$-\\sin \\theta$","$\\cos \\theta$","$-\\cos \\theta$"], correct:0 },
+    { topic:"kuadran", text:"$\\cos(360^\\circ - \\theta)$ senilai dengan…",
+      options:["$\\cos \\theta$","$-\\cos \\theta$","$\\sin \\theta$","$-\\sin \\theta$"], correct:0 },
+    { topic:"kuadran", text:"Di kuadran III, tanda dari $\\tan \\theta$ adalah…",
+      options:["Positif","Negatif","Nol","Tidak terdefinisi"], correct:0 },
+
+    // --- Identitas Trigonometri ---
+    { topic:"identitas", text:"$\\sin^2\\theta + \\cos^2\\theta = \\ldots$",
+      options:["$0$","$1$","$2$","$\\tan^2\\theta$"], correct:1 },
+    { topic:"identitas", text:"$1 + \\tan^2\\theta = \\ldots$",
+      options:["$\\sec^2\\theta$","$\\csc^2\\theta$","$\\sin^2\\theta$","$\\cos^2\\theta$"], correct:0 },
+    { topic:"identitas", text:"Bentuk sederhana dari $\\sin\\theta \\cdot \\csc\\theta$ adalah…",
+      options:["$0$","$1$","$\\sin^2\\theta$","$\\cos^2\\theta$"], correct:1 },
+    { topic:"identitas", text:"$\\cot \\theta = \\ldots$",
+      options:["$\\frac{\\sin\\theta}{\\cos\\theta}$","$\\frac{\\cos\\theta}{\\sin\\theta}$","$\\frac{1}{\\sin\\theta}$","$\\frac{1}{\\cos\\theta}$"], correct:1 },
+
+    // --- Grafik & Persamaan Trigonometri ---
+    { topic:"grafik", text:"Periode fungsi $y = \\sin x$ adalah…",
+      options:["$\\pi$","$2\\pi$","$\\frac{\\pi}{2}$","$4\\pi$"], correct:1 },
+    { topic:"grafik", text:"Amplitudo dari fungsi $y = 3\\sin x$ adalah…",
+      options:["$1$","$2$","$3$","$6$"], correct:2 },
+    { topic:"grafik", text:"Himpunan penyelesaian $\\sin x = \\frac{1}{2}$ pada interval $[0^\\circ, 360^\\circ)$ adalah…",
+      options:["$\\{30^\\circ, 150^\\circ\\}$","$\\{30^\\circ, 330^\\circ\\}$","$\\{60^\\circ, 120^\\circ\\}$","$\\{150^\\circ, 210^\\circ\\}$"], correct:0 },
+    { topic:"grafik", text:"Pada grafik $y = \\cos x$, nilai fungsi saat $x = 0$ adalah…",
+      options:["$0$","$1$","$-1$","Tidak terdefinisi"], correct:1 }
+  ];
+
+  const DIAGNOSIS_LEVELS = [
+    { max:40,  label:"Sangat Kurang", color:"var(--low)",  tint:"var(--low-tint)",
+      note:"Pemahaman dasar trigonometri masih sangat lemah. Disarankan mengulang materi perbandingan trigonometri pada segitiga siku-siku dan sudut istimewa sebelum melanjutkan ke materi identitas dan grafik." },
+    { max:60,  label:"Kurang", color:"var(--low)", tint:"var(--low-tint)",
+      note:"Sebagian konsep dasar sudah dipahami, namun masih banyak kesalahan pada indikator lanjutan. Perlu penguatan pada topik dengan skor terendah sebelum masuk ke aplikasi trigonometri." },
+    { max:75,  label:"Cukup", color:"var(--mid)", tint:"var(--mid-tint)",
+      note:"Pemahaman berada pada tingkat menengah. Konsep dasar cukup kuat, tetapi masih perlu latihan tambahan pada indikator yang skornya di bawah 75%." },
+    { max:90,  label:"Baik", color:"var(--good)", tint:"var(--good-tint)",
+      note:"Penguasaan trigonometri secara umum sudah baik. Fokuskan latihan pada satu atau dua indikator dengan skor terendah untuk mencapai penguasaan menyeluruh." },
+    { max:101, label:"Sangat Baik", color:"var(--good)", tint:"var(--good-tint)",
+      note:"Penguasaan trigonometri sangat baik di seluruh indikator. Mahasiswa siap melanjutkan ke materi trigonometri lanjut (identitas jumlah-selisih sudut, persamaan trigonometri kompleks, dan aplikasi kalkulus trigonometri)." }
+  ];
+
+  /* ---------------- state ---------------- */
+  let current = 0;
+  const answers = new Array(QUESTIONS.length).fill(null);
+  let bio = { nama:"", nim:"", kelas:"" };
+
+  /* ---------------- elements ---------------- */
+  const screenBio    = document.getElementById("screen-bio");
+  const screenTest   = document.getElementById("screen-test");
+  const screenResult = document.getElementById("screen-result");
+
+  const inpNama  = document.getElementById("inp-nama");
+  const inpNim   = document.getElementById("inp-nim");
+  const inpKelas = document.getElementById("inp-kelas");
+  const btnStart = document.getElementById("btn-start");
+
+  const progCurrent = document.getElementById("prog-current");
+  const progTotal   = document.getElementById("prog-total");
+  const progTopic   = document.getElementById("prog-topic");
+  const progFill    = document.getElementById("prog-fill");
+  const qTag        = document.getElementById("q-tag");
+  const qText       = document.getElementById("q-text");
+  const qOptions    = document.getElementById("q-options");
+  const btnPrev     = document.getElementById("btn-prev");
+  const btnNext     = document.getElementById("btn-next");
+
+  const resScore   = document.getElementById("res-score");
+  const resPercent = document.getElementById("res-percent");
+  const resPill    = document.getElementById("res-pill");
+  const resBars    = document.getElementById("res-bars");
+  const resNote    = document.getElementById("res-note");
+  const submitStatus     = document.getElementById("submit-status");
+  const submitStatusText = document.getElementById("submit-status-text");
+  const btnCopy   = document.getElementById("btn-copy");
+  const btnRetry  = document.getElementById("btn-retry-submit");
+  const btnRestart= document.getElementById("btn-restart");
+
+  const guide = document.getElementById("guide");
+  document.getElementById("guide-head").addEventListener("click", ()=>{
+    guide.classList.toggle("open");
+  });
+
+  progTotal.textContent = QUESTIONS.length;
+
+  /* ---------------- bio → start ---------------- */
+  btnStart.addEventListener("click", ()=>{
+    bio.nama  = inpNama.value.trim();
+    bio.nim   = inpNim.value.trim();
+    bio.kelas = inpKelas.value.trim();
+    if(!bio.nama || !bio.nim){
+      alert("Mohon isi Nama dan NIM/NPM terlebih dahulu.");
+      return;
+    }
+    screenBio.classList.add("hidden");
+    screenTest.classList.remove("hidden");
+    renderQuestion();
+  });
+
+  /* ---------------- render question ---------------- */
+  function renderQuestion(){
+    const q = QUESTIONS[current];
+    progCurrent.textContent = current + 1;
+    progTopic.textContent = TOPICS[q.topic];
+    progFill.style.width = ((current) / QUESTIONS.length * 100) + "%";
+    qTag.textContent = TOPICS[q.topic];
+    qText.innerHTML = q.text;
+
+    qOptions.innerHTML = "";
+    q.options.forEach((optText, idx)=>{
+      const div = document.createElement("div");
+      div.className = "opt" + (answers[current] === idx ? " selected" : "");
+      div.innerHTML = '<span class="marker"></span><span class="opt-text">'+optText+'</span>';
+      div.addEventListener("click", ()=>{
+        answers[current] = idx;
+        renderQuestion();
+      });
+      qOptions.appendChild(div);
+    });
+
+    btnPrev.disabled = current === 0;
+    btnNext.disabled = answers[current] === null;
+    btnNext.textContent = current === QUESTIONS.length - 1 ? "Selesai & Lihat Hasil →" : "Selanjutnya →";
+
+    if(window.MathJax && window.MathJax.typesetPromise){
+      window.MathJax.typesetPromise([qOptions, qText]);
+    }
+  }
+
+  btnPrev.addEventListener("click", ()=>{
+    if(current > 0){ current--; renderQuestion(); }
+  });
+
+  btnNext.addEventListener("click", ()=>{
+    if(current < QUESTIONS.length - 1){
+      current++;
+      renderQuestion();
+    } else {
+      finishTest();
+    }
+  });
+
+  /* ---------------- scoring ---------------- */
+  function computeScores(){
+    const byTopic = {};
+    Object.keys(TOPICS).forEach(k => byTopic[k] = { correct:0, total:0 });
+
+    let totalCorrect = 0;
+    QUESTIONS.forEach((q, i)=>{
+      byTopic[q.topic].total++;
+      if(answers[i] === q.correct){
+        totalCorrect++;
+        byTopic[q.topic].correct++;
+      }
+    });
+
+    return { totalCorrect, total:QUESTIONS.length, byTopic };
+  }
+
+  function diagnosisFor(percent){
+    return DIAGNOSIS_LEVELS.find(lv => percent <= lv.max);
+  }
+
+  /* ---------------- finish + render results ---------------- */
+  function finishTest(){
+    screenTest.classList.add("hidden");
+    screenResult.classList.remove("hidden");
+
+    const { totalCorrect, total, byTopic } = computeScores();
+    const percent = Math.round((totalCorrect/total) * 100);
+    const diag = diagnosisFor(percent);
+
+    resScore.textContent = totalCorrect;
+    resPercent.textContent = percent + "%";
+    resPill.textContent = "Diagnosis: " + diag.label;
+    resPill.style.background = diag.tint;
+    resPill.style.color = diag.color;
+
+    resBars.innerHTML = "";
+    Object.keys(TOPICS).forEach(key=>{
+      const t = byTopic[key];
+      const pct = Math.round((t.correct / t.total) * 100);
+      const barColor = pct <= 50 ? "var(--low)" : (pct < 80 ? "var(--mid)" : "var(--good)");
+      const row = document.createElement("div");
+      row.className = "topic-bar-row";
+      row.innerHTML = `
+        <div>
+          <div class="topic-bar-label">${TOPICS[key]}</div>
+          <div class="topic-bar-track"><div class="topic-bar-fill" style="width:${pct}%; background:${barColor};"></div></div>
+        </div>
+        <div class="topic-bar-score">${t.correct}/${t.total} · ${pct}%</div>
+      `;
+      resBars.appendChild(row);
+    });
+
+    resNote.innerHTML = "<b>Catatan diagnosis:</b> " + diag.note;
+
+    submitResultsToSheet();
+  }
+
+  /* ---------------- Google Form submission ---------------- */
+  function buildPayload(){
+    const { totalCorrect, total, byTopic } = computeScores();
+    const percent = Math.round((totalCorrect/total) * 100);
+    const diag = diagnosisFor(percent);
+    const detail = QUESTIONS.map((q,i)=> (i+1)+":"+(answers[i]===null ? "-" : (answers[i]+1))+(answers[i]===q.correct?"(B)":"(S)")).join(", ");
+
+    return {
+      nama: bio.nama,
+      nim: bio.nim,
+      kelas: bio.kelas,
+      skorTotal: totalCorrect + "/" + total,
+      persentase: percent + "%",
+      diagnosis: diag.label,
+      skorKonsepDasar:   byTopic.dasar.correct + "/" + byTopic.dasar.total,
+      skorSudutIstimewa: byTopic.sudut.correct + "/" + byTopic.sudut.total,
+      skorKuadran:       byTopic.kuadran.correct + "/" + byTopic.kuadran.total,
+      skorIdentitas:     byTopic.identitas.correct + "/" + byTopic.identitas.total,
+      skorGrafik:        byTopic.grafik.correct + "/" + byTopic.grafik.total,
+      detailJawaban: detail
+    };
+  }
+
+  function isConfigured(){
+    return GOOGLE_FORM_CONFIG.formActionUrl && !GOOGLE_FORM_CONFIG.formActionUrl.startsWith("PASTE_");
+  }
+
+  function setStatus(mode, text){
+    submitStatus.className = "submit-status " + mode;
+    submitStatusText.textContent = text;
+  }
+
+  async function submitResultsToSheet(){
+    if(!isConfigured()){
+      setStatus("idle", "Belum terhubung ke Google Form. Buka bagian \"Panduan\" di bawah halaman untuk mengatur pengiriman otomatis ke Google Sheet.");
+      return;
+    }
+
+    setStatus("sending", "Mengirim hasil ke Google Sheet…");
+    const payload = buildPayload();
+    const formData = new URLSearchParams();
+    Object.entries(GOOGLE_FORM_CONFIG.entries).forEach(([key, entryId])=>{
+      if(entryId && !entryId.startsWith("entry.PASTE_")){
+        formData.append(entryId, payload[key] ?? "");
+      }
+    });
+
+    try{
+      await fetch(GOOGLE_FORM_CONFIG.formActionUrl, {
+        method:"POST",
+        mode:"no-cors",
+        headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+        body: formData.toString()
+      });
+      // mode no-cors selalu memberi respons "opaque" -- tidak bisa dibaca statusnya,
+      // jadi jika fetch tidak melempar error, kita anggap terkirim.
+      setStatus("ok", "Hasil berhasil dikirim ke Google Sheet. Silakan verifikasi pada Sheet yang terhubung.");
+    }catch(err){
+      setStatus("err", "Pengiriman gagal (kemungkinan tidak ada koneksi internet). Klik \"Kirim Ulang ke Sheet\" untuk mencoba lagi.");
+      console.error(err);
+    }
+  }
+
+  btnRetry.addEventListener("click", submitResultsToSheet);
+
+  btnCopy.addEventListener("click", ()=>{
+    const payload = buildPayload();
+    const text = [
+      "TES DIAGNOSTIK KEMAMPUAN TRIGONOMETRI",
+      "Nama: " + payload.nama,
+      "NIM: " + payload.nim,
+      "Kelas: " + payload.kelas,
+      "Skor Total: " + payload.skorTotal + " (" + payload.persentase + ")",
+      "Diagnosis: " + payload.diagnosis,
+      "",
+      "Rincian Indikator:",
+      "- Konsep Dasar: " + payload.skorKonsepDasar,
+      "- Sudut Istimewa: " + payload.skorSudutIstimewa,
+      "- Kuadran & Relasi Sudut: " + payload.skorKuadran,
+      "- Identitas Trigonometri: " + payload.skorIdentitas,
+      "- Grafik & Persamaan: " + payload.skorGrafik,
+    ].join("\n");
+
+    navigator.clipboard.writeText(text).then(()=>{
+      btnCopy.textContent = "Tersalin ✓";
+      setTimeout(()=>{ btnCopy.textContent = "Salin Ringkasan Hasil"; }, 1800);
+    }).catch(()=>{
+      alert(text);
+    });
+  });
+
+  btnRestart.addEventListener("click", ()=>{
+    current = 0;
+    answers.fill(null);
+    screenResult.classList.add("hidden");
+    screenBio.classList.remove("hidden");
+    inpNama.value = ""; inpNim.value = ""; inpKelas.value = "";
+    setStatus("idle", "Menyiapkan pengiriman hasil ke Google Sheet…");
+  });
+
+})();
+</script>
+</body>
+</html>
