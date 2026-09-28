@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perbandingan Trigonometri pada Segitiga Siku-Siku</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0B2340;
+    --bg-line: rgba(255,255,255,0.07);
+    --panel: #123057;
+    --panel-2: #16386A;
+    --stroke: rgba(255,255,255,0.14);
+    --ink: #F2F6FB;
+    --ink-dim: #B7C6DD;
+    --ink-faint: #7C90AF;
+    --amber: #FFC469;
+    --amber-dim: #C99648;
+    --coral: #FF8F6B;
+    --teal: #52D9CB;
+    --radius: 10px;
+    --display: 'Space Grotesk', 'Segoe UI', sans-serif;
+    --sans: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+  :root:not([data-theme="light"]){ color-scheme: dark; }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0B2340; } }
+  :root[data-theme="dark"]{ --bg:#0B2340; }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--bg-line) 1px, transparent 1px) 0 0/34px 34px,
+      linear-gradient(90deg, var(--bg-line) 1px, transparent 1px) 0 0/34px 34px,
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection{ background: var(--amber); color: #0B2340; }
+  a{ color: var(--amber); }
+  button:focus-visible, input:focus-visible, select:focus-visible{
+    outline: 2px solid var(--amber); outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce){ *{ animation-duration:.001ms!important; transition-duration:.001ms!important; } }
+
+  .wrap{ max-width: 940px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- corner crop marks, blueprint device ---------- */
+  .frame{
+    position: relative;
+    border: 1px solid var(--stroke);
+    margin: 18px 0 0;
+  }
+  .frame::before, .frame::after,
+  .frame .cm-tr, .frame .cm-bl{
+    content:"";
+    position:absolute;
+    width:16px; height:16px;
+    border: 1.5px solid var(--amber-dim);
+  }
+  .frame::before{ top:-1px; left:-1px; border-right:none; border-bottom:none; }
+  .frame::after{ bottom:-1px; right:-1px; border-left:none; border-top:none; }
+  .frame .cm-tr{ top:-1px; right:-1px; border-left:none; border-bottom:none; }
+  .frame .cm-bl{ bottom:-1px; left:-1px; border-right:none; border-top:none; }
+
+  header.hero{ padding: 60px 20px 0; }
+  .hero-inner{ padding: 44px 30px 34px; }
+  .hero-grid{ display:grid; grid-template-columns: 1.2fr 0.8fr; gap: 34px; align-items:center; }
+  @media (max-width:760px){ .hero-grid{ grid-template-columns:1fr; } }
+
+  .kicker{
+    font-family: var(--mono); font-size:0.76rem; letter-spacing:0.06em;
+    color: var(--teal); margin:0 0 16px; text-transform: uppercase;
+  }
+  h1{
+    font-family: var(--display); font-weight:600;
+    font-size: clamp(2rem, 4.6vw, 2.9rem); line-height:1.12;
+    margin: 0 0 16px; color: var(--ink);
+  }
+  .lede{ font-size: 1.05rem; color: var(--ink-dim); max-width: 48ch; margin:0; }
+
+  /* title block, like an engineering drawing */
+  .titleblock{
+    margin-top: 34px;
+    display:grid; grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--stroke);
+  }
+  .titleblock div{
+    padding: 10px 14px;
+    border-right: 1px solid var(--stroke);
+    font-family: var(--mono); font-size: 0.72rem; color: var(--ink-faint);
+  }
+  .titleblock div:last-child{ border-right:none; }
+  .titleblock strong{ display:block; color: var(--ink); font-size:0.82rem; margin-top:3px; font-weight:600; }
+
+  section{ padding: 52px 0; border-top: 1px solid var(--stroke); }
+  .section-head{ display:flex; gap:16px; align-items:baseline; margin-bottom:6px; }
+  .section-num{ font-family: var(--mono); font-size:0.78rem; color: var(--teal); white-space:nowrap; padding-top:5px; }
+  h2{ font-family: var(--display); font-weight:600; font-size: clamp(1.4rem, 2.6vw, 1.75rem); margin:0; color: var(--ink); }
+  .section-body{ margin-top: 20px; }
+  p{ color: var(--ink-dim); margin: 0 0 14px; max-width: 68ch; }
+  strong{ color: var(--ink); font-weight: 600; }
+
+  .callout{
+    background: var(--panel); border: 1px solid var(--stroke); border-radius: var(--radius);
+    padding: 20px 22px; margin: 18px 0;
+  }
+  .callout .tag{ font-family: var(--mono); font-size:0.72rem; color: var(--ink-faint); margin: 0 0 8px; text-transform:uppercase; letter-spacing:0.04em; }
+  .callout .formula{ font-family: var(--mono); font-size: 1.05rem; color: var(--amber); margin: 4px 0; }
+
+  .panel{ background: var(--panel); border: 1px solid var(--stroke); border-radius: var(--radius); padding: 26px; margin: 22px 0; }
+  .panel-grid{ display:grid; grid-template-columns: minmax(0,320px) 1fr; gap: 30px; align-items:center; }
+  @media (max-width:720px){ .panel-grid{ grid-template-columns:1fr; } }
+  .stage{ display:flex; justify-content:center; }
+  svg{ max-width:100%; height:auto; overflow:visible; }
+
+  .toggle-row{ display:flex; gap:8px; margin-bottom: 18px; flex-wrap:wrap; }
+  .toggle-btn{
+    font-family: var(--mono); font-size:0.78rem; color: var(--ink-dim);
+    background: var(--panel-2); border:1px solid var(--stroke); border-radius: 6px;
+    padding: 9px 16px; cursor:pointer;
+  }
+  .toggle-btn[aria-pressed="true"]{ background: var(--amber); color:#0B2340; border-color: var(--amber); }
+
+  .readout{ display:flex; gap:12px; flex-wrap:wrap; margin: 16px 0 4px; }
+  .readout .chip{ flex:1 1 120px; background: var(--panel-2); border-radius:8px; padding:11px 13px; border:1px solid var(--stroke); }
+  .readout .chip .label{ font-family: var(--mono); font-size:0.68rem; color: var(--ink-faint); margin-bottom:4px; text-transform:uppercase; }
+  .readout .chip .value{ font-family: var(--mono); font-size:1.2rem; color: var(--ink); font-weight:600; }
+  .readout .chip .value.accent{ color: var(--amber); }
+
+  .slider-row{ margin: 18px 0 4px; }
+  .slider-row label{ display:flex; justify-content:space-between; font-family: var(--mono); font-size:0.76rem; color: var(--ink-faint); margin-bottom:8px; }
+  input[type="range"]{
+    -webkit-appearance:none; width:100%; height:4px; background: var(--stroke); border-radius:3px; outline:none;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:18px; height:18px; border-radius:50%;
+    background: var(--amber); border:3px solid var(--bg); box-shadow:0 0 0 1px var(--amber-dim); cursor:pointer;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:18px; height:18px; border-radius:50%; background: var(--amber);
+    border:3px solid var(--bg); box-shadow:0 0 0 1px var(--amber-dim); cursor:pointer;
+  }
+
+  .ratio-list{ margin-top:16px; display:grid; grid-template-columns: repeat(3,1fr); gap:10px; }
+  @media (max-width:480px){ .ratio-list{ grid-template-columns:1fr 1fr; } }
+  .ratio-item{ background: var(--panel-2); border-radius:8px; border:1px solid var(--stroke); padding:10px 12px; }
+  .ratio-item .name{ font-family: var(--mono); font-size:0.7rem; color: var(--ink-faint); }
+  .ratio-item .expr{ font-family: var(--mono); font-size:0.86rem; color: var(--ink-dim); margin:2px 0; }
+  .ratio-item .num{ font-family: var(--mono); font-size:1.1rem; color: var(--amber); font-weight:600; }
+
+  /* solver forms */
+  .solver-grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px; }
+  @media (max-width:560px){ .solver-grid{ grid-template-columns:1fr; } }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field label{ font-family: var(--mono); font-size:0.72rem; color: var(--ink-faint); text-transform:uppercase; letter-spacing:0.03em; }
+  .field select, .field input[type="number"]{
+    background: var(--panel-2); border:1px solid var(--stroke); border-radius:6px;
+    padding: 10px 12px; color: var(--ink); font-family: var(--mono); font-size:0.95rem;
+  }
+  .field select:focus, .field input:focus{ border-color: var(--amber); }
+
+  .solve-result{
+    background: var(--panel-2); border: 1px dashed var(--stroke); border-radius: var(--radius);
+    padding: 18px 20px; margin-top: 6px;
+  }
+  .solve-result .step{ font-family: var(--mono); font-size:0.88rem; color: var(--ink-dim); margin: 4px 0; }
+  .solve-result .step .k{ color: var(--teal); }
+  .solve-result .final{ font-family: var(--mono); font-size:1.15rem; color: var(--amber); margin-top:10px; font-weight:600; }
+  .solve-result.err .final{ color: var(--coral); font-size:0.95rem; font-weight:500; }
+
+  table{ width:100%; border-collapse:collapse; margin: 18px 0; font-size:0.92rem; }
+  caption{ text-align:left; font-family: var(--mono); font-size:0.72rem; color: var(--ink-faint); margin-bottom:10px; text-transform:uppercase; }
+  th, td{ text-align:left; padding: 10px 12px; border-bottom:1px solid var(--stroke); color: var(--ink-dim); white-space:nowrap; font-family: var(--mono); font-size: 0.86rem; }
+  th{ font-weight:600; font-size:0.7rem; color: var(--ink-faint); text-transform:uppercase; }
+  tr.hi td{ color: var(--amber); background: rgba(255,196,105,0.07); }
+  .tbl-scroll{ overflow-x:auto; }
+
+  .quiz-card{ background: var(--panel); border:1px solid var(--stroke); border-radius: var(--radius); padding: 22px; margin: 16px 0; }
+  .quiz-q{ font-family: var(--display); font-weight: 600; font-size:1.02rem; color: var(--ink); margin:0 0 14px; }
+  .quiz-opts{ display:grid; gap:8px; }
+  .quiz-opt{
+    text-align:left; background: var(--panel-2); border:1px solid var(--stroke); border-radius:6px;
+    padding: 11px 14px; color: var(--ink-dim); font-family: var(--sans); font-size:0.94rem; cursor:pointer;
+  }
+  .quiz-opt:hover{ border-color: var(--amber-dim); }
+  .quiz-opt.correct{ background: rgba(82,217,203,0.14); border-color: var(--teal); color: var(--ink); }
+  .quiz-opt.wrong{ background: rgba(255,143,107,0.14); border-color: var(--coral); color: var(--ink); }
+  .quiz-fb{ margin-top:12px; font-size:0.89rem; color: var(--ink-dim); min-height:1.2em; }
+  .quiz-score{ font-family: var(--mono); font-size:0.78rem; color: var(--ink-faint); text-align:right; margin-top:6px; }
+
+  footer{ padding: 36px 0 56px; border-top:1px solid var(--stroke); color: var(--ink-faint); font-size:0.82rem; font-family: var(--mono); }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="frame">
+      <span class="cm-tr"></span><span class="cm-bl"></span>
+      <div class="hero-inner">
+        <div class="hero-grid">
+          <div>
+            <p class="kicker">Gambar Kerja &middot; Trigonometri</p>
+            <h1>Perbandingan trigonometri pada segitiga siku&#8209;siku</h1>
+            <p class="lede">Enam rasio yang dibentuk oleh satu sudut acuan dan tiga sisi &mdash; lengkap dengan alat hitung untuk mencari sisi atau sudut yang belum diketahui.</p>
+          </div>
+          <div class="stage">
+            <svg viewBox="0 0 260 200" width="260" height="200" aria-hidden="true">
+              <polygon points="30,170 210,170 210,40" fill="rgba(255,196,105,0.06)" stroke="none"/>
+              <line x1="30" y1="170" x2="210" y2="170" stroke="var(--teal)" stroke-width="3"/>
+              <line x1="210" y1="170" x2="210" y2="40" stroke="var(--coral)" stroke-width="3"/>
+              <line x1="30" y1="170" x2="210" y2="40" stroke="var(--amber)" stroke-width="3"/>
+              <path d="M 196 170 L 196 156 L 210 156" fill="none" stroke="var(--ink-faint)" stroke-width="1.3"/>
+              <path d="M 68 170 A 28 28 0 0 0 55.6 149.8" fill="none" stroke="var(--ink-faint)" stroke-width="1.3"/>
+              <text x="72" y="163" font-family="Space Grotesk" font-size="13" fill="var(--ink-dim)">&theta;</text>
+              <!-- dimension ticks -->
+              <line x1="30" y1="182" x2="210" y2="182" stroke="var(--ink-faint)" stroke-width="1"/>
+              <line x1="30" y1="177" x2="30" y2="187" stroke="var(--ink-faint)" stroke-width="1"/>
+              <line x1="210" y1="177" x2="210" y2="187" stroke="var(--ink-faint)" stroke-width="1"/>
+              <text x="120" y="196" text-anchor="middle" font-family="IBM Plex Mono" font-size="10" fill="var(--ink-faint)">samping</text>
+            </svg>
+          </div>
+        </div>
+        <div class="titleblock">
+          <div>MATA KULIAH<strong>Trigonometri</strong></div>
+          <div>TOPIK<strong>Perbandingan Segitiga Siku-Siku</strong></div>
+          <div>PROGRAM STUDI<strong>Pendidikan Matematika</strong></div>
+          <div>FORMAT<strong>Interaktif &middot; HTML/CSS/JS</strong></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 01 -->
+  <section id="s1">
+    <div class="section-head"><span class="section-num">01</span><h2>Anatomi segitiga siku-siku terhadap sudut acuan</h2></div>
+    <div class="section-body">
+      <p>Segitiga siku-siku selalu punya satu sudut 90&deg; dan dua sudut lancip. Nama ketiga sisinya <strong>bergantung pada sudut mana yang kita jadikan acuan</strong> &mdash; sisi miring selalu tetap (di depan sudut siku-siku), tetapi sisi "depan" dan "samping" bisa bertukar peran. Klik salah satu sudut lancip di bawah untuk melihatnya.</p>
+
+      <div class="panel">
+        <div class="panel-grid">
+          <div class="stage">
+            <svg viewBox="0 0 300 240" width="300" height="240" role="img" aria-label="Segitiga siku-siku dengan sudut acuan yang dapat dipilih">
+              <polygon points="40,200 240,200 240,60" fill="rgba(255,196,105,0.06)" stroke="none"/>
+              <line id="sideA" x1="40" y1="200" x2="240" y2="200" stroke-width="4" stroke-linecap="round"/>
+              <line id="sideB" x1="240" y1="200" x2="240" y2="60" stroke-width="4" stroke-linecap="round"/>
+              <line x1="40" y1="200" x2="240" y2="60" stroke="var(--amber)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M 226 200 L 226 186 L 240 186" fill="none" stroke="var(--ink-faint)" stroke-width="1.4"/>
+              <!-- angle A arc + label -->
+              <path d="M 76 200 A 36 36 0 0 0 62.4 173.4" fill="none" stroke="var(--ink-dim)" stroke-width="1.6"/>
+              <g id="btnA" style="cursor:pointer;">
+                <circle cx="40" cy="200" r="16" fill="transparent"/>
+                <text x="34" y="190" font-family="Space Grotesk" font-weight="600" font-size="15" fill="var(--ink)">A</text>
+              </g>
+              <!-- angle C arc + label -->
+              <path d="M 240 96 A 36 36 0 0 1 213 118" fill="none" stroke="var(--ink-dim)" stroke-width="1.6"/>
+              <g id="btnC" style="cursor:pointer;">
+                <circle cx="240" cy="60" r="16" fill="transparent"/>
+                <text x="246" y="68" font-family="Space Grotesk" font-weight="600" font-size="15" fill="var(--ink)">C</text>
+              </g>
+              <text x="240" y="216" text-anchor="middle" font-family="Space Grotesk" font-weight="600" font-size="15" fill="var(--ink)">B</text>
+              <text id="lblSideA" x="140" y="222" text-anchor="middle" font-family="IBM Plex Mono" font-size="12"></text>
+              <text id="lblSideB" x="256" y="130" font-family="IBM Plex Mono" font-size="12"></text>
+              <text x="130" y="120" font-family="IBM Plex Mono" font-size="12" fill="var(--amber)">miring</text>
+            </svg>
+          </div>
+          <div>
+            <div class="toggle-row">
+              <button class="toggle-btn" id="refA" aria-pressed="true" type="button">Acuan: sudut A</button>
+              <button class="toggle-btn" id="refC" aria-pressed="false" type="button">Acuan: sudut C</button>
+            </div>
+            <p id="anatomyText" style="font-size:0.95rem;"></p>
+            <p style="font-size:0.88rem; color:var(--ink-faint);">Sudut siku-siku selalu berada di titik B. Sisi miring (AC) tidak pernah berubah peran karena selalu berhadapan dengan sudut 90&deg;.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section id="s2">
+    <div class="section-head"><span class="section-num">02</span><h2>Enam perbandingan dari satu sudut</h2></div>
+    <div class="section-body">
+      <p>Begitu sudut acuan &theta; ditentukan, tiga rasio dasar (SOHCAHTOA) dan tiga kebalikannya langsung mengikuti. Geser &theta; dan amati bagaimana keenam nilai berubah bersama-sama, sementara panjang sisi miring dijaga tetap.</p>
+
+      <div class="callout">
+        <p class="tag">Tiga rasio dasar &amp; kebalikannya</p>
+        <p class="formula">sin &theta; = depan/miring &nbsp;&harr;&nbsp; csc &theta; = miring/depan</p>
+        <p class="formula">cos &theta; = samping/miring &nbsp;&harr;&nbsp; sec &theta; = miring/samping</p>
+        <p class="formula">tan &theta; = depan/samping &nbsp;&harr;&nbsp; cot &theta; = samping/depan</p>
+      </div>
+
+      <div class="panel">
+        <div class="panel-grid">
+          <div class="stage">
+            <svg viewBox="0 0 320 250" width="320" height="250" role="img" aria-label="Segitiga siku-siku dengan sudut theta yang dapat diubah">
+              <polygon id="triPoly" points="" fill="rgba(255,196,105,0.07)" stroke="none"/>
+              <line id="triAdj" x1="40" y1="210" x2="220" y2="210" stroke="var(--teal)" stroke-width="4" stroke-linecap="round"/>
+              <line id="triOpp" x1="220" y1="210" x2="220" y2="70" stroke="var(--coral)" stroke-width="4" stroke-linecap="round"/>
+              <line id="triHyp" x1="40" y1="210" x2="220" y2="70" stroke="var(--amber)" stroke-width="4" stroke-linecap="round"/>
+              <path id="rightMark" d="" fill="none" stroke="var(--ink-faint)" stroke-width="1.4"/>
+              <path id="thetaArc" d="" fill="none" stroke="var(--ink-dim)" stroke-width="1.8"/>
+              <text id="thetaLabel" font-family="Space Grotesk" font-weight="600" font-size="15" fill="var(--ink)">&theta;</text>
+              <text id="oppLabel" font-family="IBM Plex Mono" font-size="12" fill="var(--coral)"></text>
+              <text id="adjLabel" font-family="IBM Plex Mono" font-size="12" fill="var(--teal)"></text>
+              <text id="hypLabel" font-family="IBM Plex Mono" font-size="12" fill="var(--amber)"></text>
+            </svg>
+          </div>
+          <div>
+            <div class="slider-row">
+              <label for="thetaSlider"><span>Sudut &theta;</span><span id="thetaSliderLabel">40&deg;</span></label>
+              <input type="range" id="thetaSlider" min="5" max="85" step="1" value="40">
+            </div>
+            <div class="readout">
+              <div class="chip"><div class="label" style="color:var(--coral)">Depan (a)</div><div class="value" id="valOpp">&mdash;</div></div>
+              <div class="chip"><div class="label" style="color:var(--teal)">Samping (b)</div><div class="value" id="valAdj">&mdash;</div></div>
+              <div class="chip"><div class="label" style="color:var(--amber)">Miring (c)</div><div class="value" id="valHyp">&mdash;</div></div>
+            </div>
+            <div class="ratio-list">
+              <div class="ratio-item"><div class="name">sin &theta;</div><div class="expr">a / c</div><div class="num" id="rSin">&mdash;</div></div>
+              <div class="ratio-item"><div class="name">cos &theta;</div><div class="expr">b / c</div><div class="num" id="rCos">&mdash;</div></div>
+              <div class="ratio-item"><div class="name">tan &theta;</div><div class="expr">a / b</div><div class="num" id="rTan">&mdash;</div></div>
+              <div class="ratio-item"><div class="name">csc &theta;</div><div class="expr">c / a</div><div class="num" id="rCsc">&mdash;</div></div>
+              <div class="ratio-item"><div class="name">sec &theta;</div><div class="expr">c / b</div><div class="num" id="rSec">&mdash;</div></div>
+              <div class="ratio-item"><div class="name">cot &theta;</div><div class="expr">b / a</div><div class="num" id="rCot">&mdash;</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tbl-scroll">
+        <table>
+          <caption>Sudut istimewa &mdash; baris menyala saat penggeser mendekati nilai ini</caption>
+          <thead><tr><th>&theta;</th><th>sin</th><th>cos</th><th>tan</th><th>csc</th><th>sec</th><th>cot</th></tr></thead>
+          <tbody id="specialTable">
+            <tr data-deg="30"><td>30&deg;</td><td>1/2</td><td>&radic;3/2</td><td>&radic;3/3</td><td>2</td><td>2&radic;3/3</td><td>&radic;3</td></tr>
+            <tr data-deg="45"><td>45&deg;</td><td>&radic;2/2</td><td>&radic;2/2</td><td>1</td><td>&radic;2</td><td>&radic;2</td><td>1</td></tr>
+            <tr data-deg="60"><td>60&deg;</td><td>&radic;3/2</td><td>1/2</td><td>&radic;3</td><td>2&radic;3/3</td><td>2</td><td>&radic;3/3</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section id="s3">
+    <div class="section-head"><span class="section-num">03</span><h2>Alat hitung: mencari sisi yang belum diketahui</h2></div>
+    <div class="section-body">
+      <p>Jika satu sudut lancip dan satu sisi sudah diketahui, dua sisi lainnya bisa dihitung langsung dari SOHCAHTOA. Isi nilainya di bawah untuk melihat langkah penyelesaiannya.</p>
+
+      <div class="panel">
+        <div class="solver-grid">
+          <div class="field">
+            <label for="s3Angle">Sudut &theta; (derajat)</label>
+            <input type="number" id="s3Angle" min="0.1" max="89.9" step="0.1" value="35">
+          </div>
+          <div class="field">
+            <label for="s3Which">Sisi yang diketahui</label>
+            <select id="s3Which">
+              <option value="hyp">Sisi miring (c)</option>
+              <option value="opp">Sisi depan (a)</option>
+              <option value="adj">Sisi samping (b)</option>
+            </select>
+          </div>
+          <div class="field" style="grid-column: 1 / -1;">
+            <label for="s3Value">Panjang sisi tersebut</label>
+            <input type="number" id="s3Value" min="0.01" step="0.01" value="12">
+          </div>
+        </div>
+        <div class="solve-result" id="s3Result"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section id="s4">
+    <div class="section-head"><span class="section-num">04</span><h2>Alat hitung: mencari sudut yang belum diketahui</h2></div>
+    <div class="section-body">
+      <p>Jika dua sisi sudah diketahui, sudut lancipnya dicari dengan fungsi trigonometri invers (arcsin, arccos, atau arctan) &mdash; kebalikan dari SOHCAHTOA.</p>
+
+      <div class="panel">
+        <div class="solver-grid">
+          <div class="field">
+            <label for="s4Pair">Pasangan sisi yang diketahui</label>
+            <select id="s4Pair">
+              <option value="oa">Depan &amp; samping (a, b)</option>
+              <option value="oh">Depan &amp; miring (a, c)</option>
+              <option value="ah">Samping &amp; miring (b, c)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label id="s4Label1" for="s4Val1">Nilai pertama</label>
+            <input type="number" id="s4Val1" min="0.01" step="0.01" value="6">
+          </div>
+          <div class="field" style="grid-column: 1 / -1;">
+            <label id="s4Label2" for="s4Val2">Nilai kedua</label>
+            <input type="number" id="s4Val2" min="0.01" step="0.01" value="8">
+          </div>
+        </div>
+        <div class="solve-result" id="s4Result"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section id="s5">
+    <div class="section-head"><span class="section-num">05</span><h2>Uji pemahaman</h2></div>
+    <div class="section-body">
+      <p>Periksa pemahamanmu tentang identifikasi sisi dan penyelesaian segitiga siku-siku.</p>
+      <div id="quizContainer"></div>
+      <div class="quiz-score" id="quizScore"></div>
+    </div>
+  </section>
+
+  <footer>MATERI INTERAKTIF &middot; PERBANDINGAN TRIGONOMETRI PADA SEGITIGA SIKU-SIKU &middot; TRIGONOMETRI, PENDIDIKAN MATEMATIKA</footer>
+
+</div>
+
+<script>
+(function(){
+  "use strict";
+  const D2R = Math.PI/180, R2D = 180/Math.PI;
+  function fmt(n){ return isFinite(n) ? n.toFixed(2) : 'tak terdefinisi'; }
+
+  /* ---------- Section 01: anatomy toggle ---------- */
+  let refAngle = 'A';
+  const btnA = document.getElementById('btnA');
+  const btnC = document.getElementById('btnC');
+  const refABtn = document.getElementById('refA');
+  const refCBtn = document.getElementById('refC');
+  const sideA = document.getElementById('sideA'); // AB (bottom)
+  const sideB = document.getElementById('sideB'); // BC (right, vertical)
+  const lblSideA = document.getElementById('lblSideA');
+  const lblSideB = document.getElementById('lblSideB');
+  const anatomyText = document.getElementById('anatomyText');
+
+  function updateAnatomy(){
+    if(refAngle === 'A'){
+      // opposite to A = BC (vertical), adjacent to A = AB (bottom)
+      sideB.style.stroke = 'var(--coral)';
+      sideA.style.stroke = 'var(--teal)';
+      lblSideA.textContent = 'samping (AB)';
+      lblSideA.setAttribute('fill','var(--teal)');
+      lblSideB.textContent = 'depan (BC)';
+      lblSideB.setAttribute('fill','var(--coral)');
+      anatomyText.innerHTML = 'Dari sudut <strong>A</strong>: sisi <strong style="color:var(--coral)">BC</strong> adalah sisi depan (di seberang A), sisi <strong style="color:var(--teal)">AB</strong> adalah sisi samping (mengapit A), dan AC tetap sisi miring.';
+      refABtn.setAttribute('aria-pressed','true');
+      refCBtn.setAttribute('aria-pressed','false');
+    } else {
+      // opposite to C = AB (bottom), adjacent to C = BC (vertical)
+      sideA.style.stroke = 'var(--coral)';
+      sideB.style.stroke = 'var(--teal)';
+      lblSideA.textContent = 'depan (AB)';
+      lblSideA.setAttribute('fill','var(--coral)');
+      lblSideB.textContent = 'samping (BC)';
+      lblSideB.setAttribute('fill','var(--teal)');
+      anatomyText.innerHTML = 'Dari sudut <strong>C</strong>: sisi <strong style="color:var(--coral)">AB</strong> adalah sisi depan (di seberang C), sisi <strong style="color:var(--teal)">BC</strong> adalah sisi samping (mengapit C), dan AC tetap sisi miring.';
+      refABtn.setAttribute('aria-pressed','false');
+      refCBtn.setAttribute('aria-pressed','true');
+    }
+  }
+  function setRef(r){ refAngle = r; updateAnatomy(); }
+  btnA.addEventListener('click', function(){ setRef('A'); });
+  btnC.addEventListener('click', function(){ setRef('C'); });
+  refABtn.addEventListener('click', function(){ setRef('A'); });
+  refCBtn.addEventListener('click', function(){ setRef('C'); });
+  updateAnatomy();
+
+  /* ---------- Section 02: theta slider triangle ---------- */
+  const thetaSlider = document.getElementById('thetaSlider');
+  const baseX = 40, baseY = 210, HYP_VALUE = 10;
+
+  function updateTriangle(){
+    const deg = parseInt(thetaSlider.value,10);
+    const rad = deg*D2R;
+    const opp = HYP_VALUE*Math.sin(rad);
+    const adj = HYP_VALUE*Math.cos(rad);
+
+    const vx = baseX + 180*Math.cos(rad);
+    const apexY = baseY - 180*Math.sin(rad)*1.05;
+
+    document.getElementById('triPoly').setAttribute('points', `${baseX},${baseY} ${vx},${baseY} ${vx},${apexY}`);
+    document.getElementById('triAdj').setAttribute('x2', vx); document.getElementById('triAdj').setAttribute('y2', baseY);
+    document.getElementById('triOpp').setAttribute('x1', vx); document.getElementById('triOpp').setAttribute('y1', baseY);
+    document.getElementById('triOpp').setAttribute('x2', vx); document.getElementById('triOpp').setAttribute('y2', apexY);
+    document.getElementById('triHyp').setAttribute('x2', vx); document.getElementById('triHyp').setAttribute('y2', apexY);
+
+    const m = 14;
+    document.getElementById('rightMark').setAttribute('d', `M ${vx-m} ${baseY} L ${vx-m} ${baseY-m} L ${vx} ${baseY-m}`);
+
+    const arcR = 30;
+    const ax = baseX + arcR, ay = baseY;
+    const hx = baseX + arcR*Math.cos(rad), hy = baseY - arcR*Math.sin(rad);
+    document.getElementById('thetaArc').setAttribute('d', `M ${ax} ${ay} A ${arcR} ${arcR} 0 0 0 ${hx} ${hy}`);
+    document.getElementById('thetaLabel').setAttribute('x', baseX+40);
+    document.getElementById('thetaLabel').setAttribute('y', baseY-10);
+
+    document.getElementById('oppLabel').textContent = 'a = ' + fmt(opp);
+    document.getElementById('oppLabel').setAttribute('x', vx+8);
+    document.getElementById('oppLabel').setAttribute('y', (baseY+apexY)/2);
+
+    document.getElementById('adjLabel').textContent = 'b = ' + fmt(adj);
+    document.getElementById('adjLabel').setAttribute('x', (baseX+vx)/2 - 20);
+    document.getElementById('adjLabel').setAttribute('y', baseY+22);
+
+    document.getElementById('hypLabel').textContent = 'c = ' + fmt(HYP_VALUE);
+    document.getElementById('hypLabel').setAttribute('x', (baseX+vx)/2 - 34);
+    document.getElementById('hypLabel').setAttribute('y', (baseY+apexY)/2 - 10);
+
+    document.getElementById('valOpp').textContent = fmt(opp);
+    document.getElementById('valAdj').textContent = fmt(adj);
+    document.getElementById('valHyp').textContent = fmt(HYP_VALUE);
+
+    const sinV = opp/HYP_VALUE, cosV = adj/HYP_VALUE, tanV = opp/adj;
+    document.getElementById('rSin').textContent = fmt(sinV);
+    document.getElementById('rCos').textContent = fmt(cosV);
+    document.getElementById('rTan').textContent = fmt(tanV);
+    document.getElementById('rCsc').textContent = fmt(1/sinV);
+    document.getElementById('rSec').textContent = fmt(1/cosV);
+    document.getElementById('rCot').textContent = fmt(1/tanV);
+
+    document.getElementById('thetaSliderLabel').textContent = deg + '\u00B0';
+
+    document.querySelectorAll('#specialTable tr').forEach(function(tr){
+      const d = parseInt(tr.getAttribute('data-deg'),10);
+      tr.classList.toggle('hi', Math.abs(d-deg) <= 1);
+    });
+  }
+  thetaSlider.addEventListener('input', updateTriangle);
+  updateTriangle();
+
+  /* ---------- Section 03: solve for missing sides ---------- */
+  const s3Angle = document.getElementById('s3Angle');
+  const s3Which = document.getElementById('s3Which');
+  const s3Value = document.getElementById('s3Value');
+  const s3Result = document.getElementById('s3Result');
+
+  function solveSides(){
+    const deg = parseFloat(s3Angle.value);
+    const val = parseFloat(s3Value.value);
+    const which = s3Which.value;
+    s3Result.classList.remove('err');
+
+    if(!isFinite(deg) || deg <= 0 || deg >= 90 || !isFinite(val) || val <= 0){
+      s3Result.classList.add('err');
+      s3Result.innerHTML = '<div class="final">Masukkan sudut antara 0&deg;&ndash;90&deg; dan panjang sisi lebih dari 0.</div>';
+      return;
+    }
+    const rad = deg*D2R;
+    let a, b, c, steps = [];
+    if(which === 'hyp'){
+      c = val;
+      a = c*Math.sin(rad);
+      b = c*Math.cos(rad);
+      steps.push(`<span class="k">a</span> = c &times; sin(&theta;) = ${fmt(c)} &times; sin(${deg}&deg;) = <strong>${fmt(a)}</strong>`);
+      steps.push(`<span class="k">b</span> = c &times; cos(&theta;) = ${fmt(c)} &times; cos(${deg}&deg;) = <strong>${fmt(b)}</strong>`);
+    } else if(which === 'opp'){
+      a = val;
+      c = a/Math.sin(rad);
+      b = a/Math.tan(rad);
+      steps.push(`<span class="k">c</span> = a / sin(&theta;) = ${fmt(a)} / sin(${deg}&deg;) = <strong>${fmt(c)}</strong>`);
+      steps.push(`<span class="k">b</span> = a / tan(&theta;) = ${fmt(a)} / tan(${deg}&deg;) = <strong>${fmt(b)}</strong>`);
+    } else {
+      b = val;
+      c = b/Math.cos(rad);
+      a = b*Math.tan(rad);
+      steps.push(`<span class="k">c</span> = b / cos(&theta;) = ${fmt(b)} / cos(${deg}&deg;) = <strong>${fmt(c)}</strong>`);
+      steps.push(`<span class="k">a</span> = b &times; tan(&theta;) = ${fmt(b)} &times; tan(${deg}&deg;) = <strong>${fmt(a)}</strong>`);
+    }
+    s3Result.innerHTML = steps.map(s => `<div class="step">${s}</div>`).join('') +
+      `<div class="final">Sisi depan a = ${fmt(a)} &middot; Sisi samping b = ${fmt(b)} &middot; Sisi miring c = ${fmt(c)}</div>`;
+  }
+  [s3Angle, s3Which, s3Value].forEach(function(el){ el.addEventListener('input', solveSides); });
+  solveSides();
+
+  /* ---------- Section 04: solve for missing angle ---------- */
+  const s4Pair = document.getElementById('s4Pair');
+  const s4Val1 = document.getElementById('s4Val1');
+  const s4Val2 = document.getElementById('s4Val2');
+  const s4Label1 = document.getElementById('s4Label1');
+  const s4Label2 = document.getElementById('s4Label2');
+  const s4Result = document.getElementById('s4Result');
+
+  function updateS4Labels(){
+    const pair = s4Pair.value;
+    if(pair === 'oa'){ s4Label1.textContent = 'Sisi depan (a)'; s4Label2.textContent = 'Sisi samping (b)'; }
+    else if(pair === 'oh'){ s4Label1.textContent = 'Sisi depan (a)'; s4Label2.textContent = 'Sisi miring (c)'; }
+    else { s4Label1.textContent = 'Sisi samping (b)'; s4Label2.textContent = 'Sisi miring (c)'; }
+  }
+
+  function solveAngle(){
+    updateS4Labels();
+    const pair = s4Pair.value;
+    const v1 = parseFloat(s4Val1.value);
+    const v2 = parseFloat(s4Val2.value);
+    s4Result.classList.remove('err');
+
+    if(!isFinite(v1) || !isFinite(v2) || v1 <= 0 || v2 <= 0){
+      s4Result.classList.add('err');
+      s4Result.innerHTML = '<div class="final">Masukkan dua panjang sisi yang lebih dari 0.</div>';
+      return;
+    }
+
+    let ratio, rad, deg, formulaStep, ratioName;
+    if(pair === 'oa'){
+      ratio = v1/v2;
+      rad = Math.atan(ratio);
+      formulaStep = `&theta; = arctan(a / b) = arctan(${fmt(v1)} / ${fmt(v2)}) = arctan(${fmt(ratio)})`;
+    } else if(pair === 'oh'){
+      if(v1 > v2){
+        s4Result.classList.add('err');
+        s4Result.innerHTML = '<div class="final">Sisi depan tidak boleh lebih panjang dari sisi miring.</div>';
+        return;
+      }
+      ratio = v1/v2;
+      rad = Math.asin(ratio);
+      formulaStep = `&theta; = arcsin(a / c) = arcsin(${fmt(v1)} / ${fmt(v2)}) = arcsin(${fmt(ratio)})`;
+    } else {
+      if(v1 > v2){
+        s4Result.classList.add('err');
+        s4Result.innerHTML = '<div class="final">Sisi samping tidak boleh lebih panjang dari sisi miring.</div>';
+        return;
+      }
+      ratio = v1/v2;
+      rad = Math.acos(ratio);
+      formulaStep = `&theta; = arccos(b / c) = arccos(${fmt(v1)} / ${fmt(v2)}) = arccos(${fmt(ratio)})`;
+    }
+    deg = rad*R2D;
+    s4Result.innerHTML = `<div class="step">${formulaStep}</div>` +
+      `<div class="final">&theta; &asymp; ${fmt(deg)}&deg; &nbsp;(&asymp; ${fmt(rad)} rad)</div>`;
+  }
+  [s4Pair, s4Val1, s4Val2].forEach(function(el){ el.addEventListener('input', solveAngle); });
+  solveAngle();
+
+  /* ---------- Section 05: quiz ---------- */
+  const questions = [
+    {
+      q: "Pada segitiga siku-siku, sisi manakah yang panjangnya tidak pernah berubah peran (tetap disebut sisi miring) terlepas dari sudut acuan yang dipilih?",
+      opts: ["Sisi yang mengapit sudut acuan", "Sisi yang berhadapan dengan sudut acuan", "Sisi di depan sudut siku-siku", "Sisi terpendek"],
+      correct: 2,
+      fb: "Sisi miring selalu berhadapan dengan sudut siku-siku (90\u00B0), sehingga tidak bergantung pada sudut acuan mana yang dipilih."
+    },
+    {
+      q: "Diketahui sisi depan = 9 dan sisi miring = 15. Berapakah nilai sin \u03B8?",
+      opts: ["9/15 = 0,6", "15/9 \u2248 1,67", "6/15 = 0,4", "15/6 = 2,5"],
+      correct: 0,
+      fb: "sin \u03B8 = depan/miring = 9/15 = 0,6."
+    },
+    {
+      q: "Jika tan \u03B8 = 4/3, berapakah cot \u03B8?",
+      opts: ["4/3", "3/4", "5/3", "5/4"],
+      correct: 1,
+      fb: "cot \u03B8 adalah kebalikan dari tan \u03B8, sehingga cot \u03B8 = 3/4."
+    },
+    {
+      q: "Untuk mencari sudut \u03B8 ketika sisi samping dan sisi miring sudah diketahui, fungsi invers yang digunakan adalah...",
+      opts: ["arcsin", "arccos", "arctan", "arccot"],
+      correct: 1,
+      fb: "cos \u03B8 = samping/miring, sehingga \u03B8 = arccos(samping/miring)."
+    },
+    {
+      q: "Sebuah tangga bersandar membentuk sudut 60\u00B0 dengan tanah dan panjang tangga (sisi miring) 4 meter. Berapa tinggi tangga menyentuh dinding (sisi depan)?",
+      opts: ["4 \u00D7 sin 60\u00B0 \u2248 3,46 m", "4 \u00D7 cos 60\u00B0 = 2 m", "4 / tan 60\u00B0 \u2248 2,31 m", "4 \u00D7 tan 60\u00B0 \u2248 6,93 m"],
+      correct: 0,
+      fb: "Tinggi di dinding adalah sisi depan terhadap sudut 60\u00B0, sehingga a = c \u00D7 sin \u03B8 = 4 \u00D7 sin 60\u00B0 \u2248 3,46 m."
+    }
+  ];
+
+  let score = 0;
+  const answered = new Array(questions.length).fill(false);
+  const quizContainer = document.getElementById('quizContainer');
+
+  questions.forEach(function(item, qi){
+    const card = document.createElement('div');
+    card.className = 'quiz-card';
+    const qEl = document.createElement('p');
+    qEl.className = 'quiz-q';
+    qEl.textContent = (qi+1) + '. ' + item.q;
+    card.appendChild(qEl);
+
+    const optsEl = document.createElement('div');
+    optsEl.className = 'quiz-opts';
+    const fbEl = document.createElement('div');
+    fbEl.className = 'quiz-fb';
+
+    item.opts.forEach(function(optText, oi){
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt';
+      btn.type = 'button';
+      btn.textContent = optText;
+      btn.addEventListener('click', function(){
+        if(answered[qi]) return;
+        answered[qi] = true;
+        optsEl.querySelectorAll('.quiz-opt').forEach(function(b, bi){
+          if(bi === item.correct) b.classList.add('correct');
+          else if(bi === oi) b.classList.add('wrong');
+        });
+        if(oi === item.correct) score++;
+        fbEl.textContent = (oi === item.correct ? 'Benar. ' : 'Kurang tepat. ') + item.fb;
+        updateScore();
+      });
+      optsEl.appendChild(btn);
+    });
+
+    card.appendChild(optsEl);
+    card.appendChild(fbEl);
+    quizContainer.appendChild(card);
+  });
+
+  function updateScore(){
+    const answeredCount = answered.filter(Boolean).length;
+    document.getElementById('quizScore').textContent = 'Skor: ' + score + ' / ' + answeredCount + ' terjawab (' + questions.length + ' soal)';
+  }
+  updateScore();
+
+})();
+</script>
+</body>
+</html>
