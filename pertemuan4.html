@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grafik Fungsi Trigonometri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bitter:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = { tex: { inlineMath: [['$', '$']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" defer></script>
+<style>
+  :root{
+    --bg:#F6F8FB;
+    --card:#FFFFFF;
+    --ink:#1B2436;
+    --ink-dim:#636E85;
+    --line:#E3E7EF;
+    --sin:#2A4494; --sin-tint:#E6EAF7;
+    --cos:#D1552F; --cos-tint:#FBEAE3;
+    --tan:#1C8C6C; --tan-tint:#E2F3ED;
+    --primary:#2A4494; --primary-dark:#1C2F6B; --primary-tint:#E6EAF7;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; scroll-padding-top:118px; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); }
+  body{
+    font-family:"Nunito Sans", sans-serif;
+    padding-top:env(safe-area-inset-top, 0px);
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+  }
+  h1,h2,h3{ font-family:"Bitter", serif; margin:0; }
+  .wrap{ max-width:980px; margin:0 auto; padding:0 20px 70px; }
+
+  .progress-bar{ position:fixed; top:0; left:0; height:3px; width:0%; background:var(--primary); z-index:100; }
+
+  .hero{ padding:44px 0 24px; text-align:center; }
+  .hero .eyebrow{ font-size:12.5px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--primary); }
+  .hero h1{ font-size:clamp(26px,4vw,36px); font-weight:700; line-height:1.2; margin:8px 0 10px; }
+  .hero p{ max-width:580px; margin:0 auto; color:var(--ink-dim); font-size:15px; line-height:1.6; }
+
+  .nav-shell{ position:sticky; top:0; z-index:20; background:rgba(246,248,251,0.93); backdrop-filter:blur(6px); padding:10px 0; border-bottom:1px solid var(--line); }
+  .nav-scroll{ display:flex; gap:8px; overflow-x:auto; padding:2px 0; scrollbar-width:none; }
+  .nav-scroll::-webkit-scrollbar{ display:none; }
+  .nav-pill{ flex:0 0 auto; font-size:13px; font-weight:600; padding:8px 14px; border-radius:20px; color:var(--ink-dim); background:var(--card); border:1px solid var(--line); cursor:pointer; white-space:nowrap; transition:background .15s,color .15s,border-color .15s; }
+  .nav-pill.active{ background:var(--primary); border-color:var(--primary); color:#fff; }
+
+  section{ padding:38px 0 10px; scroll-margin-top:118px; }
+  section .section-kicker{ font-family:"Space Mono", monospace; font-size:12px; font-weight:700; color:var(--primary); letter-spacing:.04em; margin-bottom:6px; }
+  section h2{ font-size:24px; font-weight:700; margin-bottom:12px; }
+  section > p.lead{ color:var(--ink-dim); font-size:15px; line-height:1.7; max-width:680px; margin-bottom:18px; }
+
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:16px; }
+
+  /* function mini-sections */
+  .func-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:760px){ .func-grid{ grid-template-columns:1fr; } }
+  .func-card canvas{ width:100%; aspect-ratio:16/10; background:#fbfbfe; border-radius:10px; border:1px solid var(--line); margin-bottom:12px; }
+  .func-card h3{ font-size:17px; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .func-dot{ width:10px; height:10px; border-radius:50%; display:inline-block; }
+  table.prop{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  table.prop td{ padding:7px 4px; border-bottom:1px solid var(--line); }
+  table.prop td:first-child{ color:var(--ink-dim); width:46%; }
+
+  /* accordion (transformasi) */
+  .accordion-item{ background:var(--card); border:1px solid var(--line); border-radius:14px; margin-bottom:12px; overflow:hidden; }
+  .accordion-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 20px; cursor:pointer; user-select:none; }
+  .accordion-head .tag{ font-family:"Space Mono", monospace; font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:14px; margin-right:10px; }
+  .accordion-head h3{ font-size:16.5px; font-weight:600; display:flex; align-items:center; flex-wrap:wrap; }
+  .accordion-head .chevron{ color:var(--ink-dim); transition:transform .2s; }
+  .accordion-item.open .chevron{ transform:rotate(180deg); }
+  .accordion-body{ max-height:0; overflow:hidden; transition:max-height .3s; }
+  .accordion-item.open .accordion-body{ max-height:600px; }
+  .accordion-inner{ padding:0 20px 20px; }
+  .accordion-inner p{ font-size:14.5px; line-height:1.7; margin:0 0 12px; }
+  .formula-box{ background:var(--primary-tint); color:var(--primary-dark); border-left:3px solid var(--primary); padding:12px 16px; font-size:14.5px; margin-bottom:10px; }
+  .example-box{ background:var(--bg); border:1px dashed var(--line); padding:12px 16px; font-size:14px; }
+
+  /* summary */
+  table.summary{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  table.summary th, table.summary td{ padding:10px 10px; border-bottom:1px solid var(--line); text-align:center; }
+  table.summary th{ font-family:"Space Mono", monospace; font-size:11.5px; color:var(--ink-dim); text-transform:uppercase; }
+  table.summary td:first-child{ text-align:left; font-weight:700; }
+
+  /* interactive explorer */
+  .explorer-layout{ display:grid; grid-template-columns:1.3fr 1fr; gap:18px; align-items:start; }
+  @media (max-width:800px){ .explorer-layout{ grid-template-columns:1fr; } }
+  #explorer-canvas{ width:100%; aspect-ratio:16/11; background:#fbfbfe; border-radius:12px; border:1px solid var(--line); }
+  .tab-row{ display:flex; gap:8px; margin-bottom:16px; }
+  .tab-btn{ flex:1; font-family:"Space Mono", monospace; font-weight:700; font-size:13px; padding:9px; border-radius:9px; border:1.5px solid var(--line); background:var(--bg); color:var(--ink-dim); cursor:pointer; }
+  .tab-btn.active{ color:#fff; border-color:transparent; }
+  .slider-field{ margin-bottom:14px; }
+  .slider-field label{ display:flex; justify-content:space-between; font-size:13px; font-weight:600; color:var(--ink-dim); margin-bottom:5px; }
+  .slider-field label b{ color:var(--ink); font-family:"Space Mono", monospace; }
+  .slider-field input[type="range"]{ width:100%; accent-color:var(--primary); }
+  .formula-display{ text-align:center; font-size:17px; padding:12px; background:var(--primary-tint); border-radius:10px; margin-bottom:16px; color:var(--primary-dark); }
+  .readout-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .readout-grid .stat{ background:var(--bg); border-radius:9px; padding:9px 11px; }
+  .readout-grid .stat .lbl{ font-size:11px; color:var(--ink-dim); font-weight:700; text-transform:uppercase; }
+  .readout-grid .stat .val{ font-family:"Space Mono", monospace; font-size:15px; font-weight:700; }
+
+  /* quiz */
+  .quiz-progress{ display:flex; justify-content:space-between; font-family:"Space Mono", monospace; font-size:13px; color:var(--ink-dim); margin-bottom:10px; }
+  .quiz-track{ height:6px; background:var(--line); border-radius:4px; margin-bottom:22px; overflow:hidden; }
+  .quiz-fill{ height:100%; background:var(--primary); width:0%; transition:width .3s; }
+  .quiz-q{ margin-bottom:26px; }
+  .quiz-q .q-num{ font-family:"Space Mono", monospace; font-size:12.5px; color:var(--primary); font-weight:700; margin-bottom:6px; }
+  .quiz-q .q-text{ font-size:16px; margin-bottom:12px; }
+  .quiz-options{ display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt{ padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; cursor:pointer; font-size:14.5px; background:var(--card); }
+  .quiz-opt:hover{ border-color:var(--primary); }
+  .quiz-opt.correct{ background:var(--tan-tint); border-color:var(--tan); color:var(--tan); font-weight:700; }
+  .quiz-opt.wrong{ background:var(--cos-tint); border-color:var(--cos); color:var(--cos); font-weight:700; }
+  .quiz-opt.disabled{ pointer-events:none; opacity:.55; }
+  .quiz-feedback{ margin-top:8px; font-size:13.5px; padding:9px 12px; border-radius:8px; display:none; }
+  .quiz-feedback.show{ display:block; }
+  .quiz-feedback.ok{ background:var(--tan-tint); color:var(--tan); }
+  .quiz-feedback.bad{ background:var(--cos-tint); color:var(--cos); }
+  .quiz-score-card{ text-align:center; padding:26px; display:none; }
+  .quiz-score-card.show{ display:block; }
+  .quiz-score-card .num{ font-family:"Bitter", serif; font-size:44px; font-weight:700; color:var(--primary); }
+
+  footer{ text-align:center; font-size:12px; color:var(--ink-dim); margin-top:40px; }
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progress-bar"></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Mata Kuliah Trigonometri</div>
+    <h1>Grafik Fungsi Trigonometri</h1>
+    <p>Mempelajari bentuk, sifat, dan transformasi grafik fungsi sinus, cosinus, dan tangen — dari fungsi dasar hingga bentuk umum $y=a\cdot f(b(x-c))+d$.</p>
+  </div>
+
+  <div class="nav-shell">
+    <div class="nav-scroll" id="nav-scroll">
+      <a class="nav-pill" data-target="pendahuluan">Pendahuluan</a>
+      <a class="nav-pill" data-target="fungsi-dasar">Fungsi Dasar</a>
+      <a class="nav-pill" data-target="transformasi">Transformasi</a>
+      <a class="nav-pill" data-target="eksplorasi">Eksplorasi</a>
+      <a class="nav-pill" data-target="rangkuman">Rangkuman</a>
+      <a class="nav-pill" data-target="kuis">Kuis</a>
+    </div>
+  </div>
+
+  <!-- ================= PENDAHULUAN ================= -->
+  <section id="pendahuluan">
+    <div class="section-kicker">01 — Pengantar</div>
+    <h2>Mengapa Grafik Fungsi Trigonometri Berulang?</h2>
+    <p class="lead">Fungsi trigonometri bersifat <b>periodik</b> — nilainya berulang setiap interval tertentu, karena nilainya ditentukan oleh posisi titik pada lingkaran satuan yang kembali ke posisi semula setiap $360^\circ$ ($2\pi$ radian). Sifat inilah yang membuat grafiknya berbentuk gelombang yang berulang secara teratur.</p>
+    <div class="card">
+      <p style="font-size:14.5px; line-height:1.7; margin:0;">Pada bagian ini kita akan mempelajari tiga grafik dasar — $y=\sin x$, $y=\cos x$, dan $y=\tan x$ — lalu melihat bagaimana parameter $a$, $b$, $c$, dan $d$ pada bentuk umum $y=a\cdot f(b(x-c))+d$ mengubah bentuk grafiknya: amplitudo, periode, pergeseran fase, dan pergeseran vertikal.</p>
+    </div>
+  </section>
+
+  <!-- ================= FUNGSI DASAR ================= -->
+  <section id="fungsi-dasar">
+    <div class="section-kicker">02 — Grafik Dasar</div>
+    <h2>Grafik y = sin x, y = cos x, dan y = tan x</h2>
+    <p class="lead">Perhatikan bentuk, titik potong, serta nilai maksimum/minimum dari masing-masing grafik dasar berikut.</p>
+
+    <div class="func-grid">
+      <div class="func-card card">
+        <h3><span class="func-dot" style="background:var(--sin);"></span>y = sin x</h3>
+        <canvas id="canvas-sin"></canvas>
+        <table class="prop">
+          <tr><td>Domain</td><td>semua bilangan real</td></tr>
+          <tr><td>Daerah hasil (range)</td><td>$[-1,1]$</td></tr>
+          <tr><td>Periode</td><td>$360^\circ$ ($2\pi$)</td></tr>
+          <tr><td>Maks / Min</td><td>$1$ di $x{=}90^\circ$ · $-1$ di $x{=}270^\circ$</td></tr>
+          <tr><td>Titik potong sumbu-x</td><td>$0^\circ,180^\circ,360^\circ$</td></tr>
+        </table>
+      </div>
+
+      <div class="func-card card">
+        <h3><span class="func-dot" style="background:var(--cos);"></span>y = cos x</h3>
+        <canvas id="canvas-cos"></canvas>
+        <table class="prop">
+          <tr><td>Domain</td><td>semua bilangan real</td></tr>
+          <tr><td>Daerah hasil (range)</td><td>$[-1,1]$</td></tr>
+          <tr><td>Periode</td><td>$360^\circ$ ($2\pi$)</td></tr>
+          <tr><td>Maks / Min</td><td>$1$ di $x{=}0^\circ$ · $-1$ di $x{=}180^\circ$</td></tr>
+          <tr><td>Titik potong sumbu-x</td><td>$90^\circ,270^\circ$</td></tr>
+        </table>
+      </div>
+
+      <div class="func-card card" style="grid-column:1 / -1;">
+        <h3><span class="func-dot" style="background:var(--tan);"></span>y = tan x</h3>
+        <canvas id="canvas-tan"></canvas>
+        <table class="prop">
+          <tr><td>Domain</td><td>semua real, kecuali $x=90^\circ+180^\circ k$</td></tr>
+          <tr><td>Daerah hasil (range)</td><td>semua bilangan real (tidak terbatas)</td></tr>
+          <tr><td>Periode</td><td>$180^\circ$ ($\pi$)</td></tr>
+          <tr><td>Maks / Min</td><td>tidak memiliki nilai maksimum/minimum</td></tr>
+          <tr><td>Asimtot vertikal</td><td>$x=90^\circ,270^\circ,\ldots$</td></tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TRANSFORMASI ================= -->
+  <section id="transformasi">
+    <div class="section-kicker">03 — Transformasi Grafik</div>
+    <h2>Bentuk Umum y = a · f(b(x − c)) + d</h2>
+    <p class="lead">Empat parameter ini masing-masing mengubah aspek berbeda dari grafik fungsi trigonometri dasar.</p>
+
+    <div class="accordion-item" data-acc>
+      <div class="accordion-head"><h3><span class="tag" style="background:var(--sin-tint); color:var(--sin);">a</span>Amplitudo</h3><span class="chevron">▾</span></div>
+      <div class="accordion-body"><div class="accordion-inner">
+        <p>Parameter $a$ meregangkan atau memampatkan grafik secara vertikal. Amplitudo adalah jarak dari garis tengah ke puncak grafik, dan selalu bernilai $|a|$. Jika $a$ negatif, grafik dicerminkan terhadap garis tengahnya.</p>
+        <div class="formula-box">Amplitudo $=|a|$</div>
+        <div class="example-box">Pada $y=4\sin x$, amplitudonya $=4$, sehingga grafik bergerak dari $y=-4$ hingga $y=4$.</div>
+      </div></div>
+    </div>
+
+    <div class="accordion-item" data-acc>
+      <div class="accordion-head"><h3><span class="tag" style="background:var(--cos-tint); color:var(--cos);">b</span>Periode</h3><span class="chevron">▾</span></div>
+      <div class="accordion-body"><div class="accordion-inner">
+        <p>Parameter $b$ memampatkan atau meregangkan grafik secara horizontal. Semakin besar $b$, semakin cepat grafik mengulang polanya (periode semakin pendek).</p>
+        <div class="formula-box">Periode $=\dfrac{360^\circ}{|b|}$ untuk sin &amp; cos &nbsp;·&nbsp; Periode $=\dfrac{180^\circ}{|b|}$ untuk tan</div>
+        <div class="example-box">Pada $y=\sin(2x)$, periodenya $=\dfrac{360^\circ}{2}=180^\circ$ — grafik menyelesaikan satu gelombang penuh dua kali lebih cepat dari $y=\sin x$.</div>
+      </div></div>
+    </div>
+
+    <div class="accordion-item" data-acc>
+      <div class="accordion-head"><h3><span class="tag" style="background:var(--tan-tint); color:var(--tan);">c</span>Pergeseran Fase</h3><span class="chevron">▾</span></div>
+      <div class="accordion-body"><div class="accordion-inner">
+        <p>Parameter $c$ menggeser grafik secara horizontal. Pada bentuk $y=a\cdot f(b(x-c))+d$, nilai $c$ positif menggeser grafik ke <b>kanan</b>, dan $c$ negatif menggeser ke <b>kiri</b>.</p>
+        <div class="formula-box">Pergeseran fase $=c$ (ke kanan jika $c>0$)</div>
+        <div class="example-box">Grafik $y=\sin(x-60^\circ)$ adalah grafik $y=\sin x$ yang digeser $60^\circ$ ke kanan.</div>
+      </div></div>
+    </div>
+
+    <div class="accordion-item" data-acc>
+      <div class="accordion-head"><h3><span class="tag" style="background:var(--primary-tint); color:var(--primary-dark);">d</span>Pergeseran Vertikal</h3><span class="chevron">▾</span></div>
+      <div class="accordion-body"><div class="accordion-inner">
+        <p>Parameter $d$ menggeser seluruh grafik ke atas (jika positif) atau ke bawah (jika negatif), tanpa mengubah bentuknya. Nilai $d$ menjadi garis tengah (nilai rata-rata) grafik yang baru.</p>
+        <div class="formula-box">Garis tengah grafik: $y=d$</div>
+        <div class="example-box">Grafik $y=\cos x+3$ berosilasi di sekitar $y=3$, sehingga nilai maksimumnya $=4$ dan minimumnya $=2$.</div>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ================= EKSPLORASI ================= -->
+  <section id="eksplorasi">
+    <div class="section-kicker">04 — Eksplorasi Interaktif</div>
+    <h2>Ubah Parameter, Amati Grafiknya</h2>
+    <p class="lead">Pilih fungsi dan geser setiap parameter untuk melihat perubahan grafik secara langsung.</p>
+    <div class="card">
+      <div class="explorer-layout">
+        <canvas id="explorer-canvas" width="640" height="440"></canvas>
+        <div>
+          <div class="tab-row" id="func-tabs"></div>
+          <div class="formula-display" id="formula-display"></div>
+          <div class="slider-field">
+            <label>Amplitudo (a) <b id="val-a">1.0</b></label>
+            <input type="range" id="range-a" min="-3" max="3" step="0.1" value="1">
+          </div>
+          <div class="slider-field">
+            <label>Koefisien periode (b) <b id="val-b">1.0</b></label>
+            <input type="range" id="range-b" min="0.2" max="3" step="0.1" value="1">
+          </div>
+          <div class="slider-field">
+            <label>Pergeseran fase (c)° <b id="val-c">0</b></label>
+            <input type="range" id="range-c" min="-180" max="180" step="5" value="0">
+          </div>
+          <div class="slider-field">
+            <label>Pergeseran vertikal (d) <b id="val-d">0.0</b></label>
+            <input type="range" id="range-d" min="-3" max="3" step="0.1" value="0">
+          </div>
+          <div class="readout-grid">
+            <div class="stat"><div class="lbl">Amplitudo</div><div class="val" id="read-amp">1</div></div>
+            <div class="stat"><div class="lbl">Periode</div><div class="val" id="read-period">360°</div></div>
+            <div class="stat"><div class="lbl">Fase</div><div class="val" id="read-phase">0°</div></div>
+            <div class="stat"><div class="lbl">Garis tengah</div><div class="val" id="read-mid">y = 0</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RANGKUMAN ================= -->
+  <section id="rangkuman">
+    <div class="section-kicker">05 — Konsolidasi</div>
+    <h2>Rangkuman Sifat Grafik</h2>
+    <div class="card">
+      <table class="summary">
+        <tr><th>Fungsi</th><th>Periode</th><th>Range</th><th>Asimtot</th></tr>
+        <tr><td>$y=\sin x$</td><td>$360^\circ$</td><td>$[-1,1]$</td><td>tidak ada</td></tr>
+        <tr><td>$y=\cos x$</td><td>$360^\circ$</td><td>$[-1,1]$</td><td>tidak ada</td></tr>
+        <tr><td>$y=\tan x$</td><td>$180^\circ$</td><td>$(-\infty,\infty)$</td><td>$x=90^\circ+180^\circ k$</td></tr>
+      </table>
+      <div class="formula-box" style="margin-top:16px;">Bentuk umum: $y=a\cdot f\big(b(x-c)\big)+d$ &nbsp;→&nbsp; amplitudo $|a|$ · periode $\dfrac{360^\circ}{|b|}$ (atau $\dfrac{180^\circ}{|b|}$ untuk tan) · fase $c$ · garis tengah $y=d$</div>
+    </div>
+  </section>
+
+  <!-- ================= KUIS ================= -->
+  <section id="kuis">
+    <div class="section-kicker">06 — Uji Pemahaman</div>
+    <h2>Kuis Grafik Fungsi Trigonometri</h2>
+    <p class="lead">Umpan balik diberikan langsung setelah Anda memilih jawaban.</p>
+    <div class="card">
+      <div class="quiz-progress"><span id="quiz-count">0 / 10 dijawab</span><span id="quiz-live-score">Skor: 0</span></div>
+      <div class="quiz-track"><div class="quiz-fill" id="quiz-fill"></div></div>
+      <div id="quiz-container"></div>
+      <div class="quiz-score-card" id="quiz-score-card">
+        <div class="num" id="quiz-final-score">0/10</div>
+        <p style="color:var(--ink-dim); margin-top:6px;">Jawaban benar dari 10 soal grafik fungsi trigonometri.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Martin Bernard, M.Pd. — IKIP Siliwangi, Program Studi Pendidikan Matematika</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ progress bar + scrollspy ============ */
+  var progressBar = document.getElementById("progress-bar");
+  window.addEventListener("scroll", function(){
+    var h = document.documentElement;
+    progressBar.style.width = (h.scrollTop/(h.scrollHeight-h.clientHeight)*100) + "%";
+  });
+  var navPills = document.querySelectorAll(".nav-pill");
+  navPills.forEach(function(p){
+    p.addEventListener("click", function(){
+      var t = document.getElementById(p.dataset.target);
+      if(t) t.scrollIntoView({behavior:"smooth"});
+    });
+  });
+  var spy = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ navPills.forEach(function(p){ p.classList.toggle("active", p.dataset.target===e.target.id); }); }
+    });
+  }, { rootMargin:"-40% 0px -50% 0px" });
+  document.querySelectorAll("section[id]").forEach(function(s){ spy.observe(s); });
+
+  /* ============ accordion ============ */
+  document.querySelectorAll("[data-acc]").forEach(function(item){
+    item.querySelector(".accordion-head").addEventListener("click", function(){ item.classList.toggle("open"); });
+  });
+
+  /* ============ generic plotting helper ============ */
+  function plot(canvas, fns, opts){
+    var ctx = canvas.getContext("2d");
+    var cssW = canvas.clientWidth || 320, cssH = canvas.clientHeight || 200;
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = cssW*dpr; canvas.height = cssH*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    var w = cssW, h = cssH;
+    var xMin = opts.xMin, xMax = opts.xMax, yMin = opts.yMin, yMax = opts.yMax;
+    var pad = 10;
+
+    function toPx(x,y){
+      return {
+        x: pad + (x-xMin)/(xMax-xMin) * (w-2*pad),
+        y: pad + (1-(y-yMin)/(yMax-yMin)) * (h-2*pad)
+      };
+    }
+
+    ctx.clearRect(0,0,w,h);
+
+    // gridlines (vertical every 90deg)
+    ctx.strokeStyle = "#EEF1F6"; ctx.lineWidth = 1;
+    for(var gx=Math.ceil(xMin/90)*90; gx<=xMax; gx+=90){
+      var p1 = toPx(gx,yMin), p2 = toPx(gx,yMax);
+      ctx.beginPath(); ctx.moveTo(p1.x,p1.y); ctx.lineTo(p2.x,p2.y); ctx.stroke();
+    }
+    // axes
+    ctx.strokeStyle = "#C7CEDC"; ctx.lineWidth = 1.3;
+    var zx = toPx(0,yMin), zx2 = toPx(0,yMax);
+    ctx.beginPath(); ctx.moveTo(zx.x,zx.y); ctx.lineTo(zx2.x,zx2.y); ctx.stroke();
+    var zy = toPx(xMin,0), zy2 = toPx(xMax,0);
+    ctx.beginPath(); ctx.moveTo(zy.x,zy.y); ctx.lineTo(zy2.x,zy2.y); ctx.stroke();
+
+    fns.forEach(function(f){
+      ctx.strokeStyle = f.color; ctx.lineWidth = 2.4;
+      ctx.beginPath();
+      var started = false;
+      var prevY = null;
+      for(var xDeg=xMin; xDeg<=xMax; xDeg+=0.5){
+        var y = f.fn(xDeg);
+        var broken = (y===null) || (prevY!==null && Math.abs(y-prevY) > (yMax-yMin)*1.6);
+        var pt = toPx(xDeg, Math.max(yMin-1, Math.min(yMax+1,y===null?0:y)));
+        if(y===null || broken){
+          started = false;
+        } else {
+          if(!started){ ctx.moveTo(pt.x,pt.y); started=true; }
+          else { ctx.lineTo(pt.x,pt.y); }
+        }
+        prevY = y;
+      }
+      ctx.stroke();
+    });
+  }
+
+  function degToRad(d){ return d*Math.PI/180; }
+
+  /* ============ static mini graphs ============ */
+  function renderStatics(){
+    plot(document.getElementById("canvas-sin"),
+      [{ fn:function(x){ return Math.sin(degToRad(x)); }, color:"#2A4494" }],
+      { xMin:-360, xMax:360, yMin:-1.4, yMax:1.4 });
+    plot(document.getElementById("canvas-cos"),
+      [{ fn:function(x){ return Math.cos(degToRad(x)); }, color:"#D1552F" }],
+      { xMin:-360, xMax:360, yMin:-1.4, yMax:1.4 });
+    plot(document.getElementById("canvas-tan"),
+      [{ fn:function(x){
+          var v = Math.tan(degToRad(x));
+          return Math.abs(v) > 6 ? null : v;
+        }, color:"#1C8C6C" }],
+      { xMin:-360, xMax:360, yMin:-6, yMax:6 });
+  }
+  renderStatics();
+  window.addEventListener("resize", renderStatics);
+
+  /* ============ interactive explorer ============ */
+  var FUNCS = [
+    { key:"sin", label:"sin", color:"#2A4494", calc:Math.sin, periodBase:360 },
+    { key:"cos", label:"cos", color:"#D1552F", calc:Math.cos, periodBase:360 },
+    { key:"tan", label:"tan", color:"#1C8C6C", calc:Math.tan, periodBase:180 }
+  ];
+  var activeFunc = FUNCS[0];
+
+  var funcTabs = document.getElementById("func-tabs");
+  FUNCS.forEach(function(f){
+    var btn = document.createElement("div");
+    btn.className = "tab-btn" + (f.key===activeFunc.key ? " active":"");
+    btn.textContent = "y = " + f.label + " x";
+    btn.style.background = f.key===activeFunc.key ? f.color : "";
+    btn.addEventListener("click", function(){
+      activeFunc = f;
+      document.querySelectorAll(".tab-btn").forEach(function(b,i){
+        b.classList.toggle("active", FUNCS[i].key===f.key);
+        b.style.background = FUNCS[i].key===f.key ? FUNCS[i].color : "";
+      });
+      updateExplorer();
+    });
+    funcTabs.appendChild(btn);
+  });
+
+  var rangeA = document.getElementById("range-a");
+  var rangeB = document.getElementById("range-b");
+  var rangeC = document.getElementById("range-c");
+  var rangeD = document.getElementById("range-d");
+  var valA = document.getElementById("val-a");
+  var valB = document.getElementById("val-b");
+  var valC = document.getElementById("val-c");
+  var valD = document.getElementById("val-d");
+  var formulaDisplay = document.getElementById("formula-display");
+  var readAmp = document.getElementById("read-amp");
+  var readPeriod = document.getElementById("read-period");
+  var readPhase = document.getElementById("read-phase");
+  var readMid = document.getElementById("read-mid");
+  var explorerCanvas = document.getElementById("explorer-canvas");
+
+  [rangeA,rangeB,rangeC,rangeD].forEach(function(r){ r.addEventListener("input", updateExplorer); });
+
+  function fmtNum(n){
+    return (Math.round(n*10)/10).toString();
+  }
+
+  function updateExplorer(){
+    var a = parseFloat(rangeA.value), b = parseFloat(rangeB.value),
+        c = parseFloat(rangeC.value), d = parseFloat(rangeD.value);
+    valA.textContent = fmtNum(a);
+    valB.textContent = fmtNum(b);
+    valC.textContent = fmtNum(c);
+    valD.textContent = fmtNum(d);
+
+    var period = activeFunc.periodBase / Math.abs(b || 0.0001);
+    readAmp.textContent = Math.abs(a).toFixed(1);
+    readPeriod.textContent = period.toFixed(0) + "°";
+    readPhase.textContent = c.toFixed(0) + "°";
+    readMid.textContent = "y = " + d.toFixed(1);
+
+    formulaDisplay.innerHTML = "$y = " + fmtNum(a) + "\\cdot " + activeFunc.label + "\\big(" + fmtNum(b) + "(x" + (c>=0?"-":"+") + Math.abs(c).toFixed(0) + "^\\circ)\\big) + " + fmtNum(d) + "$";
+    if(window.MathJax && window.MathJax.typesetPromise){ window.MathJax.typesetPromise([formulaDisplay]); }
+
+    var yBound = Math.max(4, Math.abs(a)+Math.abs(d)+1.5);
+    plot(explorerCanvas,
+      [{
+        fn:function(xDeg){
+          var val = a * activeFunc.calc(degToRad(b*(xDeg-c))) + d;
+          if(activeFunc.key==="tan" && Math.abs(val) > yBound*2) return null;
+          return val;
+        },
+        color: activeFunc.color
+      }],
+      { xMin:-360, xMax:360, yMin:-yBound, yMax:yBound });
+  }
+  updateExplorer();
+
+  /* ============ kuis ============ */
+  var QUIZ = [
+    { q:"Amplitudo dari $y=4\\sin x$ adalah …", opts:["1","2","4","8"], correct:2, exp:"Amplitudo $=|a|=4$." },
+    { q:"Periode dari $y=\\sin(2x)$ adalah …", opts:["90°","180°","360°","720°"], correct:1, exp:"Periode $=\\dfrac{360^\\circ}{2}=180^\\circ$." },
+    { q:"Periode dari $y=\\cos(x/2)$ adalah …", opts:["180°","360°","540°","720°"], correct:3, exp:"Periode $=\\dfrac{360^\\circ}{0.5}=720^\\circ$." },
+    { q:"Grafik $y=\\sin x+3$ mengalami pergeseran …", opts:["3 satuan ke atas","3 satuan ke bawah","3 satuan ke kanan","3 satuan ke kiri"], correct:0, exp:"Nilai $d=+3$ menggeser grafik 3 satuan ke atas." },
+    { q:"Nilai maksimum dari $y=2\\cos x-1$ adalah …", opts:["1","2","3","−1"], correct:0, exp:"Maks $\\cos x=1$, sehingga $y_{maks}=2(1)-1=1$." },
+    { q:"Periode fungsi $y=\\tan x$ adalah …", opts:["90°","180°","270°","360°"], correct:1, exp:"Periode $\\tan x = 180^\\circ$, berbeda dari sin/cos." },
+    { q:"Grafik $y=\\sin(x-60^\\circ)$ dibandingkan $y=\\sin x$ mengalami pergeseran …", opts:["60° ke kanan","60° ke kiri","60° ke atas","60° ke bawah"], correct:0, exp:"Bentuk $(x-c)$ dengan $c=60^\\circ>0$ menggeser grafik ke kanan." },
+    { q:"Asimtot vertikal pertama grafik $y=\\tan x$ untuk $x>0$ terletak pada …", opts:["45°","90°","180°","270°"], correct:1, exp:"$\\tan x$ tidak terdefinisi pertama kali di $x=90^\\circ$." },
+    { q:"Fungsi $y=3\\sin(2x)$ memiliki amplitudo dan periode berturut-turut …", opts:["3 dan 180°","2 dan 180°","3 dan 360°","2 dan 90°"], correct:0, exp:"Amplitudo $=3$; periode $=\\dfrac{360^\\circ}{2}=180^\\circ$." },
+    { q:"Garis tengah (nilai rata-rata) grafik $y=\\sin x-2$ adalah …", opts:["y = 0","y = −1","y = −2","y = 2"], correct:2, exp:"Nilai $d=-2$ menjadi garis tengah grafik yang baru." }
+  ];
+
+  var quizContainer = document.getElementById("quiz-container");
+  var answered = new Array(QUIZ.length).fill(false);
+  var score = 0;
+
+  QUIZ.forEach(function(item, qi){
+    var block = document.createElement("div");
+    block.className = "quiz-q";
+    block.innerHTML =
+      '<div class="q-num">SOAL ' + (qi+1) + ' / ' + QUIZ.length + '</div>' +
+      '<div class="q-text">' + item.q + '</div>' +
+      '<div class="quiz-options"></div>' +
+      '<div class="quiz-feedback"></div>';
+    var optHolder = block.querySelector(".quiz-options");
+    var feedback = block.querySelector(".quiz-feedback");
+
+    item.opts.forEach(function(optText, oi){
+      var opt = document.createElement("div");
+      opt.className = "quiz-opt";
+      opt.innerHTML = optText;
+      opt.addEventListener("click", function(){
+        if(answered[qi]) return;
+        answered[qi] = true;
+        optHolder.querySelectorAll(".quiz-opt").forEach(function(o,idx){
+          o.classList.add("disabled");
+          if(idx===item.correct) o.classList.add("correct");
+        });
+        if(oi===item.correct){ score++; } else { opt.classList.add("wrong"); }
+        feedback.className = "quiz-feedback show " + (oi===item.correct ? "ok":"bad");
+        feedback.innerHTML = (oi===item.correct ? "Benar! " : "Belum tepat. ") + item.exp;
+        updateQuizProgress();
+        if(window.MathJax && window.MathJax.typesetPromise){ window.MathJax.typesetPromise([feedback]); }
+      });
+      optHolder.appendChild(opt);
+    });
+
+    quizContainer.appendChild(block);
+  });
+
+  var quizCount = document.getElementById("quiz-count");
+  var quizLiveScore = document.getElementById("quiz-live-score");
+  var quizFill = document.getElementById("quiz-fill");
+  var quizScoreCard = document.getElementById("quiz-score-card");
+  var quizFinalScore = document.getElementById("quiz-final-score");
+
+  function updateQuizProgress(){
+    var done = answered.filter(Boolean).length;
+    quizCount.textContent = done + " / " + QUIZ.length + " dijawab";
+    quizLiveScore.textContent = "Skor: " + score;
+    quizFill.style.width = (done/QUIZ.length*100) + "%";
+    if(done===QUIZ.length){
+      quizScoreCard.classList.add("show");
+      quizFinalScore.textContent = score + "/" + QUIZ.length;
+    }
+  }
+
+})();
+</script>
+</body>
+</html>
