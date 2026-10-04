@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Latihan HOTS — Grafik Fungsi Trigonometri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Work+Sans:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = { tex: { inlineMath: [['$', '$']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" defer></script>
+<style>
+  :root{
+    --paper:#F3F6F3;
+    --card:#FFFFFF;
+    --ink:#1F2D26;
+    --ink-dim:#5E6B63;
+    --line:#DCE3DD;
+    --primary:#2F6E5B;
+    --primary-dark:#1F4A3D;
+    --primary-tint:#E3EFE9;
+    --c4:#C97F2A; --c4-tint:#F7E9D5;
+    --c5:#B2455B; --c5-tint:#F6E1E6;
+    --c6:#3A4E8C; --c6-tint:#E3E6F3;
+    --good:#2F6E5B; --good-tint:#E3EFE9;
+    --bad:#B2455B; --bad-tint:#F6E1E6;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--paper); color:var(--ink); }
+  body{
+    font-family:"Work Sans", sans-serif;
+    padding:28px 16px 60px;
+    padding-top:calc(28px + env(safe-area-inset-top,0px));
+    padding-bottom:calc(60px + env(safe-area-inset-bottom,0px));
+  }
+  h1,h2,h3{ font-family:"Literata", serif; margin:0; }
+  .wrap{ max-width:800px; margin:0 auto; }
+
+  /* ---------- letterhead ---------- */
+  .letterhead{ text-align:center; border-bottom:3px double var(--ink); padding-bottom:16px; margin-bottom:22px; }
+  .letterhead .inst{ font-size:12.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:8px; }
+  .letterhead h1{ font-weight:700; font-size:clamp(22px,3.4vw,28px); margin-bottom:6px; line-height:1.25; }
+  .letterhead .sub{ font-family:"Literata", serif; font-style:italic; font-size:14.5px; color:var(--ink-dim); }
+
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:12px; padding:22px 24px; margin-bottom:16px; }
+
+  /* ---------- biodata ---------- */
+  .field{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+  .field label{ font-size:12.5px; font-weight:600; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.04em; }
+  .field input{ font-family:"Work Sans", sans-serif; font-size:15px; padding:10px 12px; border:1px solid var(--line); border-radius:8px; background:var(--paper); color:var(--ink); }
+  .field input:focus{ outline:2px solid var(--primary); outline-offset:1px; background:#fff; }
+
+  .instructions{
+    font-size:13.5px; line-height:1.6; color:var(--ink);
+    background:var(--primary-tint); border-left:3px solid var(--primary);
+    padding:12px 16px; margin-bottom:18px;
+  }
+
+  /* ---------- questions ---------- */
+  .q-block{ margin-bottom:0; }
+  .q-head{ display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+  .q-num{ font-family:"Literata", serif; font-weight:700; font-size:20px; color:var(--primary-dark); }
+  .q-level{ font-size:11px; font-weight:700; letter-spacing:.03em; padding:3px 10px; border-radius:20px; }
+  .q-level.c4{ background:var(--c4-tint); color:var(--c4); }
+  .q-level.c5{ background:var(--c5-tint); color:var(--c5); }
+  .q-level.c6{ background:var(--c6-tint); color:var(--c6); }
+  .q-text{ font-size:15.5px; line-height:1.7; margin:0 0 12px; }
+  textarea.answer{
+    width:100%; min-height:100px; resize:vertical;
+    font-family:"Work Sans", sans-serif; font-size:14.5px; line-height:1.6;
+    padding:12px 14px; border:1px solid var(--line); border-radius:8px;
+    background:var(--paper); color:var(--ink);
+  }
+  textarea.answer:focus{ outline:2px solid var(--primary); outline-offset:1px; background:#fff; }
+
+  /* ---------- submit ---------- */
+  .submit-status{ display:flex; align-items:center; gap:10px; font-size:14px; margin-bottom:16px; padding:12px 14px; border-radius:8px; }
+  .submit-status.idle{ background:var(--c4-tint); color:var(--c4); }
+  .submit-status.sending{ background:var(--primary-tint); color:var(--primary-dark); }
+  .submit-status.ok{ background:var(--good-tint); color:var(--good); }
+  .submit-status.err{ background:var(--bad-tint); color:var(--bad); }
+  .dot{ width:8px; height:8px; border-radius:50%; background:currentColor; flex:0 0 auto; }
+  @media (prefers-reduced-motion: no-preference){ .sending .dot{ animation:pulse 1s ease-in-out infinite; } }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+  button{
+    font-family:"Work Sans", sans-serif; font-weight:600; font-size:15px; cursor:pointer;
+    border:none; border-radius:8px; padding:13px 22px;
+  }
+  button:active{ transform:translateY(1px); }
+  .btn-primary{ background:var(--primary); color:#fff; }
+  .btn-primary:hover{ background:var(--primary-dark); }
+  .btn-ghost{ background:transparent; color:var(--primary-dark); border:1px solid var(--line); }
+  .btn-ghost:hover{ border-color:var(--primary); }
+  .btn-row{ display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-end; }
+
+  /* ---------- guide ---------- */
+  .guide{ border:1px dashed var(--line); background:var(--card); border-radius:12px; }
+  .guide-head{ display:flex; justify-content:space-between; align-items:center; padding:16px 20px; cursor:pointer; user-select:none; }
+  .guide-head h3{ font-size:15.5px; }
+  .guide-head .chevron{ color:var(--ink-dim); transition:transform .2s; font-family:"Roboto Mono", monospace; }
+  .guide.open .chevron{ transform:rotate(180deg); }
+  .guide-body{ max-height:0; overflow:hidden; transition:max-height .3s; padding:0 20px; }
+  .guide.open .guide-body{ max-height:1400px; padding:0 20px 20px; }
+  .guide-body ol{ padding-left:20px; line-height:1.7; font-size:14px; }
+  .guide-body li{ margin-bottom:10px; }
+  .guide-body code{ font-family:"Roboto Mono", monospace; background:var(--paper); padding:2px 6px; border-radius:4px; font-size:12.5px; }
+  .guide-body pre{ background:var(--primary-dark); color:#E9F2EE; padding:14px 16px; border-radius:8px; overflow-x:auto; font-family:"Roboto Mono", monospace; font-size:12px; line-height:1.6; }
+
+  footer{ text-align:center; font-size:12px; color:var(--ink-dim); margin-top:36px; }
+  .hidden{ display:none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="letterhead">
+    <div class="inst">IKIP Siliwangi &middot; Program Studi Pendidikan Matematika</div>
+    <h1>Latihan Analisis Tingkat Tinggi (HOTS)</h1>
+    <div class="sub">Grafik Fungsi Trigonometri</div>
+  </div>
+
+  <div class="card">
+    <div class="instructions">
+      Jawaban Anda akan dikirim otomatis ke Google Sheet dosen setelah menekan tombol <b>Kirim Jawaban</b> di bagian akhir. Pastikan Nama dan NIM terisi sebelum mengirim. Tuliskan penalaran Anda secara lengkap, bukan hanya hasil akhir.
+    </div>
+    <div class="field"><label for="inp-nama">Nama Lengkap</label><input type="text" id="inp-nama"></div>
+    <div class="field"><label for="inp-nim">NIM / NPM</label><input type="text" id="inp-nim"></div>
+    <div class="field"><label for="inp-kelas">Kelas / Offering</label><input type="text" id="inp-kelas"></div>
+  </div>
+
+  <div id="quiz-container"></div>
+
+  <div class="card">
+    <div class="submit-status idle" id="submit-status">
+      <span class="dot"></span>
+      <span id="submit-status-text">Isi jawaban Anda, lalu tekan "Kirim Jawaban".</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn-ghost" id="btn-copy">Salin Semua Jawaban</button>
+      <button class="btn-primary" id="btn-submit">Kirim Jawaban ke Google Sheet</button>
+    </div>
+  </div>
+
+  <div class="guide" id="guide">
+    <div class="guide-head" id="guide-head">
+      <h3>Panduan: Menghubungkan Latihan Ini ke Google Form &amp; Google Sheet</h3>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="guide-body">
+      <ol>
+        <li>Buat <b>Google Form</b> baru dengan field <i>short answer</i> untuk Nama, NIM, dan Kelas, lalu field <i>paragraph</i> untuk setiap jawaban Soal 1 sampai Soal 10 (total 13 field, urut sesuai urutan di halaman ini).</li>
+        <li>Hubungkan form ke <b>Google Sheet</b> lewat tab <i>Responses</i> → ikon Sheets.</li>
+        <li>Ambil <code>entry ID</code> tiap field: klik menu titik tiga pada form → <i>Get pre-filled link</i> → isi setiap field dengan teks unik → <i>Get link</i> → buka link tersebut dan salin pola <code>entry.123456789</code> untuk tiap field dari URL-nya.</li>
+        <li>Ambil URL pengiriman: pada form yang sedang dibuka, lihat sumber laman untuk <code>&lt;form action="https://docs.google.com/forms/d/e/XXXX/formResponse"&gt;</code>, atau ganti akhiran <code>/viewform</code> pada URL form menjadi <code>/formResponse</code>.</li>
+        <li>Buka bagian <code>&lt;script&gt;</code> file ini, cari <code>GOOGLE_FORM_CONFIG</code>, lalu isi <code>formActionUrl</code> dan seluruh <code>entries.*</code>. Contoh:
+          <pre>const GOOGLE_FORM_CONFIG = {
+  formActionUrl: "https://docs.google.com/forms/d/e/1FAI.../formResponse",
+  entries: {
+    nama: "entry.111111111",
+    nim: "entry.222222222",
+    kelas: "entry.333333333",
+    jawaban1: "entry.444444444",
+    jawaban2: "entry.555555555",
+    jawaban3: "entry.666666666",
+    jawaban4: "entry.777777777",
+    jawaban5: "entry.888888888",
+    jawaban6: "entry.999999999",
+    jawaban7: "entry.101010101",
+    jawaban8: "entry.111011101",
+    jawaban9: "entry.121012101",
+    jawaban10:"entry.131013101"
+  }
+};</pre>
+        </li>
+        <li>Simpan file, uji kirim satu kali, lalu periksa Google Sheet yang terhubung untuk memastikan baris respons baru muncul. Karena permintaan dikirim dengan mode <code>no-cors</code>, halaman ini tidak dapat membaca status sukses dari Google secara pasti — verifikasi tetap dilakukan langsung di Sheet.</li>
+      </ol>
+    </div>
+  </div>
+
+  <footer>Martin Bernard, M.Pd. — IKIP Siliwangi, Program Studi Pendidikan Matematika</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =========================================================
+     KONFIGURASI GOOGLE FORM — isi sesuai panduan di bawah halaman
+  ========================================================= */
+  const GOOGLE_FORM_CONFIG = {
+    formActionUrl: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSfnYhLGNJzlSbOlvxj3pGUe_eK7s1d957VYiK3BQcumzKBUHw/formResponse",
+    entries: {
+      nama:     "entry.1416308325",
+      nim:      "entry.1577591606",
+      kelas:    "entry.917670029",
+      jawaban1: "entry.769431073",
+      jawaban2: "entry.744977599",
+      jawaban3: "entry.690330124",
+      jawaban4: "entry.1589938288",
+      jawaban5: "entry.1684875011",
+      jawaban6: "entry.946672962",
+      jawaban7: "entry.119097389",
+      jawaban8: "entry.136967897",
+      jawaban9: "entry.1584970652",
+      jawaban10:"entry.1280020067"
+    }
+  };
+
+  const QUESTIONS = [
+    { level:"c4", text:"Diberikan grafik $y=\\sin x$ dan $y=\\sin x+2$ pada domain yang sama. Analisislah bagaimana pergeseran vertikal memengaruhi nilai maksimum, minimum, dan garis tengah grafik tanpa mengubah bentuk dasarnya." },
+    { level:"c4", text:"Perhatikan dua grafik $y=2\\sin x$ dan $y=\\sin(2x)$. Meskipun keduanya melibatkan angka 2, analisislah perbedaan mendasar pengaruh angka tersebut terhadap bentuk grafik (amplitudo vs periode), dan jelaskan mengapa keduanya tidak boleh disamakan." },
+    { level:"c5", text:"Seorang siswa menyatakan bahwa grafik $y=\\cos x$ dan $y=\\sin(x+90^\\circ)$ adalah grafik yang sama persis. Evaluasilah kebenaran pernyataan tersebut secara matematis, disertai bukti aljabar atau grafik pendukung." },
+    { level:"c4", text:"Arus listrik AC (<i>alternating current</i>) sering dimodelkan sebagai fungsi sinusoidal $I(t)=I_{maks}\\sin(\\omega t)$. Analisislah bagaimana perubahan nilai $\\omega$ (berkaitan dengan frekuensi) memengaruhi bentuk grafik arus terhadap waktu, dan kaitkan dengan konsep periode fungsi trigonometri." },
+    { level:"c4", text:"Pasang surut air laut di suatu pelabuhan dimodelkan dengan fungsi $h(t)=3\\cos(30^\\circ t)+5$, dengan $h$ dalam meter dan $t$ dalam jam. Analisislah informasi apa saja yang dapat digali dari fungsi tersebut (ketinggian maksimum, minimum, periode pasang-surut, ketinggian rata-rata) tanpa menggambar grafiknya terlebih dahulu." },
+    { level:"c5", text:"Diberikan pernyataan: <i>\"Semakin besar nilai koefisien $b$ pada $y=\\sin(bx)$, semakin lebar grafiknya.\"</i> Evaluasilah kebenaran pernyataan tersebut dan perbaiki jika terdapat kesalahan konsep di dalamnya." },
+    { level:"c4", text:"Dalam mengerjakan soal, seorang siswa langsung menggambar grafik $y=2\\sin(x-45^\\circ)+1$ dengan titik awal di $(0,0)$ tanpa mempertimbangkan pergeseran fase maupun pergeseran vertikal. Analisislah kesalahan siswa tersebut dan jelaskan urutan langkah yang tepat dalam menggambar grafik fungsi trigonometri hasil transformasi." },
+    { level:"c4", text:"Perhatikan grafik gabungan $y=\\sin x$ dan $y=\\cos x$ pada interval $[0^\\circ,360^\\circ]$. Analisislah pada titik-titik mana kedua grafik tersebut berpotongan, dan jelaskan makna geometris dari titik potong tersebut dalam konteks lingkaran satuan." },
+    { level:"c6", text:"Rancanglah satu fungsi trigonometri dalam bentuk $y=a\\sin(b(x-c))+d$ yang grafiknya memiliki nilai maksimum 7, nilai minimum −1, dan mencapai puncak pertama pada $x=30^\\circ$ (untuk domain $x\\geq0$). Jelaskan proses penalaran Anda dalam menentukan setiap nilai $a$, $b$, $c$, dan $d$." },
+    { level:"c6", text:"Sebagai calon guru matematika, rancanglah satu soal cerita kontekstual bagi siswa SMA kelas XI yang mengharuskan siswa menginterpretasikan grafik fungsi trigonometri (bukan sekadar menggambar), lengkap dengan indikator capaian pembelajaran yang ingin diukur." }
+  ];
+
+  const LEVEL_LABEL = { c4:"C4 — Menganalisis", c5:"C5 — Mengevaluasi", c6:"C6 — Mencipta" };
+
+  var quizContainer = document.getElementById("quiz-container");
+  var textareas = [];
+
+  QUESTIONS.forEach(function(item, i){
+    var block = document.createElement("div");
+    block.className = "card q-block";
+    block.innerHTML =
+      '<div class="q-head"><span class="q-num">' + (i+1) + '</span><span class="q-level ' + item.level + '">' + LEVEL_LABEL[item.level] + '</span></div>' +
+      '<p class="q-text">' + item.text + '</p>' +
+      '<textarea class="answer" placeholder="Tulis jawaban dan penalaran Anda di sini…"></textarea>';
+    quizContainer.appendChild(block);
+    textareas.push(block.querySelector("textarea"));
+  });
+
+  if(window.MathJax && window.MathJax.typesetPromise){
+    window.MathJax.typesetPromise([quizContainer]);
+  }
+
+  var inpNama = document.getElementById("inp-nama");
+  var inpNim = document.getElementById("inp-nim");
+  var inpKelas = document.getElementById("inp-kelas");
+
+  var submitStatus = document.getElementById("submit-status");
+  var submitStatusText = document.getElementById("submit-status-text");
+  var btnSubmit = document.getElementById("btn-submit");
+  var btnCopy = document.getElementById("btn-copy");
+
+  function setStatus(mode, text){
+    submitStatus.className = "submit-status " + mode;
+    submitStatusText.textContent = text;
+  }
+
+  function isConfigured(){
+    return GOOGLE_FORM_CONFIG.formActionUrl && !GOOGLE_FORM_CONFIG.formActionUrl.startsWith("PASTE_");
+  }
+
+  function buildPayload(){
+    var payload = {
+      nama: inpNama.value.trim(),
+      nim: inpNim.value.trim(),
+      kelas: inpKelas.value.trim()
+    };
+    textareas.forEach(function(ta, i){
+      payload["jawaban" + (i+1)] = ta.value.trim();
+    });
+    return payload;
+  }
+
+  async function submitToSheet(){
+    var payload = buildPayload();
+    if(!payload.nama || !payload.nim){
+      alert("Mohon isi Nama dan NIM/NPM terlebih dahulu.");
+      return;
+    }
+    if(!isConfigured()){
+      setStatus("idle", "Belum terhubung ke Google Form. Buka \"Panduan\" di bawah halaman untuk mengatur pengiriman otomatis ke Google Sheet.");
+      return;
+    }
+
+    setStatus("sending", "Mengirim jawaban ke Google Sheet…");
+    var formData = new URLSearchParams();
+    Object.entries(GOOGLE_FORM_CONFIG.entries).forEach(function(pair){
+      var key = pair[0], entryId = pair[1];
+      if(entryId && !entryId.startsWith("entry.PASTE_")){
+        formData.append(entryId, payload[key] || "");
+      }
+    });
+
+    try{
+      await fetch(GOOGLE_FORM_CONFIG.formActionUrl, {
+        method:"POST",
+        mode:"no-cors",
+        headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+        body: formData.toString()
+      });
+      setStatus("ok", "Jawaban berhasil dikirim ke Google Sheet. Silakan verifikasi pada Sheet yang terhubung.");
+    }catch(err){
+      setStatus("err", "Pengiriman gagal (kemungkinan tidak ada koneksi internet). Coba tekan tombol kirim sekali lagi.");
+      console.error(err);
+    }
+  }
+
+  btnSubmit.addEventListener("click", submitToSheet);
+
+  btnCopy.addEventListener("click", function(){
+    var payload = buildPayload();
+    var lines = [
+      "LATIHAN HOTS — GRAFIK FUNGSI TRIGONOMETRI",
+      "Nama: " + payload.nama,
+      "NIM: " + payload.nim,
+      "Kelas: " + payload.kelas,
+      ""
+    ];
+    QUESTIONS.forEach(function(item, i){
+      lines.push("Soal " + (i+1) + ": " + payload["jawaban" + (i+1)]);
+      lines.push("");
+    });
+    var text = lines.join("\n");
+    navigator.clipboard.writeText(text).then(function(){
+      btnCopy.textContent = "Tersalin ✓";
+      setTimeout(function(){ btnCopy.textContent = "Salin Semua Jawaban"; }, 1800);
+    }).catch(function(){ alert(text); });
+  });
+
+  var guide = document.getElementById("guide");
+  document.getElementById("guide-head").addEventListener("click", function(){
+    guide.classList.toggle("open");
+  });
+
+})();
+</script>
+</body>
+</html>
