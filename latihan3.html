@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tugas: Kumpulkan Catatan PDF via Google Drive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F8F7;
+    --card:#FFFFFF;
+    --ink:#182420;
+    --ink-dim:#5F6E68;
+    --line:#DCE6E2;
+    --primary:#1C8A6E;
+    --primary-dark:#136450;
+    --primary-tint:#E2F3EE;
+    --good:#1C8A6E; --good-tint:#E2F3EE;
+    --warn:#B8791C; --warn-tint:#FBF0DD;
+    --bad:#C13C3C; --bad-tint:#FAE4E4;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); }
+  body{
+    font-family:"Inter", sans-serif;
+    padding:28px 16px 60px;
+    padding-top:calc(28px + env(safe-area-inset-top,0px));
+    padding-bottom:calc(60px + env(safe-area-inset-bottom,0px));
+  }
+  h1,h2,h3{ font-family:"Plus Jakarta Sans", sans-serif; margin:0; }
+  .wrap{ max-width:720px; margin:0 auto; }
+
+  .hero{ text-align:center; margin-bottom:26px; }
+  .hero .eyebrow{ font-size:12.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--primary); }
+  .hero h1{ font-size:clamp(23px,3.6vw,29px); font-weight:800; margin:8px 0 10px; line-height:1.25; }
+  .hero p{ color:var(--ink-dim); font-size:14.5px; max-width:540px; margin:0 auto; line-height:1.6; }
+
+  .step{ display:flex; gap:16px; margin-bottom:18px; }
+  .step-marker{
+    flex:0 0 auto; width:34px; height:34px; border-radius:50%;
+    background:var(--primary); color:#fff; font-family:"Plus Jakarta Sans", sans-serif;
+    font-weight:700; font-size:15px; display:flex; align-items:center; justify-content:center;
+  }
+  .step-marker.done{ background:var(--good); }
+  .card{ flex:1; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px 22px; }
+  .card h2{ font-size:16.5px; font-weight:700; margin-bottom:4px; }
+  .card .step-sub{ font-size:13px; color:var(--ink-dim); margin-bottom:14px; }
+
+  .field{ display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+  .field label{ font-size:12px; font-weight:600; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.04em; }
+  .field input{ font-family:"Inter", sans-serif; font-size:14.5px; padding:10px 12px; border:1px solid var(--line); border-radius:9px; background:var(--bg); color:var(--ink); }
+  .field input:focus{ outline:2px solid var(--primary); outline-offset:1px; background:#fff; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:520px){ .field-row{ grid-template-columns:1fr; } }
+
+  .mini-steps{ font-size:13.5px; line-height:1.8; padding-left:20px; margin:0 0 16px; color:var(--ink); }
+  .mini-steps li{ margin-bottom:4px; }
+  .mini-steps b{ color:var(--primary-dark); }
+
+  button{
+    font-family:"Inter", sans-serif; font-weight:600; font-size:14.5px; cursor:pointer;
+    border:none; border-radius:9px; padding:12px 20px;
+  }
+  button:active{ transform:translateY(1px); }
+  .btn-primary{ background:var(--primary); color:#fff; width:100%; }
+  .btn-primary:hover{ background:var(--primary-dark); }
+  .btn-ghost{ background:transparent; color:var(--primary-dark); border:1px solid var(--line); width:100%; }
+  .btn-ghost:hover{ border-color:var(--primary); }
+
+  .status-line{
+    display:flex; align-items:center; gap:9px; font-size:13.5px; margin-top:12px;
+    padding:11px 13px; border-radius:9px;
+  }
+  .status-line.idle{ background:var(--warn-tint); color:var(--warn); }
+  .status-line.sending{ background:var(--primary-tint); color:var(--primary-dark); }
+  .status-line.ok{ background:var(--good-tint); color:var(--good); }
+  .status-line.err{ background:var(--bad-tint); color:var(--bad); }
+  .dot{ width:7px; height:7px; border-radius:50%; background:currentColor; flex:0 0 auto; }
+  @media (prefers-reduced-motion:no-preference){ .sending .dot{ animation:pulse 1s ease-in-out infinite; } }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+  .guide{ border:1px dashed var(--line); background:var(--card); border-radius:14px; margin-top:20px; }
+  .guide-head{ display:flex; justify-content:space-between; align-items:center; padding:16px 20px; cursor:pointer; user-select:none; }
+  .guide-head h3{ font-size:15px; }
+  .guide-head .chevron{ color:var(--ink-dim); transition:transform .2s; font-family:"IBM Plex Mono", monospace; }
+  .guide.open .chevron{ transform:rotate(180deg); }
+  .guide-body{ max-height:0; overflow:hidden; transition:max-height .3s; padding:0 20px; }
+  .guide.open .guide-body{ max-height:1200px; padding:0 20px 20px; }
+  .guide-body ol{ padding-left:20px; line-height:1.7; font-size:13.5px; }
+  .guide-body li{ margin-bottom:9px; }
+  .guide-body code{ font-family:"IBM Plex Mono", monospace; background:var(--bg); padding:2px 6px; border-radius:4px; font-size:12px; }
+  .guide-body pre{ background:var(--primary-dark); color:#E8F7F1; padding:13px 15px; border-radius:8px; overflow-x:auto; font-family:"IBM Plex Mono", monospace; font-size:11.5px; line-height:1.6; }
+
+  footer{ text-align:center; font-size:12px; color:var(--ink-dim); margin-top:36px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Tugas Mandiri</div>
+    <h1>Kumpulkan Catatan (PDF) via Google Drive</h1>
+    <p>Unggah berkas catatan PDF Anda ke Google Drive pribadi, lalu kirimkan tautannya melalui formulir di bawah ini.</p>
+  </div>
+
+  <!-- ===== STEP 1: BIODATA ===== -->
+  <div class="step">
+    <div class="step-marker" id="marker-1">1</div>
+    <div class="card">
+      <h2>Identitas &amp; Topik Catatan</h2>
+      <div class="step-sub">Isi sesuai tugas yang diberikan dosen.</div>
+      <div class="field-row">
+        <div class="field"><label for="inp-nama">Nama Lengkap</label><input type="text" id="inp-nama"></div>
+        <div class="field"><label for="inp-nim">NIM / NPM</label><input type="text" id="inp-nim"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label for="inp-kelas">Kelas / Offering</label><input type="text" id="inp-kelas"></div>
+        <div class="field"><label for="inp-mk">Mata Kuliah</label><input type="text" id="inp-mk"></div>
+      </div>
+      <div class="field"><label for="inp-topik">Judul / Topik Catatan</label><input type="text" id="inp-topik" placeholder="Contoh: Pertemuan 5 — Grafik Fungsi Trigonometri"></div>
+    </div>
+  </div>
+
+  <!-- ===== STEP 2: UPLOAD DRIVE & KIRIM ===== -->
+  <div class="step">
+    <div class="step-marker" id="marker-2">2</div>
+    <div class="card">
+      <h2>Unggah PDF ke Google Drive &amp; Kirim</h2>
+      <div class="step-sub">Pastikan catatan Anda sudah berbentuk satu berkas PDF sebelum mengikuti langkah ini.</div>
+      <ol class="mini-steps">
+        <li>Buka <b>drive.google.com</b> dan masuk dengan akun Google Anda.</li>
+        <li>Unggah berkas PDF catatan Anda ke Drive.</li>
+        <li>Klik kanan file tersebut → <b>Dapatkan link</b> → ubah akses menjadi <b>"Siapa saja yang memiliki link"</b> → <b>Salin link</b>.</li>
+        <li>Tempelkan link tersebut pada kolom di bawah, lalu kirim.</li>
+      </ol>
+      <div class="field"><label for="inp-link">Link Google Drive</label><input type="text" id="inp-link" placeholder="https://drive.google.com/file/d/..."></div>
+      <button class="btn-primary" id="btn-submit">Kirim Tugas ke Google Sheet</button>
+      <div class="status-line idle" id="submit-status"><span class="dot"></span><span id="submit-status-text">Lengkapi semua data lalu tekan "Kirim Tugas".</span></div>
+      <div style="margin-top:10px;">
+        <button class="btn-ghost" id="btn-copy">Salin Ringkasan Tugas</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide" id="guide">
+    <div class="guide-head" id="guide-head">
+      <h3>Panduan Dosen: Menghubungkan Formulir Ini ke Google Form &amp; Google Sheet</h3>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="guide-body">
+      <ol>
+        <li>Buat <b>Google Form</b> dengan field <i>short answer</i> berurutan: Nama, NIM, Kelas, Mata Kuliah, Judul/Topik Catatan, dan Link Google Drive.</li>
+        <li>Hubungkan form ke <b>Google Sheet</b> lewat tab <i>Responses</i> → ikon Sheets.</li>
+        <li>Ambil <code>entry ID</code> tiap field lewat menu titik tiga pada form → <i>Get pre-filled link</i> → isi tiap field dengan teks unik → <i>Get link</i> → salin pola <code>entry.123456789</code> dari URL yang dihasilkan untuk tiap field.</li>
+        <li>Ambil URL pengiriman form: lihat sumber laman untuk <code>&lt;form action="https://docs.google.com/forms/d/e/XXXX/formResponse"&gt;</code>, atau ganti akhiran <code>/viewform</code> pada URL form menjadi <code>/formResponse</code>.</li>
+        <li>Buka bagian <code>&lt;script&gt;</code> file ini, cari <code>GOOGLE_FORM_CONFIG</code>, lalu isi <code>formActionUrl</code> dan seluruh <code>entries.*</code>. Contoh:
+          <pre>const GOOGLE_FORM_CONFIG = {
+  formActionUrl: "https://docs.google.com/forms/u/0/d/e/.../formResponse",
+  entries: {
+    nama:  "entry.1",
+    nim:   "entry.2",
+    kelas: "entry.3",
+    mk:    "entry.4",
+    topik: "entry.5",
+    link:  "entry.6"
+  }
+};</pre>
+        </li>
+        <li>Bagikan file HTML ini ke mahasiswa (unggah ke Google Classroom / Google Sites / LMS). Berkas PDF mahasiswa tidak pernah melewati server manapun selain Drive mahasiswa itu sendiri — halaman ini hanya mengirim data teks (identitas + link) ke Sheet.</li>
+      </ol>
+    </div>
+  </div>
+
+  <footer>Martin Bernard, M.Pd. — IKIP Siliwangi</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =========================================================
+     KONFIGURASI GOOGLE FORM — isi sesuai panduan di bawah halaman
+  ========================================================= */
+  const GOOGLE_FORM_CONFIG = {
+    formActionUrl: "https://docs.google.com/forms/u/0/d/e/1FAIpQLSdnoZqa837BYy9Rcf9r7hbW9e9qzxonkJVX_H43pkXT7d6tvw/formResponse",
+    entries: {
+      nama:  "entry.1695648287",
+      nim:   "entry.49081777",
+      kelas: "entry.1510834949",
+      mk:    "entry.1205297981",
+      topik: "entry.1270428554",
+      link:  "entry2064692472"
+    }
+  };
+
+  var inpNama = document.getElementById("inp-nama");
+  var inpNim = document.getElementById("inp-nim");
+  var inpKelas = document.getElementById("inp-kelas");
+  var inpMk = document.getElementById("inp-mk");
+  var inpTopik = document.getElementById("inp-topik");
+  var inpLink = document.getElementById("inp-link");
+  var btnSubmit = document.getElementById("btn-submit");
+  var submitStatus = document.getElementById("submit-status");
+  var submitStatusText = document.getElementById("submit-status-text");
+  var marker1 = document.getElementById("marker-1");
+  var marker2 = document.getElementById("marker-2");
+
+  function setSubmitStatus(mode, text){
+    submitStatus.className = "status-line " + mode;
+    submitStatusText.textContent = text;
+  }
+
+  function isConfigured(){
+    return GOOGLE_FORM_CONFIG.formActionUrl && !GOOGLE_FORM_CONFIG.formActionUrl.startsWith("PASTE_");
+  }
+
+  function buildPayload(){
+    return {
+      nama: inpNama.value.trim(),
+      nim: inpNim.value.trim(),
+      kelas: inpKelas.value.trim(),
+      mk: inpMk.value.trim(),
+      topik: inpTopik.value.trim(),
+      link: inpLink.value.trim()
+    };
+  }
+
+  async function submitTugas(){
+    var payload = buildPayload();
+    if(!payload.nama || !payload.nim || !payload.link){
+      alert("Mohon lengkapi minimal Nama, NIM, dan Link Google Drive sebelum mengirim.");
+      return;
+    }
+    if(!/^https?:\/\//i.test(payload.link)){
+      alert("Link Google Drive sepertinya belum valid. Pastikan diawali dengan https://");
+      return;
+    }
+    marker1.classList.add("done");
+    if(!isConfigured()){
+      setSubmitStatus("idle", "Belum terhubung ke Google Form. Dosen perlu membuka \"Panduan Dosen\" di bawah halaman untuk mengatur ini.");
+      return;
+    }
+
+    setSubmitStatus("sending", "Mengirim tugas ke Google Sheet…");
+    var formData = new URLSearchParams();
+    Object.entries(GOOGLE_FORM_CONFIG.entries).forEach(function(pair){
+      var key = pair[0], entryId = pair[1];
+      if(entryId && !entryId.startsWith("entry.PASTE_")){
+        formData.append(entryId, payload[key] || "");
+      }
+    });
+
+    try{
+      await fetch(GOOGLE_FORM_CONFIG.formActionUrl, {
+        method:"POST", mode:"no-cors",
+        headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+        body: formData.toString()
+      });
+      setSubmitStatus("ok", "Tugas berhasil dikirim. Dosen dapat memeriksa Google Sheet yang terhubung.");
+      marker2.classList.add("done");
+    }catch(err){
+      setSubmitStatus("err", "Pengiriman gagal (kemungkinan tidak ada koneksi internet). Coba tekan \"Kirim Tugas\" sekali lagi.");
+      console.error(err);
+    }
+  }
+
+  btnSubmit.addEventListener("click", submitTugas);
+
+  document.getElementById("btn-copy").addEventListener("click", function(){
+    var payload = buildPayload();
+    var text = [
+      "TUGAS CATATAN PDF",
+      "Nama: " + payload.nama,
+      "NIM: " + payload.nim,
+      "Kelas: " + payload.kelas,
+      "Mata Kuliah: " + payload.mk,
+      "Topik: " + payload.topik,
+      "Link Drive: " + payload.link
+    ].join("\n");
+    navigator.clipboard.writeText(text).then(function(){
+      var btn = document.getElementById("btn-copy");
+      btn.textContent = "Tersalin ✓";
+      setTimeout(function(){ btn.textContent = "Salin Ringkasan Tugas"; }, 1800);
+    }).catch(function(){ alert(text); });
+  });
+
+  var guide = document.getElementById("guide");
+  document.getElementById("guide-head").addEventListener("click", function(){
+    guide.classList.toggle("open");
+  });
+
+})();
+</script>
+</body>
+</html>
