@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Soal Analisis Tingkat Tinggi — Konsep Identitas Trigonometri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = { tex: { inlineMath: [['$', '$']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" defer></script>
+<style>
+  :root{
+    --paper:#F4F6F5;
+    --sheet:#FFFFFF;
+    --ink:#20262B;
+    --ink-dim:#5E6A6D;
+    --line:#DCE3E1;
+    --teal:#1F6F78; --teal-tint:#E1EEEF;
+    --coral:#B5503B; --coral-tint:#F5E4DF;
+    --indigo:#3C4A8C; --indigo-tint:#E3E6F3;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--paper); }
+  body{
+    font-family:"Archivo", sans-serif;
+    color:var(--ink);
+    padding:32px 16px 60px;
+    padding-top:calc(32px + env(safe-area-inset-top,0px));
+    padding-bottom:calc(60px + env(safe-area-inset-bottom,0px));
+  }
+  .sheet{
+    max-width:820px; margin:0 auto; background:var(--sheet);
+    border:1px solid var(--line);
+    box-shadow:0 1px 0 var(--line), 0 18px 40px -30px rgba(32,38,43,0.3);
+    padding:44px 48px 52px;
+  }
+
+  .letterhead{ text-align:center; border-bottom:3px double var(--ink); padding-bottom:18px; margin-bottom:22px; }
+  .letterhead .inst{ font-size:12.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:10px; }
+  .letterhead h1{ font-family:"Crimson Pro", serif; font-weight:600; font-size:clamp(22px,3.4vw,29px); margin:0 0 6px; line-height:1.25; }
+  .letterhead .sub{ font-family:"Crimson Pro", serif; font-style:italic; font-size:15px; color:var(--ink-dim); }
+
+  .id-fields{ display:grid; grid-template-columns:1fr 1fr; gap:10px 28px; margin-bottom:22px; padding-bottom:20px; border-bottom:1px solid var(--line); }
+  .id-field{ display:flex; align-items:baseline; gap:8px; font-size:14.5px; }
+  .id-field .lbl{ color:var(--ink-dim); white-space:nowrap; font-weight:600; }
+  .id-field input{ flex:1; border:none; border-bottom:1px solid var(--ink-dim); background:transparent; font-family:"Archivo", sans-serif; font-size:14.5px; padding:2px 4px; color:var(--ink); }
+  .id-field input:focus{ outline:none; border-bottom-color:var(--teal); }
+
+  .instructions{ background:var(--indigo-tint); border-left:3px solid var(--indigo); padding:14px 18px; font-size:14px; line-height:1.65; margin-bottom:30px; color:var(--ink); }
+  .instructions b{ color:var(--indigo); }
+  .instructions ul{ margin:8px 0 0; padding-left:20px; }
+  .instructions li{ margin-bottom:4px; }
+
+  .legend{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:30px; }
+  .legend .chip{ font-size:11.5px; font-weight:700; letter-spacing:.03em; padding:5px 11px; border-radius:20px; }
+  .chip.c4{ background:var(--teal-tint); color:var(--teal); }
+  .chip.c5{ background:var(--coral-tint); color:var(--coral); }
+  .chip.c6{ background:var(--indigo-tint); color:var(--indigo); }
+
+  .question{ margin-bottom:34px; page-break-inside:avoid; break-inside:avoid; }
+  .question-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:10px; }
+  .q-number{ font-family:"Crimson Pro", serif; font-weight:700; font-size:22px; color:var(--teal); flex:0 0 auto; min-width:30px; }
+  .q-level{ font-size:11px; font-weight:700; letter-spacing:.04em; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+  .q-level.c4{ background:var(--teal-tint); color:var(--teal); }
+  .q-level.c5{ background:var(--coral-tint); color:var(--coral); }
+  .q-level.c6{ background:var(--indigo-tint); color:var(--indigo); }
+
+  .q-body{ font-size:16px; line-height:1.7; margin:0 0 14px 42px; }
+  .q-body .indikator{ display:block; margin-top:8px; font-size:13px; font-style:italic; color:var(--ink-dim); }
+
+  .answer-space{
+    margin-left:42px; height:110px; border:1px solid var(--line); border-radius:2px;
+    background-image:repeating-linear-gradient(to bottom, transparent, transparent 27px, var(--line) 28px);
+    background-color:var(--sheet); width:calc(100% - 42px);
+    font-family:"Archivo", sans-serif; font-size:14px; padding:10px 12px; color:var(--ink); line-height:28px;
+  }
+  .answer-space:focus{ outline:2px solid var(--teal); outline-offset:1px; }
+
+  footer{ margin-top:36px; padding-top:16px; border-top:1px solid var(--line); display:flex; justify-content:space-between; font-size:11.5px; color:var(--ink-dim); flex-wrap:wrap; gap:6px; }
+
+  @media (max-width:640px){
+    .sheet{ padding:28px 20px 36px; }
+    .id-fields{ grid-template-columns:1fr; }
+    .q-body{ margin-left:0; }
+    .answer-space{ margin-left:0; width:100%; }
+    .question-head{ flex-wrap:wrap; }
+  }
+
+  @media print{
+    body{ background:#fff; padding:0; }
+    .sheet{ box-shadow:none; border:none; max-width:100%; padding:20px 28px; }
+    .instructions{ background:#fff; border-left:3px solid var(--indigo); }
+    .answer-space{ background-color:#fff; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="letterhead">
+    <div class="inst">IKIP Siliwangi &middot; Program Studi Pendidikan Matematika</div>
+    <h1>Soal Analisis Tingkat Tinggi (HOTS)</h1>
+    <div class="sub">Konsep Identitas Trigonometri</div>
+  </div>
+
+  <div class="id-fields">
+    <div class="id-field"><span class="lbl">Nama</span><input type="text"></div>
+    <div class="id-field"><span class="lbl">NIM / NPM</span><input type="text"></div>
+    <div class="id-field"><span class="lbl">Kelas / Offering</span><input type="text"></div>
+    <div class="id-field"><span class="lbl">Mata Kuliah</span><input type="text" value="Trigonometri"></div>
+  </div>
+
+  <div class="instructions">
+    <b>Petunjuk Pengerjaan</b>
+    <ul>
+      <li>Jawablah setiap soal secara analitis dan uraikan penalaran Anda, bukan hanya hasil akhir.</li>
+      <li>Gunakan pembuktian aljabar, contoh numerik, atau ilustrasi lingkaran satuan bila diperlukan.</li>
+      <li>Soal ini tidak memiliki kunci jawaban tunggal — penilaian menekankan kedalaman analisis dan ketepatan argumen matematis.</li>
+    </ul>
+  </div>
+
+  <div class="legend">
+    <span class="chip c4">C4 — Menganalisis</span>
+    <span class="chip c5">C5 — Mengevaluasi</span>
+    <span class="chip c6">C6 — Mencipta</span>
+  </div>
+
+  <!-- 1 -->
+  <div class="question">
+    <div class="question-head"><span class="q-number">1</span><span class="q-level c4">C4 — Menganalisis</span></div>
+    <p class="q-body">
+      Analisislah mengapa identitas $\sin^2\theta+\cos^2\theta=1$ berlaku untuk semua nilai $\theta$, sedangkan persamaan seperti $\sin\theta=\tfrac{1}{2}$ hanya berlaku untuk nilai $\theta$ tertentu. Jelaskan perbedaan mendasar antara identitas dan persamaan trigonometri ditinjau dari domain keberlakuannya.
+      <span class="indikator">Indikator: membedakan identitas dan persamaan trigonometri berdasarkan domain keberlakuannya.</span>
+    </p>
+    <div class="answer-space" contenteditable="true"></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="question">
+    <div class="question-head"><span class="q-number">2</span><span class="q-level c5">C5 — Mengevaluasi</span></div>
+    <p class="q-body">
+      Seorang siswa menuliskan kesimpulan <i>"$\tan\theta+\cot\theta=1$ untuk semua $\theta$"</i>. Evaluasilah kebenaran pernyataan tersebut, dan jika salah, tunjukkan nilai $\theta$ yang membuktikan bahwa pernyataan ini tidak berlaku secara umum.
+      <span class="indikator">Indikator: mengevaluasi kebenaran klaim identitas melalui counterexample numerik.</span>
+    </p>
+    <div class="answer-space" contenteditable="true"></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="question">
+    <div class="question-head"><span class="q-number">3</span><span class="q-level c4">C4 — Menganalisis</span></div>
+    <p class="q-body">
+      Analisislah hubungan antara $\sin^2\theta+\cos^2\theta=1$, $1+\tan^2\theta=\sec^2\theta$, dan $1+\cot^2\theta=\csc^2\theta$. Jelaskan bagaimana ketiga identitas ini sebenarnya berasal dari satu identitas dasar yang sama melalui operasi aljabar tertentu.
+      <span class="indikator">Indikator: menganalisis keterkaitan struktural antar identitas Pythagoras.</span>
+    </p>
+    <div class="answer-space" contenteditable="true"></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="question">
+    <div class="question-head"><span class="q-number">4</span><span class="q-level c5">C5 — Mengevaluasi</span></div>
+    <p class="q-body">
+      Diberikan dua cara berbeda menyederhanakan $\sec^2\theta\cdot\sin^2\theta$: Cara 1 menghasilkan $\tan^2\theta$, Cara 2 menghasilkan $1-\cos^2\theta$. Evaluasilah apakah kedua hasil tersebut benar-benar ekuivalen, disertai pembuktian aljabarnya.
+      <span class="indikator">Indikator: mengevaluasi ekuivalensi dua hasil penyederhanaan berbeda.</span>
+    </p>
+    <div class="answer-space" contenteditable="true"></div>
+  </div>
+
+  <!-- 5 -->
+  <div class="question">
+    <div class="question-head"><span class="q-number">5</span><span class="q-level c4">C4 — Menganalisis</span></div>
+    <p class="q-body">
+      Dalam membuktikan suatu identitas, seorang siswa langsung mengoperasikan kedua ruas secara bersamaan (misalnya menambahkan bilangan yang sama pada ruas kiri dan kanan), alih-alih mengerjakan satu ruas sampai identik dengan ruas lainnya. Analisislah mengapa pendekatan siswa tersebut tidak dapat diterima sebagai metode pembuktian identitas yang sah.
+      <span class="indikator">Indikator: menganalisis kesalahan metodologis dalam pembuktian identitas.</span>
+    </p>
+    <div class="answer-space" contenteditable="true"></div>
+  </div>
+
+  <!-- 6 -->
+  <div class="question">
+    <div class="question-head"><span class="q-number">6</span><span class="q-level c6">C6 — Mencipta</span></div>
+    <p class="q-body">
+      Rancanglah sebuah identitas trigonometri baru (yang belum pernah dibahas di kelas) yang dapat dibuktikan hanya dengan kombinasi identitas Pythagoras dan identitas perbandingan. Tuliskan identitas yang Anda rancang beserta langkah pembuktiannya secara lengkap.
+      <span class="indikator">Indikator: merancang dan membuktikan identitas trigonometri baru secara mandiri.</span>
+    </p>
+    <div class="answer-space" contenteditable="true"></div>
+  </div>
+
+  <!-- 7 -->
+  <div class="question">
+    <div class="question-head"><span class="q-number">7</span><span class="q-level c4">C4 — Menganalisis</span></div>
+    <p class="q-body">
+      Bentuk $(1-\sin\theta)(1+\sin\theta)$ dan $\cos^2\theta$ sering dianggap identik. Analisislah mengapa kedua bentuk tersebut benar-benar ekuivalen, dan jelaskan keuntungan praktis menuliskan suatu ekspresi dalam bentuk terfaktorkan seperti ini saat menyederhanakan ekspresi trigonometri yang lebih kompleks.
+      <span class="indikator">Indikator: menganalisis ekuivalensi bentuk faktor dan manfaat strategisnya.</span>
+    </p>
+    <div class="answer-space" contenteditable="true"></div>
+  </div>
+
+  <!-- 8 -->
+  <div class="question">
+    <div class="question-head"><span class="q-number">8</span><span class="q-level c5">C5 — Mengevaluasi</span></div>
+    <p class="q-body">
+      Evaluasilah pernyataan berikut: <i>"Untuk membuktikan suatu identitas trigonometri, cukup mensubstitusikan satu nilai sudut saja, misalnya $\theta=45^\circ$, dan jika kedua ruas bernilai sama maka identitas tersebut terbukti benar untuk semua $\theta$."</i> Jelaskan mengapa pernyataan ini keliru secara logika matematis, meskipun secara numerik tampak meyakinkan.
+      <span class="indikator">Indikator: mengevaluasi kekeliruan logis dalam metode pembuktian berbasis substitusi tunggal.</span>
+    </p>
+    <div class="answer-space" contenteditable="true"></div>
+  </div>
+
+  <!-- 9 -->
+  <div class="question">
+    <div class="question-head"><span class="q-number">9</span><span class="q-level c4">C4 — Menganalisis</span></div>
+    <p class="q-body">
+      Perhatikan identitas $\csc^2\theta-\cot^2\theta=1$. Analisislah nilai $\theta$ yang membuat identitas ini tidak terdefinisi, dan jelaskan mengapa identitas yang melibatkan fungsi kebalikan (csc, sec, cot) umumnya memiliki pengecualian domain yang tidak dimiliki identitas yang hanya melibatkan sin dan cos.
+      <span class="indikator">Indikator: menganalisis domain keberlakuan identitas yang melibatkan fungsi kebalikan.</span>
+    </p>
+    <div class="answer-space" contenteditable="true"></div>
+  </div>
+
+  <!-- 10 -->
+  <div class="question">
+    <div class="question-head"><span class="q-number">10</span><span class="q-level c6">C6 — Mencipta</span></div>
+    <p class="q-body">
+      Sebagai calon guru matematika, rancanglah satu aktivitas pembelajaran (bukan sekadar soal) yang mengarahkan siswa SMA untuk <i>menemukan sendiri</i> identitas $\sin^2\theta+\cos^2\theta=1$ melalui eksplorasi (misalnya lewat lingkaran satuan atau pengukuran langsung), bukan langsung diberi rumusnya. Jelaskan langkah-langkah aktivitas tersebut beserta pertanyaan pemandu yang akan diajukan kepada siswa.
+      <span class="indikator">Indikator: merancang aktivitas pembelajaran berbasis penemuan (discovery learning) untuk identitas trigonometri.</span>
+    </p>
+    <div class="answer-space" contenteditable="true"></div>
+  </div>
+
+  <footer>
+    <span>Martin Bernard, M.Pd. — IKIP Siliwangi, Program Studi Pendidikan Matematika</span>
+    <span>Soal Analisis Tingkat Tinggi &middot; Konsep Identitas Trigonometri</span>
+  </footer>
+
+</div>
+</body>
+</html>
