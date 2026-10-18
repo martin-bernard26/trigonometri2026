@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Latihan HOTS: Aturan Sinus dan Cosinus</title>
+<style>
+  :root {
+    --paper:#F2F5F7; --card:#fff; --ink:#16213A; --muted:#55637C; --line:#C9D3DD;
+    --accent:#0E6A8A; --accent-ink:#fff; --mark:#8A5A00; --mark-bg:#FBE9C6;
+    --head:"Trebuchet MS","Segoe UI",system-ui,sans-serif; --body:Georgia,"Times New Roman",serif;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --paper:#0F1724; --card:#172236; --ink:#E8EEF5; --muted:#9AA9BF; --line:#2C3B52;
+    --accent:#5CC0E0; --accent-ink:#0F1724; --mark:#F0B74F; --mark-bg:#3A2D12;}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:1.05rem;line-height:1.7}
+  .page{max-width:800px;margin:0 auto;padding:2rem 1.25rem 4rem}
+
+  header.top{border-bottom:2px solid var(--ink);padding-bottom:1.25rem}
+  h1{font-family:var(--head);font-size:clamp(1.7rem,5vw,2.5rem);line-height:1.15;margin:0 0 .5rem;letter-spacing:-.01em}
+  header p{margin:0;color:var(--muted);max-width:56ch}
+  .formulas{display:flex;flex-wrap:wrap;gap:.5rem 1.5rem;margin-top:1rem;font-family:var(--head);font-size:.95rem;color:var(--muted)}
+
+  .bar{position:sticky;top:0;z-index:5;background:var(--paper);padding:.75rem 0;border-bottom:1px solid var(--line);
+    display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.25rem;font-family:var(--head);font-size:.9rem}
+  .timer{font-size:1.35rem;font-weight:700;font-variant-numeric:tabular-nums;min-width:4.5ch}
+  .prog{flex:1;min-width:140px}
+  .prog .track{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .prog .fill{height:100%;width:0;background:var(--accent);transition:width .25s}
+  button{font:inherit;font-family:var(--head);font-size:.85rem;color:var(--ink);background:transparent;border:1.5px solid var(--ink);
+    padding:.3rem .8rem;border-radius:6px;cursor:pointer}
+  button:hover{background:var(--ink);color:var(--paper)}
+  button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+  button:focus-visible,textarea:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+  .rules{margin:1.5rem 0 0;padding:.9rem 1.2rem;border-left:4px solid var(--accent);background:var(--card)}
+  .rules ul{margin:.3rem 0 0;padding-left:1.1rem}
+
+  .problem{display:grid;grid-template-columns:3rem 1fr;gap:0 1rem;margin-top:2.75rem}
+  .num{font-family:var(--head);font-weight:700;font-size:2.8rem;line-height:1;color:var(--accent)}
+  .tag{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:.25rem 1rem}
+  h2{font-family:var(--head);font-size:1.2rem;margin:0}
+  .lvl{font-family:var(--head);font-size:.8rem;font-weight:700;color:var(--mark);background:var(--mark-bg);padding:.1rem .65rem;border-radius:99px}
+  .body{min-width:0}
+  .body p{margin:.5rem 0}
+  ol{margin:.6rem 0 0;padding-left:1.5rem;list-style:lower-alpha}
+  ol li{margin:.4rem 0}
+  ol li::marker{font-family:var(--head);font-weight:700;color:var(--accent)}
+
+  figure{margin:1rem 0;padding:.75rem;background:var(--card);border:1px solid var(--line);max-width:360px}
+  figure svg{display:block;width:100%;height:auto}
+  figure figcaption{font-size:.85rem;color:var(--muted);line-height:1.4;margin-top:.3rem}
+  .s{stroke:var(--ink);fill:none;stroke-width:1.5}
+  .d{stroke:var(--muted);fill:none;stroke-width:1;stroke-dasharray:4 3}
+  .w{fill:var(--accent);opacity:.18}
+  svg text{fill:var(--ink);font-family:var(--head);font-size:12px}
+  svg text.m2{fill:var(--muted);font-size:10px}
+
+  details{margin-top:.9rem;border:1px dashed var(--line);padding:.4rem .8rem;background:var(--card)}
+  summary{cursor:pointer;font-family:var(--head);font-size:.9rem;color:var(--accent);font-weight:700}
+  details p{margin:.4rem 0;font-size:.95rem;color:var(--muted)}
+
+  textarea{display:block;width:100%;min-height:11rem;margin-top:.9rem;padding:.6rem .8rem;resize:vertical;
+    font:inherit;font-size:1rem;line-height:2rem;color:var(--ink);background-color:var(--card);border:1px solid var(--line);
+    background-image:repeating-linear-gradient(to bottom,transparent 0,transparent calc(2rem - 1px),var(--line) calc(2rem - 1px),var(--line) 2rem);
+    background-attachment:local}
+  .done{display:inline-flex;align-items:center;gap:.5rem;margin-top:.6rem;font-family:var(--head);font-size:.9rem;cursor:pointer}
+  .done input{width:1.1rem;height:1.1rem;accent-color:var(--accent)}
+
+  .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;margin:0 .15em;font-size:.95em}
+  .frac>span:first-child{border-bottom:1px solid currentColor;padding:0 .25em .05em}
+  .frac>span:last-child{padding:.05em .25em 0}
+  .m{font-style:italic;white-space:nowrap}
+  .quote{padding-left:1rem;border-left:3px solid var(--line)}
+  .foot{margin-top:3rem;padding-top:1rem;border-top:2px solid var(--ink);display:flex;flex-wrap:wrap;gap:.6rem;font-family:var(--head)}
+  .note{width:100%;font-size:.85rem;color:var(--muted);margin:0}
+
+  @media (max-width:600px){.problem{grid-template-columns:1fr}.num{font-size:2.1rem}}
+  @media print{.bar,.foot,details{display:none}body{background:#fff;color:#000}.problem{break-inside:avoid}}
+</style>
+</head>
+<body>
+<main class="page">
+
+<header class="top">
+  <h1>Latihan HOTS: Aturan Sinus dan Cosinus</h1>
+  <p>Lima soal penalaran tingkat tinggi. Tulis jawabanmu di kolom yang tersedia; jawaban tersimpan otomatis di peramban ini.</p>
+  <div class="formulas" aria-label="Rumus yang boleh digunakan">
+    <span class="m">a / sin A = b / sin B = c / sin C = 2R</span>
+    <span class="m">a² = b² + c² − 2bc cos A</span>
+    <span class="m">L = ½ ab sin C</span>
+  </div>
+</header>
+
+<div class="bar" role="region" aria-label="Penghitung waktu dan kemajuan">
+  <span class="timer" id="time">90:00</span>
+  <button id="tgl" class="primary" type="button">Mulai</button>
+  <button id="rst" type="button">Atur ulang</button>
+  <div class="prog">
+    <div id="ptext">0 dari 5 soal ditandai selesai</div>
+    <div class="track"><div class="fill" id="pfill"></div></div>
+  </div>
+</div>
+
+<section class="rules">
+  <strong style="font-family:var(--head)">Petunjuk</strong>
+  <ul>
+    <li>Tuliskan sketsa, langkah, dan alasan; jawaban akhir tanpa penalaran tidak dinilai penuh.</li>
+    <li>Gunakan nilai eksak bila memungkinkan; bila memakai kalkulator, bulatkan hingga dua desimal.</li>
+    <li>Kolom “Petunjuk strategi” hanya memberi arah berpikir, bukan jawaban.</li>
+  </ul>
+</section>
+
+<!-- 1 -->
+<article class="problem" data-id="1">
+  <div class="num" aria-hidden="true">1</div>
+  <div class="body">
+    <div class="tag"><h2>Navigasi kapal</h2><span class="lvl">Menganalisis · Mengevaluasi</span></div>
+    <p>Kapal berlayar dari pelabuhan <span class="m">P</span> menuju titik <span class="m">Q</span> sejauh 8 km pada arah 050°. Dari <span class="m">Q</span>, kapal berbelok dan berlayar 5 km menuju titik <span class="m">R</span> pada arah 170°. Arah (bearing) diukur searah jarum jam dari utara.</p>
+    <ol>
+      <li>Gambarlah sketsa lintasan dan tentukan besar sudut <span class="m">PQR</span>, dengan menjelaskan hubungan antar bearing yang kamu pakai.</li>
+      <li>Tentukan jarak langsung <span class="m">P</span> ke <span class="m">R</span>, lalu tentukan bearing <span class="m">R</span> dari <span class="m">P</span>.</li>
+      <li>Kapal tersebut hanya memiliki bahan bakar untuk menempuh 9 km lagi. Evaluasi apakah ia dapat kembali ke <span class="m">P</span> secara langsung dari <span class="m">R</span>. Jelaskan, dan tentukan bearing perjalanan pulangnya.</li>
+    </ol>
+    <details><summary>Petunjuk strategi</summary><p>Sudut dalam segitiga di <span class="m">Q</span> dibentuk oleh arah ke <span class="m">P</span> (balikan bearing <span class="m">PQ</span>) dan arah ke <span class="m">R</span>. Pilih aturan yang sesuai dengan data sisi–sudut–sisi, lalu pilih aturan kedua untuk mencari sudut.</p></details>
+    <textarea aria-label="Jawaban soal 1" placeholder="Tulis jawabanmu di sini…"></textarea>
+    <label class="done"><input type="checkbox"> Tandai selesai</label>
+  </div>
+</article>
+
+<!-- 2 -->
+<article class="problem" data-id="2">
+  <div class="num" aria-hidden="true">2</div>
+  <div class="body">
+    <div class="tag"><h2>Kasus ambigu</h2><span class="lvl">Menganalisis · Mencipta</span></div>
+    <p>Pada segitiga <span class="m">ABC</span>, diketahui <span class="m">∠A = 30°</span>, panjang <span class="m">a = BC = 5</span> cm, dan panjang <span class="m">b = CA = 8</span> cm.</p>
+    <ol>
+      <li>Tunjukkan bahwa terdapat dua segitiga berbeda yang memenuhi data tersebut, lalu hitung sudut <span class="m">B</span> pada masing-masing segitiga.</li>
+      <li>Tentukan panjang sisi <span class="m">c</span> untuk kedua segitiga itu dan bandingkan luasnya.</li>
+      <li>Dengan <span class="m">A = 30°</span> dan <span class="m">b = 8</span> tetap, tentukan semua nilai <span class="m">a</span> yang menghasilkan tepat nol, satu, atau dua segitiga. Jelaskan secara geometris dengan sketsa.</li>
+    </ol>
+    <details><summary>Petunjuk strategi</summary><p>Perhatikan bahwa <span class="m">sin B = sin (180° − B)</span>. Bandingkan <span class="m">a</span> dengan jarak dari titik <span class="m">C</span> ke garis <span class="m">AB</span>, yaitu <span class="m">b sin A</span>.</p></details>
+    <textarea aria-label="Jawaban soal 2" placeholder="Tulis jawabanmu di sini…"></textarea>
+    <label class="done"><input type="checkbox"> Tandai selesai</label>
+  </div>
+</article>
+
+<!-- 3 -->
+<article class="problem" data-id="3">
+  <div class="num" aria-hidden="true">3</div>
+  <div class="body">
+    <div class="tag"><h2>Lebar sungai</h2><span class="lvl">Menerapkan · Menganalisis</span></div>
+    <p>Dua pengamat berdiri di titik <span class="m">A</span> dan <span class="m">B</span> pada tepi sungai yang lurus, terpisah sejauh 60 m. Mereka mengamati sebuah pohon di titik <span class="m">C</span> di seberang sungai. Dari <span class="m">A</span>, sudut <span class="m">CAB = 45°</span>, dan dari <span class="m">B</span>, sudut <span class="m">CBA = 75°</span>.</p>
+    <figure>
+      <svg viewBox="0 0 300 190" role="img" aria-label="Sungai di antara dua tepi, titik A dan B di tepi bawah, titik C di tepi atas">
+        <rect class="w" x="10" y="70" width="280" height="60"/>
+        <line class="s" x1="10" y1="70" x2="290" y2="70"/>
+        <line class="s" x1="10" y1="130" x2="290" y2="130"/>
+        <circle cx="70" cy="130" r="3.5" fill="var(--ink)"/><circle cx="190" cy="130" r="3.5" fill="var(--ink)"/><circle cx="150" cy="22" r="3.5" fill="var(--accent)"/>
+        <line class="d" x1="70" y1="130" x2="150" y2="22"/><line class="d" x1="190" y1="130" x2="150" y2="22"/>
+        <text x="58" y="150">A</text><text x="186" y="150">B</text><text x="158" y="22">C</text>
+        <text class="m2" x="105" y="150">60 m</text><text class="m2" x="14" y="104">sungai</text>
+      </svg>
+      <figcaption>Sketsa tidak sesuai skala.</figcaption>
+    </figure>
+    <ol>
+      <li>Tentukan besar sudut <span class="m">ACB</span> dan panjang <span class="m">AC</span> dalam bentuk eksak. Gunakan <span class="m">sin 75° = (√6 + √2)/4</span>.</li>
+      <li>Hitunglah lebar sungai, yaitu jarak <span class="m">C</span> ke garis <span class="m">AB</span>, dengan dua cara yang berbeda.</li>
+      <li>Pengamat ketiga berdiri di titik <span class="m">D</span> pada garis <span class="m">AB</span> sehingga <span class="m">CD</span> membagi sudut <span class="m">ACB</span> menjadi dua sama besar. Rancanglah langkah menentukan posisi <span class="m">D</span> dengan aturan sinus (cukup uraikan strategi dan persamaan yang dipakai).</li>
+    </ol>
+    <details><summary>Petunjuk strategi</summary><p>Lebar sungai dapat dicari dari segitiga siku-siku kecil, atau dari rumus luas <span class="m">½ ab sin C</span> dibandingkan dengan <span class="m">½ · alas · tinggi</span>.</p></details>
+    <textarea aria-label="Jawaban soal 3" placeholder="Tulis jawabanmu di sini…"></textarea>
+    <label class="done"><input type="checkbox"> Tandai selesai</label>
+  </div>
+</article>
+
+<!-- 4 -->
+<article class="problem" data-id="4">
+  <div class="num" aria-hidden="true">4</div>
+  <div class="body">
+    <div class="tag"><h2>Pembuktian dan klasifikasi segitiga</h2><span class="lvl">Mengevaluasi · Mencipta</span></div>
+    <ol>
+      <li>Pada segitiga <span class="m">ABC</span> berlaku <span class="m">a cos B = b cos A</span>. Buktikan bahwa segitiga tersebut sama kaki.</li>
+      <li>Panjang sisi suatu segitiga berbanding <span class="m">3 : 5 : 7</span>. Tanpa mengetahui panjang sebenarnya, tentukan besar sudut terbesarnya dan jelaskan mengapa aturan cosinus lebih tepat daripada aturan sinus untuk keperluan ini.</li>
+      <li>Buatlah satu segitiga yang sisi-sisinya bilangan bulat berurutan dan salah satu sudutnya tumpul. Buktikan bahwa segitigamu memenuhi syarat.</li>
+    </ol>
+    <details><summary>Petunjuk strategi</summary><p>Untuk bagian (a), ubah sisi menjadi sinus melalui <span class="m">a = 2R sin A</span>. Untuk bagian (c), sudut tumpul terjadi bila kuadrat sisi terpanjang melebihi jumlah kuadrat dua sisi lainnya.</p></details>
+    <textarea aria-label="Jawaban soal 4" placeholder="Tulis jawabanmu di sini…"></textarea>
+    <label class="done"><input type="checkbox"> Tandai selesai</label>
+  </div>
+</article>
+
+<!-- 5 -->
+<article class="problem" data-id="5">
+  <div class="num" aria-hidden="true">5</div>
+  <div class="body">
+    <div class="tag"><h2>Analisis kesalahan dan lingkaran luar</h2><span class="lvl">Mengevaluasi · Menganalisis</span></div>
+    <p>Diketahui segitiga <span class="m">ABC</span> dengan <span class="m">a = 5</span>, <span class="m">b = 7</span>, dan <span class="m">c = 8</span>. Dina ingin mencari sudut terbesar dan menuliskan:</p>
+    <p class="quote">“Sudut terbesar berhadapan dengan sisi 8, jadi <span class="m">sin C = <span class="frac"><span>8 sin A</span><span>5</span></span></span>. Saya ambil nilai <span class="m">C</span> dari kalkulator.”</p>
+    <ol>
+      <li>Jelaskan dua kelemahan pendekatan Dina, termasuk mengapa data yang ia punya tidak langsung cocok untuk aturan sinus.</li>
+      <li>Selesaikan masalah yang sama dengan metode yang benar, dan tentukan sudut terbesar serta ukuran dua sudut lainnya.</li>
+      <li>Hitunglah luas segitiga dan jari-jari lingkaran luarnya. Jelaskan hubungan antara hasil aturan sinus dan jari-jari tersebut.</li>
+    </ol>
+    <details><summary>Petunjuk strategi</summary><p>Sudut tumpul dan lancip dapat memiliki nilai sinus yang sama. Luas dapat dicari tanpa tinggi jika satu sudut sudah diketahui, dan <span class="m">R</span> muncul pada rasio <span class="m">a / sin A</span>.</p></details>
+    <textarea aria-label="Jawaban soal 5" placeholder="Tulis jawabanmu di sini…"></textarea>
+    <label class="done"><input type="checkbox"> Tandai selesai</label>
+  </div>
+</article>
+
+<footer class="foot">
+  <button id="dl" class="primary" type="button">Unduh jawabanku (.txt)</button>
+  <button id="prt" type="button">Cetak</button>
+  <button id="clr" type="button">Hapus semua jawaban</button>
+  <p class="note" id="msg" role="status"></p>
+</footer>
+
+</main>
+<script>
+(function () {
+  var KEY = 'hots-sinus-cosinus-v1', store = {};
+  try { store = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { store = {}; }
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+
+  var probs = Array.prototype.slice.call(document.querySelectorAll('.problem'));
+  var ptext = document.getElementById('ptext'), pfill = document.getElementById('pfill'), msg = document.getElementById('msg');
+
+  function progress() {
+    var n = probs.filter(function (p) { return p.querySelector('input').checked; }).length;
+    ptext.textContent = n + ' dari ' + probs.length + ' soal ditandai selesai';
+    pfill.style.width = (n / probs.length * 100) + '%';
+  }
+
+  probs.forEach(function (p) {
+    var id = p.dataset.id, ta = p.querySelector('textarea'), cb = p.querySelector('input');
+    var s = store[id] || {};
+    ta.value = s.t || ''; cb.checked = !!s.d;
+    ta.addEventListener('input', function () { store[id] = { t: ta.value, d: cb.checked }; save(); });
+    cb.addEventListener('change', function () { store[id] = { t: ta.value, d: cb.checked }; save(); progress(); });
+  });
+  progress();
+
+  /* Pewaktu */
+  var TOTAL = 90 * 60, left = TOTAL, tick = null;
+  var tEl = document.getElementById('time'), tgl = document.getElementById('tgl');
+  function show() {
+    var m = Math.floor(left / 60), s = left % 60;
+    tEl.textContent = (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  }
+  function stop() { clearInterval(tick); tick = null; tgl.textContent = left === 0 ? 'Selesai' : 'Lanjut'; }
+  tgl.addEventListener('click', function () {
+    if (left === 0) return;
+    if (tick) { stop(); return; }
+    tgl.textContent = 'Jeda';
+    tick = setInterval(function () {
+      left--; show();
+      if (left <= 0) { left = 0; show(); stop(); msg.textContent = 'Waktu habis. Kamu masih dapat melengkapi jawaban dan mengunduhnya.'; }
+    }, 1000);
+  });
+  document.getElementById('rst').addEventListener('click', function () {
+    clearInterval(tick); tick = null; left = TOTAL; show(); tgl.textContent = 'Mulai'; msg.textContent = '';
+  });
+
+  /* Unduh, cetak, hapus */
+  document.getElementById('dl').addEventListener('click', function () {
+    var out = 'Latihan HOTS: Aturan Sinus dan Cosinus\n\n';
+    probs.forEach(function (p) {
+      out += 'Soal ' + p.dataset.id + (p.querySelector('input').checked ? ' [selesai]' : '') + '\n' +
+             (p.querySelector('textarea').value || '(belum dijawab)') + '\n\n';
+    });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([out], { type: 'text/plain;charset=utf-8' }));
+    a.download = 'jawaban-hots-sinus-cosinus.txt';
+    document.body.appendChild(a); a.click(); a.remove();
+    msg.textContent = 'Jawaban diunduh.';
+  });
+  document.getElementById('prt').addEventListener('click', function () { window.print(); });
+
+  var clr = document.getElementById('clr'), armed = false;
+  clr.addEventListener('click', function () {
+    if (!armed) {
+      armed = true; clr.textContent = 'Klik lagi untuk menghapus';
+      setTimeout(function () { armed = false; clr.textContent = 'Hapus semua jawaban'; }, 4000);
+      return;
+    }
+    store = {}; save();
+    probs.forEach(function (p) { p.querySelector('textarea').value = ''; p.querySelector('input').checked = false; });
+    progress(); armed = false; clr.textContent = 'Hapus semua jawaban'; msg.textContent = 'Semua jawaban dihapus.';
+  });
+})();
+</script>
+</body>
+</html>
