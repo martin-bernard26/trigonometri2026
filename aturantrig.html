@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aturan Sinus dan Cosinus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = { tex: { inlineMath: [['$', '$']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" defer></script>
+<style>
+  :root{
+    --bg:#F3F5F7;
+    --card:#FFFFFF;
+    --ink:#1C2B3A;
+    --ink-dim:#5E6E7F;
+    --line:#DCE3EA;
+    --sinus:#2A4A66; --sinus-tint:#E4EBF1;
+    --cosinus:#C96A2C; --cosinus-tint:#F7E6D8;
+    --primary:#2A4A66; --primary-dark:#192F42; --primary-tint:#E4EBF1;
+  }
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; scroll-padding-top:118px; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); }
+  body{
+    font-family:"Public Sans", sans-serif;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  h1,h2,h3{ font-family:"Libre Baskerville", serif; margin:0; }
+  .wrap{ max-width:980px; margin:0 auto; padding:0 20px 70px; }
+
+  .progress-bar{ position:fixed; top:0; left:0; height:3px; width:0%; background:var(--primary); z-index:100; }
+
+  .hero{ padding:44px 0 24px; text-align:center; }
+  .hero .eyebrow{ font-size:12.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--primary); }
+  .hero h1{ font-size:clamp(26px,4vw,36px); font-weight:700; line-height:1.2; margin:8px 0 10px; }
+  .hero p{ max-width:600px; margin:0 auto; color:var(--ink-dim); font-size:15px; line-height:1.6; }
+
+  .nav-shell{ position:sticky; top:0; z-index:20; background:rgba(243,245,247,0.93); backdrop-filter:blur(6px); padding:10px 0; border-bottom:1px solid var(--line); }
+  .nav-scroll{ display:flex; gap:8px; overflow-x:auto; padding:2px 0; scrollbar-width:none; }
+  .nav-scroll::-webkit-scrollbar{ display:none; }
+  .nav-pill{ flex:0 0 auto; font-size:13px; font-weight:600; padding:8px 14px; border-radius:20px; color:var(--ink-dim); background:var(--card); border:1px solid var(--line); cursor:pointer; white-space:nowrap; transition:background .15s,color .15s,border-color .15s; }
+  .nav-pill.active{ background:var(--primary); border-color:var(--primary); color:#fff; }
+
+  section{ padding:38px 0 10px; scroll-margin-top:118px; }
+  section .section-kicker{ font-family:"IBM Plex Mono", monospace; font-size:12px; font-weight:600; color:var(--primary); letter-spacing:.04em; margin-bottom:6px; }
+  section h2{ font-size:24px; font-weight:700; margin-bottom:12px; }
+  section > p.lead{ color:var(--ink-dim); font-size:15px; line-height:1.7; max-width:680px; margin-bottom:18px; }
+
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:22px 24px; margin-bottom:16px; }
+  .id-card{ border-left:4px solid var(--sinus); }
+  .id-card.cos{ border-left-color:var(--cosinus); }
+  .id-card h3{ font-size:16px; margin-bottom:10px; }
+
+  .formula-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  .formula-chip{ font-size:15px; padding:11px 18px; border-radius:10px; background:var(--bg); border:1px solid var(--line); flex:1 1 180px; text-align:center; }
+  .formula-chip.sinus{ background:var(--sinus-tint); color:var(--sinus); }
+  .formula-chip.cosinus{ background:var(--cosinus-tint); color:var(--cosinus); }
+  .id-card p{ font-size:14.5px; line-height:1.7; color:var(--ink); margin:0 0 10px; }
+
+  /* kapan pakai yang mana */
+  .accordion-item{ background:var(--card); border:1px solid var(--line); border-radius:14px; margin-bottom:12px; overflow:hidden; }
+  .accordion-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 20px; cursor:pointer; user-select:none; }
+  .accordion-head .tag{ font-family:"IBM Plex Mono", monospace; font-size:11.5px; font-weight:700; padding:4px 10px; border-radius:14px; margin-right:10px; }
+  .accordion-head h3{ font-size:16px; font-weight:600; display:flex; align-items:center; flex-wrap:wrap; }
+  .accordion-head .chevron{ color:var(--ink-dim); transition:transform .2s; }
+  .accordion-item.open .chevron{ transform:rotate(180deg); }
+  .accordion-body{ max-height:0; overflow:hidden; transition:max-height .3s; }
+  .accordion-item.open .accordion-body{ max-height:500px; }
+  .accordion-inner{ padding:0 20px 20px; }
+  .accordion-inner p{ font-size:14.5px; line-height:1.7; margin:0 0 10px; }
+
+  /* visualisasi */
+  .solver-layout{ display:grid; grid-template-columns:1.1fr 1fr; gap:20px; align-items:start; }
+  @media (max-width:800px){ .solver-layout{ grid-template-columns:1fr; } }
+  #solver-canvas{ width:100%; aspect-ratio:1/1; background:#fbfcfd; border-radius:12px; border:1px solid var(--line); }
+  .slider-field{ margin-bottom:16px; }
+  .slider-field label{ display:flex; justify-content:space-between; font-size:13px; font-weight:600; color:var(--ink-dim); margin-bottom:6px; }
+  .slider-field label b{ color:var(--ink); font-family:"IBM Plex Mono", monospace; }
+  .slider-field input[type=range]{ width:100%; accent-color:var(--primary); }
+  .readout-grid{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px; }
+  .readout-grid .stat{ border-radius:9px; padding:9px 11px; }
+  .readout-grid .stat.known{ background:var(--bg); }
+  .readout-grid .stat.cos{ background:var(--cosinus-tint); }
+  .readout-grid .stat.sin{ background:var(--sinus-tint); }
+  .readout-grid .lbl{ font-size:11px; color:var(--ink-dim); font-weight:700; text-transform:uppercase; }
+  .readout-grid .val{ font-family:"IBM Plex Mono", monospace; font-size:15px; font-weight:700; }
+  .solver-note{ font-size:12.5px; color:var(--ink-dim); margin-top:10px; line-height:1.6; }
+
+  /* rangkuman */
+  table.summary{ width:100%; border-collapse:collapse; font-size:14px; }
+  table.summary th, table.summary td{ padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; }
+  table.summary th{ font-family:"IBM Plex Mono", monospace; font-size:11.5px; color:var(--ink-dim); text-transform:uppercase; }
+
+  /* kuis */
+  .quiz-progress{ display:flex; justify-content:space-between; font-family:"IBM Plex Mono", monospace; font-size:13px; color:var(--ink-dim); margin-bottom:10px; }
+  .quiz-track{ height:6px; background:var(--line); border-radius:4px; margin-bottom:22px; overflow:hidden; }
+  .quiz-fill{ height:100%; background:var(--primary); width:0%; transition:width .3s; }
+  .quiz-q{ margin-bottom:26px; }
+  .quiz-q .q-num{ font-family:"IBM Plex Mono", monospace; font-size:12.5px; color:var(--primary); font-weight:700; margin-bottom:6px; }
+  .quiz-q .q-text{ font-size:16px; margin-bottom:12px; }
+  .quiz-options{ display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt{ padding:11px 14px; border:1.5px solid var(--line); border-radius:10px; cursor:pointer; font-size:14.5px; background:var(--card); }
+  .quiz-opt:hover{ border-color:var(--primary); }
+  .quiz-opt.correct{ background:var(--sinus-tint); border-color:var(--sinus); color:var(--sinus); font-weight:700; }
+  .quiz-opt.wrong{ background:var(--cosinus-tint); border-color:var(--cosinus); color:var(--cosinus); font-weight:700; }
+  .quiz-opt.disabled{ pointer-events:none; opacity:.55; }
+  .quiz-feedback{ margin-top:8px; font-size:13.5px; padding:9px 12px; border-radius:8px; display:none; }
+  .quiz-feedback.show{ display:block; }
+  .quiz-feedback.ok{ background:var(--sinus-tint); color:var(--sinus); }
+  .quiz-feedback.bad{ background:var(--cosinus-tint); color:var(--cosinus); }
+  .quiz-score-card{ text-align:center; padding:26px; display:none; }
+  .quiz-score-card.show{ display:block; }
+  .quiz-score-card .num{ font-family:"Libre Baskerville", serif; font-size:44px; font-weight:700; color:var(--primary); }
+
+  footer{ text-align:center; font-size:12px; color:var(--ink-dim); margin-top:40px; }
+</style>
+</head>
+<body>
+<div class="progress-bar" id="progress-bar"></div>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Mata Kuliah Trigonometri</div>
+    <h1>Aturan Sinus dan Cosinus</h1>
+    <p>Memperluas perbandingan trigonometri dari segitiga siku-siku ke segitiga <b>sembarang</b> — alat utama untuk menyelesaikan segitiga yang tidak memiliki sudut 90°.</p>
+  </div>
+
+  <div class="nav-shell">
+    <div class="nav-scroll" id="nav-scroll">
+      <a class="nav-pill" data-target="pendahuluan">Pendahuluan</a>
+      <a class="nav-pill" data-target="sinus">Aturan Sinus</a>
+      <a class="nav-pill" data-target="cosinus">Aturan Cosinus</a>
+      <a class="nav-pill" data-target="kapan">Kapan Pakai yang Mana</a>
+      <a class="nav-pill" data-target="solver">Segitiga Interaktif</a>
+      <a class="nav-pill" data-target="rangkuman">Rangkuman</a>
+      <a class="nav-pill" data-target="kuis">Kuis</a>
+    </div>
+  </div>
+
+  <!-- ================= PENDAHULUAN ================= -->
+  <section id="pendahuluan">
+    <div class="section-kicker">01 — Mengapa Diperlukan</div>
+    <h2>Melampaui Segitiga Siku-Siku</h2>
+    <p class="lead">Perbandingan $\sin,\cos,\tan$ yang dipelajari sebelumnya (SOHCAHTOA) hanya berlaku pada segitiga <b>siku-siku</b>. Namun banyak segitiga di dunia nyata — dalam survei lahan, navigasi, atau konstruksi — tidak memiliki sudut $90^\circ$. Untuk segitiga sembarang seperti ini, dibutuhkan dua aturan baru: <b>Aturan Sinus</b> dan <b>Aturan Cosinus</b>.</p>
+    <div class="card">
+      <p style="font-size:14.5px; line-height:1.7; margin:0;">Konvensi penamaan: pada segitiga $ABC$, sisi $a$ adalah sisi di <i>hadapan</i> sudut $A$, sisi $b$ di hadapan sudut $B$, dan sisi $c$ di hadapan sudut $C$. Kedua aturan di bawah ini menggunakan konvensi tersebut.</p>
+    </div>
+  </section>
+
+  <!-- ================= SINUS ================= -->
+  <section id="sinus">
+    <div class="section-kicker">02 — Aturan Sinus</div>
+    <h2>Law of Sines</h2>
+    <p class="lead">Menyatakan bahwa perbandingan panjang sisi terhadap sinus sudut di hadapannya selalu bernilai sama untuk ketiga sisi segitiga.</p>
+    <div class="card id-card">
+      <div class="formula-row">
+        <div class="formula-chip sinus">$\dfrac{a}{\sin A}=\dfrac{b}{\sin B}=\dfrac{c}{\sin C}$</div>
+      </div>
+      <p><b>Paling tepat digunakan ketika</b> diketahui dua sudut dan satu sisi (ASA/AAS), atau dua sisi dan satu sudut yang bukan diapit oleh keduanya (SSA) — meskipun kasus SSA berpotensi menghasilkan segitiga ganda (kasus ambigu).</p>
+    </div>
+  </section>
+
+  <!-- ================= COSINUS ================= -->
+  <section id="cosinus">
+    <div class="section-kicker">03 — Aturan Cosinus</div>
+    <h2>Law of Cosines</h2>
+    <p class="lead">Memperluas Teorema Pythagoras untuk segitiga sembarang, dengan tambahan suku yang melibatkan cosinus sudut yang diapit.</p>
+    <div class="card id-card cos">
+      <div class="formula-row">
+        <div class="formula-chip cosinus">$a^2=b^2+c^2-2bc\cos A$</div>
+      </div>
+      <p>Bentuk ini juga bisa diputar untuk sisi $b$ atau $c$. Untuk <b>mencari sudut</b> ketika ketiga sisi diketahui, bentuk di atas dapat disusun ulang:</p>
+      <div class="formula-row">
+        <div class="formula-chip cosinus">$\cos A=\dfrac{b^2+c^2-a^2}{2bc}$</div>
+      </div>
+      <p><b>Paling tepat digunakan ketika</b> diketahui dua sisi dan sudut apitnya (SAS), atau ketiga sisi segitiga (SSS).</p>
+    </div>
+  </section>
+
+  <!-- ================= KAPAN PAKAI ================= -->
+  <section id="kapan">
+    <div class="section-kicker">04 — Panduan Memilih</div>
+    <h2>Kapan Pakai Aturan yang Mana?</h2>
+    <p class="lead">Pilihan aturan bergantung pada informasi apa yang sudah diketahui tentang segitiga.</p>
+
+    <div class="accordion-item" data-acc>
+      <div class="accordion-head"><h3><span class="tag" style="background:var(--sinus-tint); color:var(--sinus);">ASA / AAS</span>Dua sudut &amp; satu sisi</h3><span class="chevron">▾</span></div>
+      <div class="accordion-body"><div class="accordion-inner">
+        <p>Gunakan <b>Aturan Sinus</b> secara langsung. Karena jumlah sudut segitiga selalu $180^\circ$, sudut ketiga dapat dicari lebih dulu, lalu aturan sinus dipakai untuk mencari sisi-sisi yang belum diketahui.</p>
+      </div></div>
+    </div>
+
+    <div class="accordion-item" data-acc>
+      <div class="accordion-head"><h3><span class="tag" style="background:var(--cosinus-tint); color:var(--cosinus);">SAS</span>Dua sisi &amp; sudut apit</h3><span class="chevron">▾</span></div>
+      <div class="accordion-body"><div class="accordion-inner">
+        <p>Gunakan <b>Aturan Cosinus</b> untuk mencari sisi ketiga terlebih dahulu, kemudian <b>Aturan Sinus</b> untuk mencari dua sudut yang tersisa.</p>
+      </div></div>
+    </div>
+
+    <div class="accordion-item" data-acc>
+      <div class="accordion-head"><h3><span class="tag" style="background:var(--cosinus-tint); color:var(--cosinus);">SSS</span>Tiga sisi diketahui</h3><span class="chevron">▾</span></div>
+      <div class="accordion-body"><div class="accordion-inner">
+        <p>Gunakan <b>Aturan Cosinus</b> untuk mencari salah satu sudut terlebih dahulu (aturan sinus tidak bisa dipakai di awal karena belum ada pasangan sisi-sudut yang berhadapan).</p>
+      </div></div>
+    </div>
+
+    <div class="accordion-item" data-acc>
+      <div class="accordion-head"><h3><span class="tag" style="background:var(--sinus-tint); color:var(--sinus);">SSA</span>Dua sisi &amp; sudut bukan apit</h3><span class="chevron">▾</span></div>
+      <div class="accordion-body"><div class="accordion-inner">
+        <p>Gunakan <b>Aturan Sinus</b>, tetapi berhati-hati — kasus ini dikenal sebagai <i>kasus ambigu</i> karena dapat menghasilkan dua segitiga berbeda, tepat satu segitiga, atau tidak ada segitiga yang valid sama sekali, tergantung panjang sisi-sisinya.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ================= SOLVER INTERAKTIF ================= -->
+  <section id="solver">
+    <div class="section-kicker">05 — Eksplorasi</div>
+    <h2>Segitiga Interaktif: Kasus SAS</h2>
+    <p class="lead">Atur panjang dua sisi dan besar sudut apitnya — perhatikan bagaimana Aturan Cosinus mencari sisi ketiga, lalu Aturan Sinus mencari sudut-sudut yang tersisa.</p>
+    <div class="card">
+      <div class="solver-layout">
+        <canvas id="solver-canvas" width="500" height="500"></canvas>
+        <div>
+          <div class="slider-field">
+            <label>Sisi b (AC) = <b id="val-b">6.0</b></label>
+            <input type="range" id="range-b" min="2" max="10" step="0.5" value="6">
+          </div>
+          <div class="slider-field">
+            <label>Sisi c (AB) = <b id="val-c">7.0</b></label>
+            <input type="range" id="range-c" min="2" max="10" step="0.5" value="7">
+          </div>
+          <div class="slider-field">
+            <label>Sudut A (apit) = <b id="val-A">50</b>°</label>
+            <input type="range" id="range-A" min="10" max="170" step="1" value="50">
+          </div>
+          <div class="readout-grid">
+            <div class="stat known"><div class="lbl">Sisi b</div><div class="val" id="read-b">6.0</div></div>
+            <div class="stat known"><div class="lbl">Sisi c</div><div class="val" id="read-c">7.0</div></div>
+            <div class="stat cos"><div class="lbl">Sisi a (cosinus)</div><div class="val" id="read-a">—</div></div>
+            <div class="stat known"><div class="lbl">Sudut A</div><div class="val" id="read-A">50°</div></div>
+            <div class="stat sin"><div class="lbl">Sudut B (sinus)</div><div class="val" id="read-B">—</div></div>
+            <div class="stat sin"><div class="lbl">Sudut C (sinus)</div><div class="val" id="read-C">—</div></div>
+          </div>
+          <div class="solver-note" id="solver-formula"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= RANGKUMAN ================= -->
+  <section id="rangkuman">
+    <div class="section-kicker">06 — Konsolidasi</div>
+    <h2>Rangkuman</h2>
+    <div class="card">
+      <table class="summary">
+        <tr><th>Aturan</th><th>Rumus</th><th>Dipakai untuk kasus</th></tr>
+        <tr><td>Sinus</td><td>$\dfrac{a}{\sin A}=\dfrac{b}{\sin B}=\dfrac{c}{\sin C}$</td><td>ASA, AAS, SSA (hati-hati ambigu)</td></tr>
+        <tr><td>Cosinus (sisi)</td><td>$a^2=b^2+c^2-2bc\cos A$</td><td>SAS</td></tr>
+        <tr><td>Cosinus (sudut)</td><td>$\cos A=\dfrac{b^2+c^2-a^2}{2bc}$</td><td>SSS</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= KUIS ================= -->
+  <section id="kuis">
+    <div class="section-kicker">07 — Uji Pemahaman</div>
+    <h2>Kuis Aturan Sinus dan Cosinus</h2>
+    <p class="lead">Umpan balik diberikan langsung setelah Anda memilih jawaban.</p>
+    <div class="card">
+      <div class="quiz-progress"><span id="quiz-count">0 / 10 dijawab</span><span id="quiz-live-score">Skor: 0</span></div>
+      <div class="quiz-track"><div class="quiz-fill" id="quiz-fill"></div></div>
+      <div id="quiz-container"></div>
+      <div class="quiz-score-card" id="quiz-score-card">
+        <div class="num" id="quiz-final-score">0/10</div>
+        <p style="color:var(--ink-dim); margin-top:6px;">Jawaban benar dari 10 soal aturan sinus dan cosinus.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Martin Bernard, M.Pd. — IKIP Siliwangi, Program Studi Pendidikan Matematika</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ progress bar + scrollspy ============ */
+  var progressBar = document.getElementById("progress-bar");
+  window.addEventListener("scroll", function(){
+    var h = document.documentElement;
+    progressBar.style.width = (h.scrollTop/(h.scrollHeight-h.clientHeight)*100) + "%";
+  });
+  var navPills = document.querySelectorAll(".nav-pill");
+  navPills.forEach(function(p){
+    p.addEventListener("click", function(){
+      var t = document.getElementById(p.dataset.target);
+      if(t) t.scrollIntoView({behavior:"smooth"});
+    });
+  });
+  var spy = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ navPills.forEach(function(p){ p.classList.toggle("active", p.dataset.target===e.target.id); }); }
+    });
+  }, { rootMargin:"-40% 0px -50% 0px" });
+  document.querySelectorAll("section[id]").forEach(function(s){ spy.observe(s); });
+
+  /* ============ accordion ============ */
+  document.querySelectorAll("[data-acc]").forEach(function(item){
+    item.querySelector(".accordion-head").addEventListener("click", function(){ item.classList.toggle("open"); });
+  });
+
+  /* ============ segitiga interaktif (SAS solver) ============ */
+  var canvas = document.getElementById("solver-canvas");
+  var ctx = canvas.getContext("2d");
+  var rangeB = document.getElementById("range-b");
+  var rangeC = document.getElementById("range-c");
+  var rangeA = document.getElementById("range-A");
+  var valB = document.getElementById("val-b");
+  var valC = document.getElementById("val-c");
+  var valA = document.getElementById("val-A");
+  var readB = document.getElementById("read-b");
+  var readC = document.getElementById("read-c");
+  var readA2 = document.getElementById("read-a");
+  var readAngA = document.getElementById("read-A");
+  var readAngB = document.getElementById("read-B");
+  var readAngC = document.getElementById("read-C");
+  var solverFormula = document.getElementById("solver-formula");
+
+  function deg2rad(d){ return d*Math.PI/180; }
+  function rad2deg(r){ return r*180/Math.PI; }
+
+  function drawTriangle(b, c, Adeg){
+    var cssW = canvas.clientWidth || 320, cssH = canvas.clientHeight || 320;
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = cssW*dpr; canvas.height = cssH*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.clearRect(0,0,cssW,cssH);
+
+    var Arad = deg2rad(Adeg);
+    // A at origin, B along +x at distance c, C at angle A from AB at distance b
+    var Ax=0, Ay=0;
+    var Bx=c, By=0;
+    var Cx=b*Math.cos(Arad), Cy=-b*Math.sin(Arad);
+
+    // scale to fit canvas with padding
+    var xs=[Ax,Bx,Cx], ys=[Ay,By,Cy];
+    var minX=Math.min.apply(null,xs), maxX=Math.max.apply(null,xs);
+    var minY=Math.min.apply(null,ys), maxY=Math.max.apply(null,ys);
+    var pad=60;
+    var scale = Math.min((cssW-2*pad)/(maxX-minX||1), (cssH-2*pad)/(maxY-minY||1));
+    function toPx(x,y){
+      return {
+        x: pad + (x-minX)*scale,
+        y: cssH - pad - (y-minY)*scale
+      };
+    }
+    var pA=toPx(Ax,Ay), pB=toPx(Bx,By), pC=toPx(Cx,Cy);
+
+    ctx.strokeStyle = "#1C2B3A"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(pA.x,pA.y); ctx.lineTo(pB.x,pB.y); ctx.lineTo(pC.x,pC.y); ctx.closePath(); ctx.stroke();
+
+    // side AB = c (sinus tint)
+    ctx.strokeStyle = "#2A4A66"; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(pA.x,pA.y); ctx.lineTo(pB.x,pB.y); ctx.stroke();
+    // side AC = b (cosinus tint)
+    ctx.strokeStyle = "#C96A2C"; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(pA.x,pA.y); ctx.lineTo(pC.x,pC.y); ctx.stroke();
+    // side BC = a (dark, computed)
+    ctx.strokeStyle = "#1C2B3A"; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(pB.x,pB.y); ctx.lineTo(pC.x,pC.y); ctx.stroke();
+
+    // vertices
+    ["A","B","C"].forEach(function(name, idx){
+      var p = [pA,pB,pC][idx];
+      ctx.fillStyle = "#1C2B3A";
+      ctx.beginPath(); ctx.arc(p.x,p.y,4,0,Math.PI*2); ctx.fill();
+      ctx.font = "13px Public Sans, sans-serif";
+      ctx.fillText(name, p.x + (idx===2?-18:8), p.y + (idx===1?16:-8));
+    });
+
+    // side labels
+    ctx.fillStyle = "#2A4A66";
+    ctx.fillText("c = "+c.toFixed(1), (pA.x+pB.x)/2-10, (pA.y+pB.y)/2+18);
+    ctx.fillStyle = "#C96A2C";
+    ctx.fillText("b = "+b.toFixed(1), (pA.x+pC.x)/2-30, (pA.y+pC.y)/2);
+  }
+
+  function solveSAS(){
+    var b = parseFloat(rangeB.value);
+    var c = parseFloat(rangeC.value);
+    var Adeg = parseFloat(rangeA.value);
+    valB.textContent = b.toFixed(1);
+    valC.textContent = c.toFixed(1);
+    valA.textContent = Adeg.toFixed(0);
+
+    var Arad = deg2rad(Adeg);
+    var a = Math.sqrt(b*b + c*c - 2*b*c*Math.cos(Arad));
+
+    // law of sines for angle B (opposite side b)
+    var sinB = b * Math.sin(Arad) / a;
+    sinB = Math.max(-1, Math.min(1, sinB));
+    var Bdeg = rad2deg(Math.asin(sinB));
+    var Cdeg = 180 - Adeg - Bdeg;
+
+    readB.textContent = b.toFixed(1);
+    readC.textContent = c.toFixed(1);
+    readA2.textContent = a.toFixed(2);
+    readAngA.textContent = Adeg.toFixed(0)+"°";
+    readAngB.textContent = Bdeg.toFixed(1)+"°";
+    readAngC.textContent = Cdeg.toFixed(1)+"°";
+
+    solverFormula.innerHTML =
+      "a = √(b²+c²−2bc·cos A) = √(" + (b*b).toFixed(1) + "+" + (c*c).toFixed(1) + "−" + (2*b*c).toFixed(1) + "·cos" + Adeg.toFixed(0) + "°) = " + a.toFixed(2) +
+      "<br>sin B = b·sin A / a → B = " + Bdeg.toFixed(1) + "° &nbsp;·&nbsp; C = 180° − A − B = " + Cdeg.toFixed(1) + "°";
+
+    drawTriangle(b, c, Adeg);
+  }
+
+  [rangeB, rangeC, rangeA].forEach(function(r){ r.addEventListener("input", solveSAS); });
+  solveSAS();
+  window.addEventListener("resize", function(){
+    drawTriangle(parseFloat(rangeB.value), parseFloat(rangeC.value), parseFloat(rangeA.value));
+  });
+
+  /* ============ kuis ============ */
+  var QUIZ = [
+    { q:"Aturan Sinus paling tepat digunakan ketika diketahui …", opts:["Dua sudut dan satu sisi (ASA/AAS)","Tiga sisi (SSS)","Dua sisi dan sudut apit (SAS)","Tiga sudut saja"], correct:0, exp:"Aturan Sinus langsung bisa dipakai bila ada pasangan sisi-sudut yang berhadapan." },
+    { q:"Aturan Cosinus digunakan untuk mencari sisi ketiga ketika diketahui …", opts:["Dua sudut saja","Dua sisi dan sudut apit (SAS)","Tiga sisi (SSS)","Satu sisi saja"], correct:1, exp:"Kasus SAS memerlukan Aturan Cosinus untuk mencari sisi yang berhadapan dengan sudut apit." },
+    { q:"Rumus Aturan Cosinus untuk mencari sisi c adalah …", opts:["$c^2=a^2+b^2-2ab\\cos C$","$c=a\\sin C$","$c^2=a^2+b^2$","$c=\\dfrac{a}{\\sin A}$"], correct:0, exp:"Bentuk umum Aturan Cosinus untuk sisi c." },
+    { q:"Jika ketiga sisi segitiga diketahui (SSS), rumus mencari sudut C adalah …", opts:["$\\cos C=\\dfrac{a^2+b^2-c^2}{2ab}$","$\\sin C=\\dfrac{c}{a+b}$","$\\cos C=a+b-c$","$\\tan C=\\dfrac{a}{b}$"], correct:0, exp:"Bentuk Aturan Cosinus yang disusun ulang untuk mencari sudut." },
+    { q:"Segitiga dengan $a=7$, $b=5$, sudut $C=60^\\circ$ — aturan apa yang tepat untuk mencari sisi $c$?", opts:["Aturan Sinus","Aturan Cosinus","Teorema Pythagoras","Tidak bisa ditentukan"], correct:1, exp:"Ini kasus SAS (dua sisi + sudut apit), gunakan Aturan Cosinus." },
+    { q:"Segitiga dengan sudut $A=40^\\circ$, sudut $B=70^\\circ$, sisi $a=10$ — aturan apa yang tepat untuk mencari sisi $b$?", opts:["Aturan Sinus","Aturan Cosinus","Keduanya tidak bisa","Teorema Pythagoras"], correct:0, exp:"Ini kasus AAS, gunakan Aturan Sinus langsung." },
+    { q:"Kasus SSA (dua sisi, satu sudut bukan apit) berpotensi menghasilkan …", opts:["Selalu tepat satu segitiga","Dua segitiga, satu segitiga, atau tidak ada sama sekali","Selalu tidak ada segitiga","Selalu dua segitiga"], correct:1, exp:"Inilah sebabnya kasus SSA disebut kasus ambigu." },
+    { q:"Jika sudut $C=90^\\circ$, maka Aturan Cosinus $c^2=a^2+b^2-2ab\\cos C$ akan tereduksi menjadi …", opts:["Teorema Pythagoras","Aturan Sinus","$c=a+b$","Tidak bisa disederhanakan"], correct:0, exp:"Karena $\\cos90^\\circ=0$, suku terakhir hilang sehingga menjadi $c^2=a^2+b^2$." },
+    { q:"Perbandingan $\\dfrac{a}{\\sin A}=\\dfrac{b}{\\sin B}=\\dfrac{c}{\\sin C}$ dikenal sebagai …", opts:["Aturan Cosinus","Aturan Sinus","Teorema Pythagoras","Identitas Pythagoras"], correct:1, exp:"Ini adalah definisi Aturan Sinus." },
+    { q:"Pada kasus SSS, aturan mana yang HARUS digunakan terlebih dahulu?", opts:["Aturan Sinus","Aturan Cosinus","Keduanya bisa dipakai bersamaan","Tidak ada yang bisa dipakai"], correct:1, exp:"Aturan Sinus butuh minimal satu pasangan sisi-sudut yang berhadapan, yang belum tersedia pada kasus SSS." }
+  ];
+
+  var quizContainer = document.getElementById("quiz-container");
+  var answered = new Array(QUIZ.length).fill(false);
+  var score = 0;
+
+  QUIZ.forEach(function(item, qi){
+    var block = document.createElement("div");
+    block.className = "quiz-q";
+    block.innerHTML =
+      '<div class="q-num">SOAL ' + (qi+1) + ' / ' + QUIZ.length + '</div>' +
+      '<div class="q-text">' + item.q + '</div>' +
+      '<div class="quiz-options"></div>' +
+      '<div class="quiz-feedback"></div>';
+    var optHolder = block.querySelector(".quiz-options");
+    var feedback = block.querySelector(".quiz-feedback");
+
+    item.opts.forEach(function(optText, oi){
+      var opt = document.createElement("div");
+      opt.className = "quiz-opt";
+      opt.innerHTML = optText;
+      opt.addEventListener("click", function(){
+        if(answered[qi]) return;
+        answered[qi] = true;
+        optHolder.querySelectorAll(".quiz-opt").forEach(function(o,idx){
+          o.classList.add("disabled");
+          if(idx===item.correct) o.classList.add("correct");
+        });
+        if(oi===item.correct){ score++; } else { opt.classList.add("wrong"); }
+        feedback.className = "quiz-feedback show " + (oi===item.correct ? "ok":"bad");
+        feedback.innerHTML = (oi===item.correct ? "Benar! " : "Belum tepat. ") + item.exp;
+        updateQuizProgress();
+        if(window.MathJax && window.MathJax.typesetPromise){ window.MathJax.typesetPromise([feedback]); }
+      });
+      optHolder.appendChild(opt);
+    });
+
+    quizContainer.appendChild(block);
+  });
+
+  var quizCount = document.getElementById("quiz-count");
+  var quizLiveScore = document.getElementById("quiz-live-score");
+  var quizFill = document.getElementById("quiz-fill");
+  var quizScoreCard = document.getElementById("quiz-score-card");
+  var quizFinalScore = document.getElementById("quiz-final-score");
+
+  function updateQuizProgress(){
+    var done = answered.filter(Boolean).length;
+    quizCount.textContent = done + " / " + QUIZ.length + " dijawab";
+    quizLiveScore.textContent = "Skor: " + score;
+    quizFill.style.width = (done/QUIZ.length*100) + "%";
+    if(done===QUIZ.length){
+      quizScoreCard.classList.add("show");
+      quizFinalScore.textContent = score + "/" + QUIZ.length;
+    }
+  }
+
+})();
+</script>
+</body>
+</html>
