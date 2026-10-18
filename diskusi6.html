@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Diskusi Trigonometri — dengan LaTeX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Karla:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = { tex: { inlineMath: [['$', '$']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" defer></script>
+<style>
+  :root{
+    --bg:#F7F6F4;
+    --card:#FFFFFF;
+    --ink:#22201D;
+    --ink-dim:#6B6559;
+    --line:#E3E0D8;
+    --brick:#A6422E; --brick-tint:#F5E4E0;
+    --slate:#3C4858; --slate-tint:#E6E9ED;
+    --good:#2F6F4F; --good-tint:#E4F0E9;
+    --bad:#A6422E; --bad-tint:#F5E4E0;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); }
+  body{
+    font-family:"Karla", sans-serif;
+    padding:28px 16px 60px;
+    padding-top:calc(28px + env(safe-area-inset-top,0px));
+    padding-bottom:calc(60px + env(safe-area-inset-bottom,0px));
+  }
+  h1,h2,h3{ font-family:"Literata", serif; margin:0; }
+  .wrap{ max-width:720px; margin:0 auto; }
+
+  .hero{ text-align:center; margin-bottom:24px; }
+  .hero .eyebrow{ font-size:12.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--brick); }
+  .hero h1{ font-size:clamp(23px,3.6vw,29px); font-weight:700; margin:8px 0 10px; line-height:1.25; }
+  .hero p{ color:var(--ink-dim); font-size:14.5px; max-width:540px; margin:0 auto; line-height:1.6; }
+
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:14px; padding:20px 22px; margin-bottom:16px; }
+
+  /* feed */
+  .feed-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .feed-head h2{ font-size:16.5px; }
+  .btn-refresh{
+    font-family:"Karla", sans-serif; font-weight:600; font-size:13px; cursor:pointer;
+    border:1px solid var(--line); border-radius:8px; padding:7px 14px; background:var(--bg); color:var(--ink-dim);
+  }
+  .btn-refresh:hover{ border-color:var(--brick); color:var(--brick); }
+
+  .msg-card{
+    background:var(--bg); border:1px solid var(--line); border-radius:10px;
+    padding:13px 16px; margin-bottom:10px; border-left:4px solid var(--slate);
+  }
+  .msg-head{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; gap:10px; flex-wrap:wrap; }
+  .msg-name{ font-weight:700; font-size:14.5px; color:var(--ink); }
+  .msg-time{ font-size:11px; color:var(--ink-dim); font-family:"JetBrains Mono", monospace; }
+  .msg-body{ font-size:15px; line-height:1.6; white-space:pre-wrap; word-break:break-word; }
+  .empty-note{ font-size:14px; color:var(--ink-dim); text-align:center; padding:20px 0; }
+
+  /* compose */
+  .field{ display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+  .field label{ font-size:12px; font-weight:700; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.04em; }
+  .field input, .field textarea{
+    font-family:"Karla", sans-serif; font-size:14.5px; padding:10px 12px; border:1px solid var(--line);
+    border-radius:8px; background:var(--bg); color:var(--ink); resize:vertical;
+  }
+  .field textarea{ min-height:90px; line-height:1.6; }
+  .field input:focus, .field textarea:focus{ outline:2px solid var(--brick); outline-offset:1px; background:#fff; }
+
+  .chip-row{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; }
+  .chip{
+    font-family:"JetBrains Mono", monospace; font-size:12.5px; font-weight:600;
+    padding:6px 11px; border-radius:16px; border:1px solid var(--line);
+    background:var(--slate-tint); color:var(--slate); cursor:pointer;
+  }
+  .chip:hover{ border-color:var(--slate); }
+
+  .preview-box{
+    background:var(--brick-tint); border-radius:8px; padding:12px 14px; margin-bottom:14px;
+    font-size:14.5px; min-height:24px; color:var(--ink);
+  }
+  .preview-label{ font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:var(--brick); margin-bottom:6px; display:block; }
+
+  button.btn-send{
+    font-family:"Karla", sans-serif; font-weight:700; font-size:14.5px; cursor:pointer;
+    border:none; border-radius:9px; padding:12px 20px; background:var(--brick); color:#fff; width:100%;
+  }
+  button.btn-send:hover{ background:#8A3523; }
+
+  .status-line{ display:flex; align-items:center; gap:9px; font-size:13.5px; margin-top:12px; padding:11px 13px; border-radius:8px; }
+  .status-line.idle{ background:var(--slate-tint); color:var(--slate); }
+  .status-line.sending{ background:var(--brick-tint); color:var(--brick); }
+  .status-line.ok{ background:var(--good-tint); color:var(--good); }
+  .status-line.err{ background:var(--bad-tint); color:var(--bad); }
+  .dot{ width:7px; height:7px; border-radius:50%; background:currentColor; flex:0 0 auto; }
+  @media (prefers-reduced-motion:no-preference){ .sending .dot{ animation:pulse 1s ease-in-out infinite; } }
+  @keyframes pulse{ 0%,100%{opacity:1;} 50%{opacity:.3;} }
+
+  /* guide */
+  .guide{ border:1px dashed var(--line); background:var(--card); border-radius:14px; margin-top:20px; }
+  .guide-head{ display:flex; justify-content:space-between; align-items:center; padding:16px 20px; cursor:pointer; user-select:none; }
+  .guide-head h3{ font-size:15px; }
+  .guide-head .chevron{ color:var(--ink-dim); transition:transform .2s; font-family:"JetBrains Mono", monospace; }
+  .guide.open .chevron{ transform:rotate(180deg); }
+  .guide-body{ max-height:0; overflow:hidden; transition:max-height .3s; padding:0 20px; }
+  .guide.open .guide-body{ max-height:1200px; padding:0 20px 20px; }
+  .guide-body ol{ padding-left:20px; line-height:1.7; font-size:13.5px; }
+  .guide-body li{ margin-bottom:9px; }
+  .guide-body code{ font-family:"JetBrains Mono", monospace; background:var(--bg); padding:2px 6px; border-radius:4px; font-size:12px; }
+  .guide-body pre{ background:var(--slate); color:#EDF0F4; padding:13px 15px; border-radius:8px; overflow-x:auto; font-family:"JetBrains Mono", monospace; font-size:11.5px; line-height:1.6; }
+
+  footer{ text-align:center; font-size:12px; color:var(--ink-dim); margin-top:36px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Forum Publik</div>
+    <h1>📐 Diskusi Trigonometri</h1>
+    <p>Tulis pertanyaan atau tanggapan — gunakan tanda <code>$...$</code> untuk menuliskan notasi matematika, hasilnya akan dirender otomatis dan terlihat oleh semua orang yang membuka halaman ini.</p>
+  </div>
+
+  <!-- ===== FEED ===== -->
+  <div class="card">
+    <div class="feed-head">
+      <h2>Percakapan</h2>
+      <button class="btn-refresh" id="btn-refresh">🔄 Refresh</button>
+    </div>
+    <div id="feed"></div>
+  </div>
+
+  <!-- ===== COMPOSE ===== -->
+  <div class="card">
+    <h2 style="font-size:16.5px; margin-bottom:14px;">Tulis Pesan</h2>
+    <div class="field">
+      <label for="inp-nama">Nama</label>
+      <input type="text" id="inp-nama" placeholder="Nama Anda">
+    </div>
+    <div class="field">
+      <label for="inp-pesan">Pesan (bisa memuat LaTeX, contoh: $\sin^2\theta+\cos^2\theta=1$)</label>
+      <textarea id="inp-pesan" placeholder="Tulis pertanyaan atau tanggapan Anda di sini…"></textarea>
+    </div>
+    <div class="chip-row" id="chip-row"></div>
+    <div class="preview-box">
+      <span class="preview-label">Pratinjau</span>
+      <div id="preview-content">—</div>
+    </div>
+    <button class="btn-send" id="btn-send">Kirim ke Diskusi</button>
+    <div class="status-line idle" id="submit-status"><span class="dot"></span><span id="submit-status-text">Tulis pesan lalu tekan "Kirim ke Diskusi".</span></div>
+  </div>
+
+  <div class="guide" id="guide">
+    <div class="guide-head" id="guide-head">
+      <h3>⚙️ Panduan Setup Firebase (untuk dosen)</h3>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="guide-body">
+      <ol>
+        <li>Buka <a href="https://console.firebase.google.com" target="_blank" rel="noopener">Firebase Console</a>, buat proyek baru (gratis, paket Spark).</li>
+        <li>Di menu kiri pilih <b>Build → Realtime Database</b> → <b>Create Database</b> → pilih lokasi server → mulai dalam mode <i>test</i>.</li>
+        <li>Salin <b>URL database</b> yang tampil di bagian atas halaman (bentuknya seperti <code>https://nama-proyek-default-rtdb.asia-southeast1.firebasedatabase.app</code>, atau alias lama <code>https://nama-proyek-default-rtdb.firebaseio.com</code>).</li>
+        <li>Tempelkan URL tersebut ke variabel <code>FIREBASE_DB_URL</code> di bagian atas kode ini.</li>
+        <li>Buka tab <b>Rules</b>, gunakan aturan berikut agar node <code>diskusi</code> bisa diakses publik tanpa autentikasi:
+          <pre>{
+  "rules": {
+    "diskusi": {
+      ".read": true,
+      ".write": true
+    }
+  }
+}</pre>
+        </li>
+        <li>⚠️ Aturan ini terbuka bagi siapa pun yang tahu URL-nya — cukup aman untuk diskusi kelas jangka pendek, tetapi jangan simpan data sensitif. Nonaktifkan Rules setelah semester selesai.</li>
+        <li>Tidak perlu <code>firebase-admin</code> SDK maupun API key — halaman ini hanya memakai <code>fetch()</code> biasa ke REST API Firebase.</li>
+      </ol>
+    </div>
+  </div>
+
+  <footer>Martin Bernard, M.Pd. — IKIP Siliwangi, Program Studi Pendidikan Matematika</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* =========================================================
+     KONFIGURASI — isi sesuai panduan di bagian bawah halaman
+  ========================================================= */
+  var FIREBASE_DB_URL = "https://diskusimatematika-7a30c-default-rtdb.firebaseio.com";
+  var NODE_PATH = "diskusi6";
+
+  var feedEl = document.getElementById("feed");
+  var btnRefresh = document.getElementById("btn-refresh");
+  var inpNama = document.getElementById("inp-nama");
+  var inpPesan = document.getElementById("inp-pesan");
+  var previewContent = document.getElementById("preview-content");
+  var btnSend = document.getElementById("btn-send");
+  var submitStatus = document.getElementById("submit-status");
+  var submitStatusText = document.getElementById("submit-status-text");
+  var chipRow = document.getElementById("chip-row");
+
+  function isConfigured(){
+    return FIREBASE_DB_URL && FIREBASE_DB_URL.indexOf("NAMA-PROYEK-ANDA") === -1;
+  }
+
+  function setStatus(mode, text){
+    submitStatus.className = "status-line " + mode;
+    submitStatusText.textContent = text;
+  }
+
+  function escapeHtml(str){
+    var div = document.createElement("div");
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  /* ---------------- LaTeX snippet chips ---------------- */
+  var SNIPPETS = [
+    { label:"x²", snippet:"x^2" },
+    { label:"a/b", snippet:"\\frac{a}{b}" },
+    { label:"√x", snippet:"\\sqrt{x}" },
+    { label:"θ", snippet:"\\theta" },
+    { label:"sin θ", snippet:"\\sin\\theta" },
+    { label:"cos θ", snippet:"\\cos\\theta" },
+    { label:"π", snippet:"\\pi" },
+    { label:"≤", snippet:"\\leq" },
+    { label:"∞", snippet:"\\infty" }
+  ];
+  SNIPPETS.forEach(function(s){
+    var chip = document.createElement("span");
+    chip.className = "chip";
+    chip.textContent = s.label;
+    chip.addEventListener("click", function(){
+      var start = inpPesan.selectionStart || inpPesan.value.length;
+      var end = inpPesan.selectionEnd || inpPesan.value.length;
+      var before = inpPesan.value.slice(0, start);
+      var after = inpPesan.value.slice(end);
+      var insertion = "$" + s.snippet + "$";
+      inpPesan.value = before + insertion + after;
+      inpPesan.focus();
+      var newPos = start + insertion.length;
+      inpPesan.setSelectionRange(newPos, newPos);
+      updatePreview();
+    });
+    chipRow.appendChild(chip);
+  });
+
+  /* ---------------- live preview ---------------- */
+  var previewTimer = null;
+  function updatePreview(){
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(function(){
+      var text = inpPesan.value.trim();
+      previewContent.textContent = text || "—";
+      if(window.MathJax && window.MathJax.typesetPromise){
+        window.MathJax.typesetPromise([previewContent]);
+      }
+    }, 300);
+  }
+  inpPesan.addEventListener("input", updatePreview);
+
+  /* ---------------- Firebase REST: GET & POST (tanpa SDK) ---------------- */
+  function loadMessages(){
+    if(!isConfigured()){
+      feedEl.innerHTML = '<div class="empty-note">Belum terhubung ke Firebase. Buka "Panduan Setup Firebase" di bawah untuk mengatur ini.</div>';
+      return;
+    }
+    feedEl.innerHTML = '<div class="empty-note">Memuat diskusi…</div>';
+    fetch(FIREBASE_DB_URL + "/" + NODE_PATH + ".json")
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(!data){
+          feedEl.innerHTML = '<div class="empty-note">Belum ada diskusi. Jadilah yang pertama menulis!</div>';
+          return;
+        }
+        var items = Object.values(data).filter(function(v){ return v && typeof v === "object"; });
+        items.sort(function(a,b){ return (a.waktu||"").localeCompare(b.waktu||""); });
+        feedEl.innerHTML = "";
+        items.forEach(function(m){
+          var div = document.createElement("div");
+          div.className = "msg-card";
+          div.innerHTML =
+            '<div class="msg-head"><span class="msg-name">' + escapeHtml(m.nama||"Anonim") + '</span><span class="msg-time">' + escapeHtml(m.waktu||"") + '</span></div>' +
+            '<div class="msg-body">' + escapeHtml(m.pesan||"") + '</div>';
+          feedEl.appendChild(div);
+        });
+        if(window.MathJax && window.MathJax.typesetPromise){
+          window.MathJax.typesetPromise([feedEl]);
+        }
+      })
+      .catch(function(err){
+        feedEl.innerHTML = '<div class="empty-note">Gagal memuat diskusi. Periksa koneksi internet atau konfigurasi Firebase.</div>';
+        console.error(err);
+      });
+  }
+
+  function sendMessage(){
+    var nama = inpNama.value.trim();
+    var pesan = inpPesan.value.trim();
+    if(!nama || !pesan){
+      alert("Mohon isi nama dan pesan terlebih dahulu.");
+      return;
+    }
+    if(!isConfigured()){
+      setStatus("idle", "Belum terhubung ke Firebase. Buka \"Panduan Setup Firebase\" di bawah untuk mengatur ini.");
+      return;
+    }
+
+    setStatus("sending", "Mengirim pesan…");
+    var payload = {
+      nama: nama,
+      pesan: pesan,
+      waktu: new Date().toLocaleString("id-ID", { day:"2-digit", month:"short", year:"numeric", hour:"2-digit", minute:"2-digit" })
+    };
+
+    fetch(FIREBASE_DB_URL + "/" + NODE_PATH + ".json", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+      .then(function(r){
+        if(!r.ok) throw new Error("HTTP " + r.status);
+        return r.json();
+      })
+      .then(function(){
+        setStatus("ok", "Pesan terkirim!");
+        inpPesan.value = "";
+        updatePreview();
+        loadMessages();
+      })
+      .catch(function(err){
+        setStatus("err", "Gagal mengirim pesan. Periksa koneksi internet atau konfigurasi Firebase.");
+        console.error(err);
+      });
+  }
+
+  btnSend.addEventListener("click", sendMessage);
+  btnRefresh.addEventListener("click", loadMessages);
+
+  var guide = document.getElementById("guide");
+  document.getElementById("guide-head").addEventListener("click", function(){
+    guide.classList.toggle("open");
+  });
+
+  /* initial load + light polling so new messages from others appear */
+  loadMessages();
+  setInterval(loadMessages, 15000);
+})();
+</script>
+</body>
+</html>
