@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Latihan Dasar — Aturan Sinus dan Cosinus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = { tex: { inlineMath: [['$', '$']] }, svg: { fontCache: 'global' } };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" defer></script>
+<style>
+  :root{
+    --bg:#F1F9F6;
+    --card:#FFFFFF;
+    --ink:#163832;
+    --ink-dim:#5C756E;
+    --line:#DCEAE4;
+    --primary:#1B8A7A; --primary-dark:#126459; --primary-tint:#E1F3EF;
+    --good:#1B8A7A; --good-tint:#E1F3EF;
+    --bad:#D9644F; --bad-tint:#FBE7E2;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); color:var(--ink); }
+  body{
+    font-family:"Nunito", sans-serif;
+    padding:28px 16px 60px;
+    padding-top:calc(28px + env(safe-area-inset-top,0px));
+    padding-bottom:calc(60px + env(safe-area-inset-bottom,0px));
+  }
+  h1,h2,h3{ font-family:"Quicksand", sans-serif; margin:0; }
+  .wrap{ max-width:720px; margin:0 auto; }
+
+  .hero{ text-align:center; margin-bottom:22px; }
+  .hero .eyebrow{ font-size:12.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--primary); }
+  .hero h1{ font-size:clamp(23px,3.6vw,29px); font-weight:700; margin:8px 0 10px; line-height:1.25; }
+  .hero p{ color:var(--ink-dim); font-size:14.5px; max-width:540px; margin:0 auto; line-height:1.6; }
+
+  .card{ background:var(--card); border:1px solid var(--line); border-radius:16px; padding:20px 22px; margin-bottom:16px; }
+
+  .formula-card{ display:flex; gap:12px; flex-wrap:wrap; }
+  .formula-chip{ flex:1 1 220px; background:var(--primary-tint); color:var(--primary-dark); border-radius:12px; padding:12px 16px; text-align:center; font-size:15px; }
+  .formula-chip .fc-label{ display:block; font-family:"JetBrains Mono", monospace; font-size:10.5px; letter-spacing:.05em; text-transform:uppercase; margin-bottom:6px; opacity:.75; }
+
+  .quiz-progress{ display:flex; justify-content:space-between; font-family:"JetBrains Mono", monospace; font-size:13px; color:var(--ink-dim); margin-bottom:10px; }
+  .quiz-track{ height:8px; background:var(--line); border-radius:6px; margin-bottom:6px; overflow:hidden; }
+  .quiz-fill{ height:100%; background:var(--primary); width:0%; transition:width .3s; border-radius:6px; }
+
+  .quiz-q{ margin-bottom:22px; }
+  .triangle-info{
+    display:inline-flex; gap:10px; flex-wrap:wrap; background:var(--bg);
+    border-radius:10px; padding:10px 14px; margin-bottom:12px; font-family:"JetBrains Mono", monospace; font-size:13px; color:var(--ink-dim);
+  }
+  .triangle-info b{ color:var(--ink); }
+  .q-num{ font-family:"JetBrains Mono", monospace; font-size:12px; color:var(--primary); font-weight:700; margin-bottom:6px; }
+  .q-text{ font-size:16px; margin-bottom:12px; font-weight:600; }
+  .quiz-options{ display:flex; flex-direction:column; gap:8px; }
+  .quiz-opt{ padding:11px 14px; border:1.5px solid var(--line); border-radius:12px; cursor:pointer; font-size:14.5px; background:var(--card); }
+  .quiz-opt:hover{ border-color:var(--primary); }
+  .quiz-opt.correct{ background:var(--good-tint); border-color:var(--good); color:var(--good); font-weight:700; }
+  .quiz-opt.wrong{ background:var(--bad-tint); border-color:var(--bad); color:var(--bad); font-weight:700; }
+  .quiz-opt.disabled{ pointer-events:none; opacity:.55; }
+  .quiz-feedback{ margin-top:8px; font-size:13.5px; padding:10px 13px; border-radius:10px; display:none; }
+  .quiz-feedback.show{ display:block; }
+  .quiz-feedback.ok{ background:var(--good-tint); color:var(--good); }
+  .quiz-feedback.bad{ background:var(--bad-tint); color:var(--bad); }
+
+  .quiz-score-card{ text-align:center; padding:28px; display:none; }
+  .quiz-score-card.show{ display:block; }
+  .quiz-score-card .num{ font-family:"Quicksand", sans-serif; font-size:48px; font-weight:700; color:var(--primary); }
+  .quiz-score-card .msg{ margin-top:6px; color:var(--ink-dim); font-size:14px; }
+  .btn-restart{
+    margin-top:14px; font-family:"Nunito", sans-serif; font-weight:700; font-size:14px; cursor:pointer;
+    border:none; border-radius:10px; padding:11px 22px; background:var(--primary); color:#fff;
+  }
+  .btn-restart:hover{ background:var(--primary-dark); }
+
+  footer{ text-align:center; font-size:12px; color:var(--ink-dim); margin-top:30px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="eyebrow">Latihan Dasar</div>
+    <h1>Aturan Sinus dan Cosinus</h1>
+    <p>10 soal hitungan dasar untuk melatih penerapan langsung kedua aturan. Jawaban langsung diperiksa setiap kali Anda memilih.</p>
+  </div>
+
+  <div class="card formula-card">
+    <div class="formula-chip"><span class="fc-label">Aturan Sinus</span>$\dfrac{a}{\sin A}=\dfrac{b}{\sin B}=\dfrac{c}{\sin C}$</div>
+    <div class="formula-chip"><span class="fc-label">Aturan Cosinus</span>$a^2=b^2+c^2-2bc\cos A$</div>
+  </div>
+
+  <div class="card">
+    <div class="quiz-progress"><span id="quiz-count">0 / 10 dijawab</span><span id="quiz-live-score">Skor: 0</span></div>
+    <div class="quiz-track"><div class="quiz-fill" id="quiz-fill"></div></div>
+  </div>
+
+  <div id="quiz-container"></div>
+
+  <div class="card quiz-score-card" id="quiz-score-card">
+    <div class="num" id="quiz-final-score">0/10</div>
+    <div class="msg">Jawaban benar dari 10 soal latihan dasar.</div>
+    <button class="btn-restart" id="btn-restart">Ulangi Latihan</button>
+  </div>
+
+  <footer>Martin Bernard, M.Pd. — IKIP Siliwangi, Program Studi Pendidikan Matematika</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var QUIZ = [
+    { info:"a=5, b=8, sudut C=60°", q:"Tentukan panjang sisi $c$ menggunakan Aturan Cosinus.",
+      opts:["7","6,5","8","9"], correct:0,
+      exp:"$c^2=5^2+8^2-2(5)(8)\\cos60^\\circ=25+64-40=49 \\Rightarrow c=7$." },
+    { info:"a=6, b=6, sudut C=90°", q:"Tentukan panjang sisi $c$.",
+      opts:["12","6√2","6","8"], correct:1,
+      exp:"Karena $\\cos90^\\circ=0$, rumus tereduksi menjadi Pythagoras: $c^2=36+36=72 \\Rightarrow c=6\\sqrt{2}$." },
+    { info:"a=5, b=12, c=13", q:"Tentukan besar sudut $C$ (sudut di hadapan sisi $c$) menggunakan Aturan Cosinus.",
+      opts:["60°","90°","45°","120°"], correct:1,
+      exp:"$\\cos C=\\dfrac{25+144-169}{2(5)(12)}=\\dfrac{0}{120}=0 \\Rightarrow C=90^\\circ$ (segitiga siku-siku 5-12-13)." },
+    { info:"Sudut A=30°, sudut B=90°, a=5", q:"Tentukan panjang sisi $b$ menggunakan Aturan Sinus.",
+      opts:["5","7,5","10","12"], correct:2,
+      exp:"$\\dfrac{b}{\\sin90^\\circ}=\\dfrac{5}{\\sin30^\\circ} \\Rightarrow b=\\dfrac{5(1)}{0{,}5}=10$." },
+    { info:"a=6, sudut A=30°, b=6√3", q:"Tentukan besar sudut $B$ menggunakan Aturan Sinus.",
+      opts:["30°","45°","60°","90°"], correct:2,
+      exp:"$\\sin B=\\dfrac{b\\sin A}{a}=\\dfrac{6\\sqrt3(0{,}5)}{6}=\\dfrac{\\sqrt3}{2} \\Rightarrow B=60^\\circ$." },
+    { info:"a=b=c=4 (segitiga sama sisi)", q:"Tentukan besar sudut $A$ menggunakan Aturan Cosinus.",
+      opts:["45°","60°","90°","30°"], correct:1,
+      exp:"$\\cos A=\\dfrac{16+16-16}{2(16)}=\\dfrac{1}{2} \\Rightarrow A=60^\\circ$ — sesuai sifat segitiga sama sisi." },
+    { info:"Sudut A=90°, sudut B=30°, a=10", q:"Tentukan panjang sisi $b$ menggunakan Aturan Sinus.",
+      opts:["5","5√2","10","7,5"], correct:0,
+      exp:"$\\dfrac{b}{\\sin30^\\circ}=\\dfrac{10}{\\sin90^\\circ} \\Rightarrow b=10(0{,}5)=5$ (segitiga siku-siku 30-60-90)." },
+    { info:"a=9, b=12, c=15", q:"Tentukan besar sudut yang menghadap sisi terpanjang ($c=15$).",
+      opts:["60°","75°","90°","100°"], correct:2,
+      exp:"$9,12,15$ adalah kelipatan tripel Pythagoras $3,4,5$, sehingga sudut di hadapan $c$ adalah $90^\\circ$." },
+    { info:"Sudut A=B=C=60° (segitiga sama sisi), a=10", q:"Tentukan panjang sisi $b$ menggunakan Aturan Sinus.",
+      opts:["5","8","10","10√3"], correct:2,
+      exp:"Karena ketiga sudut sama besar, ketiga sisi juga sama panjang: $b=a=10$." },
+    { info:"a=10, b=10, sudut C=120°", q:"Tentukan panjang sisi $c$ menggunakan Aturan Cosinus.",
+      opts:["10","10√2","10√3","20"], correct:2,
+      exp:"$c^2=100+100-2(10)(10)\\cos120^\\circ=200-200(-0{,}5)=300 \\Rightarrow c=10\\sqrt3$." }
+  ];
+
+  var quizContainer = document.getElementById("quiz-container");
+  var answered = new Array(QUIZ.length).fill(false);
+  var score = 0;
+
+  function buildQuiz(){
+    quizContainer.innerHTML = "";
+    answered.fill(false);
+    score = 0;
+
+    QUIZ.forEach(function(item, qi){
+      var block = document.createElement("div");
+      block.className = "card quiz-q";
+      block.innerHTML =
+        '<div class="q-num">SOAL ' + (qi+1) + ' / ' + QUIZ.length + '</div>' +
+        '<div class="triangle-info">' + item.info + '</div>' +
+        '<div class="q-text">' + item.q + '</div>' +
+        '<div class="quiz-options"></div>' +
+        '<div class="quiz-feedback"></div>';
+      var optHolder = block.querySelector(".quiz-options");
+      var feedback = block.querySelector(".quiz-feedback");
+
+      item.opts.forEach(function(optText, oi){
+        var opt = document.createElement("div");
+        opt.className = "quiz-opt";
+        opt.textContent = optText;
+        opt.addEventListener("click", function(){
+          if(answered[qi]) return;
+          answered[qi] = true;
+          optHolder.querySelectorAll(".quiz-opt").forEach(function(o,idx){
+            o.classList.add("disabled");
+            if(idx===item.correct) o.classList.add("correct");
+          });
+          if(oi===item.correct){ score++; } else { opt.classList.add("wrong"); }
+          feedback.className = "quiz-feedback show " + (oi===item.correct ? "ok":"bad");
+          feedback.innerHTML = (oi===item.correct ? "Benar! " : "Belum tepat. ") + item.exp;
+          updateQuizProgress();
+          if(window.MathJax && window.MathJax.typesetPromise){ window.MathJax.typesetPromise([feedback]); }
+        });
+        optHolder.appendChild(opt);
+      });
+
+      quizContainer.appendChild(block);
+    });
+
+    if(window.MathJax && window.MathJax.typesetPromise){ window.MathJax.typesetPromise([quizContainer]); }
+    updateQuizProgress();
+    document.getElementById("quiz-score-card").classList.remove("show");
+  }
+
+  var quizCount = document.getElementById("quiz-count");
+  var quizLiveScore = document.getElementById("quiz-live-score");
+  var quizFill = document.getElementById("quiz-fill");
+  var quizScoreCard = document.getElementById("quiz-score-card");
+  var quizFinalScore = document.getElementById("quiz-final-score");
+
+  function updateQuizProgress(){
+    var done = answered.filter(Boolean).length;
+    quizCount.textContent = done + " / " + QUIZ.length + " dijawab";
+    quizLiveScore.textContent = "Skor: " + score;
+    quizFill.style.width = (done/QUIZ.length*100) + "%";
+    if(done===QUIZ.length){
+      quizScoreCard.classList.add("show");
+      quizFinalScore.textContent = score + "/" + QUIZ.length;
+    }
+  }
+
+  document.getElementById("btn-restart").addEventListener("click", buildQuiz);
+
+  buildQuiz();
+})();
+</script>
+</body>
+</html>
