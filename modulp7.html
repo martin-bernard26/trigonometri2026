@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Luas Segitiga — Trigonometri</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5fb;--card:#fff;--ink:#1b2340;--mut:#5f6b8a;--ind:#4338ca;--rose:#e11d48;--em:#059669;--amb:#d97706;--line:#dde2f0;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1224;--card:#161d38;--ink:#e9ecf8;--mut:#9aa6c9;--ind:#8b8cff;--rose:#ff6b8b;--em:#34d399;--amb:#fbbf24;--line:#2a3560}}
+:root[data-theme="dark"]{--bg:#0d1224;--card:#161d38;--ink:#e9ecf8;--mut:#9aa6c9;--ind:#8b8cff;--rose:#ff6b8b;--em:#34d399;--amb:#fbbf24;--line:#2a3560}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:calc(66px + env(safe-area-inset-top,0px))}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 'Nunito Sans',system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+h1,h2{font-family:'Sora',system-ui,sans-serif;margin:0;line-height:1.15}
+header{text-align:center;padding:46px 20px 36px;background:linear-gradient(135deg,color-mix(in srgb,var(--ind) 22%,transparent),transparent 55%),linear-gradient(315deg,color-mix(in srgb,var(--rose) 18%,transparent),transparent 50%)}
+.tag{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ind);font-weight:700}
+h1{font-size:clamp(32px,6vw,52px);font-weight:800;margin:10px 0}
+header p{max-width:560px;margin:0 auto;color:var(--mut)}
+.hero{width:120px;height:90px;margin:0 auto 14px;display:block}.hero polygon{fill:color-mix(in srgb,var(--ind) 25%,transparent);stroke:var(--ind);stroke-width:4;stroke-linejoin:round;stroke-dasharray:300;animation:dr 3s ease forwards}
+@keyframes dr{from{stroke-dashoffset:300}to{stroke-dashoffset:0}}
+nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--line);display:flex;gap:6px;overflow-x:auto;padding:10px 14px;justify-content:center}
+nav a{white-space:nowrap;text-decoration:none;color:var(--mut);padding:6px 14px;border-radius:99px;font-weight:600;font-size:14px}
+nav a.on{background:var(--ind);color:#fff}
+#bar{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:linear-gradient(90deg,var(--ind),var(--rose))}
+main{max-width:900px;margin:0 auto;padding:22px 16px 60px}
+section{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px;margin:22px 0}
+h2{font-size:26px;margin-bottom:6px}.sub{color:var(--mut);margin:0 0 14px}
+.def{border-left:5px solid var(--amb);background:color-mix(in srgb,var(--amb) 13%,transparent);padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0}
+.m{font-family:'Sora',sans-serif;font-size:.95em}
+canvas{width:100%;height:320px;display:block;border-radius:14px;background:var(--bg);border:1px solid var(--line)}
+.row{display:flex;flex-wrap:wrap;gap:8px 18px;margin:12px 0}
+label{font-size:14px;color:var(--mut);display:flex;gap:8px;align-items:center}
+input[type=range]{accent-color:var(--ind)}.out{font-weight:700;color:var(--ink);min-width:3ch}
+.res{background:var(--bg);border-radius:12px;padding:14px 16px;font-size:15px}
+.res b{color:var(--ind)}
+.eqs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:12px}
+.eqs div{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;text-align:center;font-size:14px}
+.eqs b{display:block;font-family:'Sora',sans-serif;font-size:20px;color:var(--em)}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--ink);padding:8px 16px;border-radius:99px;font:700 14px 'Nunito Sans',sans-serif;cursor:pointer}
+.chip.on{background:var(--ind);border-color:var(--ind);color:#fff}
+details{border:1px solid var(--line);border-radius:12px;padding:10px 16px;margin:8px 0}summary{cursor:pointer;font-weight:700}
+.q{margin:16px 0;padding-bottom:12px;border-bottom:1px dashed var(--line)}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--ind)}
+.opt.ok{background:color-mix(in srgb,var(--em) 22%,transparent);border-color:var(--em)}
+.opt.no{background:color-mix(in srgb,var(--rose) 22%,transparent);border-color:var(--rose)}
+.fb{font-size:14px;color:var(--mut);margin-top:4px}#score{font-size:20px;font-weight:700;text-align:center;padding:10px}
+footer{text-align:center;color:var(--mut);font-size:14px;padding:10px 20px 40px}
+</style>
+</head>
+<body>
+<header>
+  <svg class="hero" viewBox="0 0 120 90"><polygon points="8,82 112,82 44,10"/></svg>
+  <span class="tag">Trigonometri</span>
+  <h1>Luas Segitiga</h1>
+  <p>Dari ½ × alas × tinggi sampai rumus trigonometri dan rumus Heron. Geser, ubah, dan lihat sendiri.</p>
+</header>
+<nav id="nav"><a href="#konsep">1. Konsep</a><a href="#kalkulator">2. Tiga Situasi</a><a href="#kuis">3. Kuis</a><div id="bar"></div></nav>
+<main>
+
+<section id="konsep">
+  <h2>1. Dari Alas × Tinggi ke Sinus</h2>
+  <p class="sub">Atur dua sisi (a, b) dan sudut apit C. Garis putus-putus merah adalah tinggi t.</p>
+  <div class="def">Pada segitiga siku-siku yang terbentuk, <span class="m">sin C = t / b</span> sehingga <span class="m">t = b sin C</span>. Maka
+  <span class="m">L = ½ · a · t = ½ · a · b · sin C</span>.</div>
+  <canvas id="c1"></canvas>
+  <div class="row">
+    <label>a <input id="a1" type="range" min="2" max="14" value="8"><span class="out" id="a1v"></span></label>
+    <label>b <input id="b1" type="range" min="2" max="14" value="6"><span class="out" id="b1v"></span></label>
+    <label>∠C <input id="C1" type="range" min="10" max="170" step="5" value="50"><span class="out" id="C1v"></span></label>
+  </div>
+  <div class="res" id="r1"></div>
+  <div class="eqs" id="e1"></div>
+  <p class="sub" style="margin-top:12px">Ketiga bentuk selalu bernilai sama: pilih <b>dua sisi dan sudut yang diapitnya</b>. Coba buat ∠C = 90°, lalu amati nilai L maksimum untuk a dan b yang tetap.</p>
+</section>
+
+<section id="kalkulator">
+  <h2>2. Kalkulator Tiga Situasi</h2>
+  <p class="sub">Pilih data yang diketahui. Segitiga digambar dan langkah hitungnya ditampilkan.</p>
+  <div class="chips" id="modes"></div>
+  <canvas id="c2"></canvas>
+  <div class="row" id="sl"></div>
+  <div class="res" id="r2"></div>
+  <details><summary>Rangkuman rumus</summary>
+    <p><b>Dua sisi dan sudut apit:</b> <span class="m">L = ½ ab sin C</span><br>
+    <b>Satu sisi dan dua sudut:</b> <span class="m">∠A = 180° − B − C</span>, lalu <span class="m">L = a² sin B sin C / (2 sin A)</span><br>
+    <b>Tiga sisi (Heron):</b> <span class="m">s = ½(a+b+c)</span>, <span class="m">L = √(s(s−a)(s−b)(s−c))</span></p>
+  </details>
+</section>
+
+<section id="kuis">
+  <h2>3. Kuis Cepat</h2>
+  <p class="sub">10 soal dengan umpan balik langsung.</p>
+  <div id="quiz"></div><div id="score"></div>
+</section>
+</main>
+<footer>Disusun oleh Martin Bernard, M.Pd. · IKIP Siliwangi</footer>
+
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const V=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const R=Math.PI/180,f=n=>n.toFixed(2).replace('.',','),g=n=>(Math.round(n*10)/10).toString().replace('.',',');
+function setup(c){const d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*d;c.height=h*d;const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);x.clearRect(0,0,w,h);return[x,w,h]}
+
+/* Menggambar segitiga: C di (0,0), B di (a,0), A = b(cos C, sin C) */
+function tri(c,a,b,Cd,height){const[x,w,h]=setup(c),C=Cd*R,A={x:b*Math.cos(C),y:b*Math.sin(C)},mn=Math.min(0,A.x),mx=Math.max(a,A.x),
+ s=Math.min((w-130)/(mx-mn),(h-100)/A.y),ox=(w-(mx-mn)*s)/2-mn*s,oy=h-44,P=p=>[ox+p.x*s,oy-p.y*s],
+ pc=P({x:0,y:0}),pb=P({x:a,y:0}),pa=P(A),cen=[(pc[0]+pb[0]+pa[0])/3,(pc[1]+pb[1]+pa[1])/3];
+ const out=(p,q,k,t,col)=>{const m=[(p[0]+q[0])/2,(p[1]+q[1])/2],dx=m[0]-cen[0],dy=m[1]-cen[1],l=Math.hypot(dx,dy)||1;x.fillStyle=col;x.fillText(t,m[0]+dx/l*k-8,m[1]+dy/l*k+4)};
+ x.font='700 14px Nunito Sans, sans-serif';x.lineJoin='round';
+ x.beginPath();x.moveTo(...pc);x.lineTo(...pb);x.lineTo(...pa);x.closePath();x.fillStyle=V('--ind')+'30';x.fill();x.strokeStyle=V('--ind');x.lineWidth=3.5;x.stroke();
+ if(height){const fx=ox+A.x*s;x.setLineDash([6,5]);x.strokeStyle=V('--rose');x.lineWidth=2.5;x.beginPath();x.moveTo(...pa);x.lineTo(fx,oy);x.stroke();
+  if(A.x<0||A.x>a){x.beginPath();x.moveTo(...(A.x<0?pc:pb));x.lineTo(fx,oy);x.stroke()}x.setLineDash([]);
+  const dr=Math.sign(a/2-A.x)||1;x.lineWidth=1.5;x.beginPath();x.moveTo(fx,oy-10);x.lineTo(fx+dr*10,oy-10);x.lineTo(fx+dr*10,oy);x.stroke();
+  x.fillStyle=V('--rose');x.fillText('t = '+f(A.y),fx+(A.x<a/2?-70:8),(oy+pa[1])/2)}
+ x.strokeStyle=V('--em');x.lineWidth=2.5;x.beginPath();x.arc(pc[0],pc[1],30,-C,0);x.stroke();
+ const c3=Math.hypot(a-A.x,A.y);out(pc,pb,16,'a = '+g(a),V('--ink'));out(pc,pa,18,'b = '+g(b),V('--ink'));out(pa,pb,18,'c = '+f(c3),V('--ink'));
+ x.fillStyle=V('--em');x.fillText('C = '+g(Cd)+'°',pc[0]+36,pc[1]-6-(C>1.2?-12:0)*0);
+ x.fillStyle=V('--ink');[['C',pc],['B',pb],['A',pa]].forEach(([t,p])=>{const dx=p[0]-cen[0],dy=p[1]-cen[1],l=Math.hypot(dx,dy);x.font='800 16px Sora, sans-serif';x.fillText(t,p[0]+dx/l*14-5,p[1]+dy/l*14+5)})}
+
+/* ---------- 1. Konsep ---------- */
+function d1(){const a=+$('#a1').value,b=+$('#b1').value,C=+$('#C1').value;[['a1',a],['b1',b],['C1',C+'°']].forEach(([i,v])=>$('#'+i+'v').textContent=v);
+ tri($('#c1'),a,b,C,true);const t=b*Math.sin(C*R),L=.5*a*t,c=Math.sqrt(a*a+b*b-2*a*b*Math.cos(C*R)),A=Math.acos((b*b+c*c-a*a)/(2*b*c)),B=Math.PI-A-C*R;
+ $('#r1').innerHTML='t = b sin C = '+b+' · sin '+C+'° = <b>'+f(t)+'</b><br>L = ½ · a · t = ½ · '+a+' · '+f(t)+' = <b>'+f(L)+'</b> satuan luas';
+ $('#e1').innerHTML=[['½ ab sin C',.5*a*b*Math.sin(C*R)],['½ bc sin A',.5*b*c*Math.sin(A)],['½ ac sin B',.5*a*c*Math.sin(B)]].map(([t,v])=>'<div>'+t+'<b>'+f(v)+'</b></div>').join('')}
+['a1','b1','C1'].forEach(i=>$('#'+i).oninput=d1);
+
+/* ---------- 2. Kalkulator ---------- */
+const M={sas:['Dua sisi + sudut apit',[['a','a',2,16,1,8],['b','b',2,16,1,6],['C','∠C',10,170,5,30]]],
+ asa:['Satu sisi + dua sudut',[['a','a',2,16,1,10],['B','∠B',10,150,5,45],['C','∠C',10,150,5,75]]],
+ sss:['Tiga sisi (Heron)',[['a','a',3,16,1,14],['b','b',3,16,1,15],['c','c',3,16,1,13]]]};
+let mode='sas';const val={};
+function mk(){$('#modes').innerHTML='';Object.keys(M).forEach(k=>{const b=document.createElement('button');b.className='chip'+(k==mode?' on':'');b.textContent=M[k][0];b.onclick=()=>{mode=k;mk()};$('#modes').append(b)});
+ $('#sl').innerHTML=M[mode][1].map(([id,t,mi,ma,st,df])=>{val[mode+id]=val[mode+id]??df;return'<label>'+t+' <input type="range" data-id="'+id+'" min="'+mi+'" max="'+ma+'" step="'+st+'" value="'+val[mode+id]+'"><span class="out">'+val[mode+id]+(id.length&&'BC'.includes(id)?'°':'')+'</span></label>'}).join('');
+ $$('#sl input').forEach(i=>i.oninput=()=>{val[mode+i.dataset.id]=+i.value;i.nextElementSibling.textContent=i.value+('BC'.includes(i.dataset.id)?'°':'');d2()});d2()}
+function d2(){const v=id=>val[mode+id],c=$('#c2'),r=$('#r2');let a,b,C,L,st;
+ if(mode=='sas'){a=v('a');b=v('b');C=v('C');L=.5*a*b*Math.sin(C*R);st='L = ½ · a · b · sin C<br>= ½ · '+a+' · '+b+' · sin '+C+'°<br>= <b>'+f(L)+'</b> satuan luas'}
+ else if(mode=='asa'){a=v('a');const B=v('B');C=v('C');const A=180-B-C;if(A<=1){setup(c);r.innerHTML='Jumlah ∠B + ∠C harus kurang dari 180°.';return}
+  b=a*Math.sin(B*R)/Math.sin(A*R);L=a*a*Math.sin(B*R)*Math.sin(C*R)/(2*Math.sin(A*R));
+  st='∠A = 180° − '+B+'° − '+C+'° = '+A+'°<br>L = a² sin B sin C / (2 sin A)<br>= '+a+'² · sin '+B+'° · sin '+C+'° / (2 · sin '+A+'°)<br>= <b>'+f(L)+'</b> satuan luas'}
+ else{a=v('a');b=v('b');const cc=v('c');if(a+b<=cc||a+cc<=b||b+cc<=a){setup(c);r.innerHTML='Ketiga sisi tidak membentuk segitiga (jumlah dua sisi harus lebih besar dari sisi ketiga).';return}
+  const s=(a+b+cc)/2;L=Math.sqrt(s*(s-a)*(s-b)*(s-cc));C=Math.acos((a*a+b*b-cc*cc)/(2*a*b))/R;
+  st='s = ½('+a+' + '+b+' + '+cc+') = '+g(s)+'<br>L = √(s(s−a)(s−b)(s−c)) = √('+g(s)+' · '+g(s-a)+' · '+g(s-b)+' · '+g(s-cc)+')<br>= <b>'+f(L)+'</b> satuan luas'}
+ tri(c,a,b,C,true);r.innerHTML=st}
+
+/* ---------- 3. Kuis ---------- */
+const Q=[
+['Dua sisi 8 dan 6 mengapit sudut 30°. Luas segitiga …',['24','12','12√3','6'],1,'½ · 8 · 6 · sin 30° = ½ · 8 · 6 · ½ = 12.'],
+['Dua sisi 10 dan 12 mengapit sudut 90°. Luasnya …',['120','30','60','22'],2,'sin 90° = 1, jadi L = ½ · 10 · 12 = 60.'],
+['Sisi 6 dan 8 mengapit sudut 150°. Luasnya …',['12','24','12√3','6'],0,'sin 150° = ½, jadi L = ½ · 6 · 8 · ½ = 12.'],
+['Luas segitiga sama sisi dengan sisi 4 adalah …',['4√3','8√3','8','16'],0,'½ · 4 · 4 · sin 60° = 8 · ½√3 = 4√3.'],
+['Bentuk berikut yang BUKAN rumus luas segitiga ABC adalah …',['½ ab sin C','½ bc sin A','½ ac sin B','½ ab sin A'],3,'Sudut harus diapit oleh kedua sisi. Pada ½ ab sin A, sudut A tidak diapit sisi a dan b.'],
+['Sisi 5 dan 7 mengapit sudut 30°. Luasnya …',['17,5','8,75','35','4,375'],1,'½ · 5 · 7 · ½ = 8,75.'],
+['Segitiga bersisi 3, 4, dan 5 memiliki luas (rumus Heron) …',['12','7,5','6','10'],2,'s = 6, L = √(6 · 3 · 2 · 1) = √36 = 6.'],
+['Segitiga bersisi 13, 14, 15 memiliki luas …',['84','91','42','105'],0,'s = 21, L = √(21 · 8 · 7 · 6) = √7056 = 84.'],
+['a = 10, ∠B = 45°, ∠C = 75°. Luasnya sekitar …',['28,28','39,43','50','70,7'],1,'∠A = 60°, L = 100 · sin 45° · sin 75° / (2 sin 60°) ≈ 39,43.'],
+['Untuk dua sisi tetap a dan b, luas segitiga terbesar diperoleh saat sudut apitnya …',['30°','60°','90°','120°'],2,'L = ½ ab sin C maksimum ketika sin C = 1, yaitu C = 90°.']];
+let sc=0,dn=0;Q.forEach((q,i)=>{const d=document.createElement('div');d.className='q';d.innerHTML='<b>'+(i+1)+'. '+q[0]+'</b>';
+ q[1].forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=o;b.onclick=()=>{const os=d.querySelectorAll('.opt');os.forEach(x=>x.disabled=true);const ok=j==q[2];b.classList.add(ok?'ok':'no');os[q[2]].classList.add('ok');sc+=ok;dn++;
+  const e=document.createElement('div');e.className='fb';e.textContent=(ok?'Benar. ':'Belum tepat. ')+q[3];d.append(e);
+  $('#score').textContent=dn==Q.length?'Skor akhir: '+sc+' / '+Q.length+(sc==Q.length?' — sempurna!':''):'Terjawab '+dn+' dari '+Q.length};d.append(b)});$('#quiz').append(d)});
+
+/* ---------- Navigasi ---------- */
+const links=$$('#nav a');$$('section').forEach(s=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('on',a.hash=='#'+e.target.id))}),{rootMargin:'-30% 0px -60% 0px'}).observe(s));
+addEventListener('scroll',()=>{const m=document.documentElement;$('#bar').style.width=100*scrollY/(m.scrollHeight-innerHeight)+'%'},{passive:true});
+const all=()=>{d1();d2()};addEventListener('resize',all);matchMedia('(prefers-color-scheme: dark)').addEventListener('change',all);
+mk();d1();document.fonts&&document.fonts.ready.then(all);
+</script>
+</body>
+</html>
