@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diskusi GeoGebra Classic</title>
+<!--
+  Diskusi Pemecahan Masalah dengan GeoGebra Classic (versi sederhana)
+  Disusun oleh: Martin Bernard, M.Pd. | IKIP Siliwangi
+
+  Cara pakai:
+  1. Buat Firebase Realtime Database, lalu isi aturan (uji coba / kelas):
+       { "rules": { "diskusi": { ".read": true, ".write": true } } }
+     Catatan: aturan ini membuat data terbuka bagi siapa pun yang tahu URL-nya.
+  2. Isi DB_URL di bawah (atau isi lewat kolom di halaman).
+  3. Ubah daftar MASALAH sesuai kebutuhan, lalu unggah berkas ini ke hosting
+     (GitHub Pages, Netlify, dsb.) atau jalankan lewat server lokal.
+  Struktur data sama dengan versi Streamlit dan versi lengkap, sehingga bisa berbagi database.
+-->
+<style>
+:root{--bg:#f3f5fb;--card:#fff;--ink:#1b2340;--mut:#5f6b8a;--ind:#4338ca;--rose:#e11d48;--em:#059669;--line:#dde2f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1224;--card:#161d38;--ink:#e9ecf8;--mut:#9aa6c9;--ind:#8b8cff;--rose:#ff6b8b;--em:#34d399;--line:#2a3560}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:24px 16px 10px;text-align:center}
+h1{margin:0;font-size:clamp(22px,4vw,30px)}header p{margin:4px 0 0;color:var(--mut)}
+main{max-width:980px;margin:0 auto;padding:0 14px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0}
+h2{margin:0 0 10px;font-size:20px}
+.bar{display:grid;grid-template-columns:2fr 1fr;gap:10px}
+@media(max-width:640px){.bar{grid-template-columns:1fr}}
+label{display:block;font-size:13px;color:var(--mut);margin-bottom:3px}
+input,select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{resize:vertical;min-height:70px}
+button{padding:9px 16px;border:0;border-radius:9px;background:var(--ind);color:#fff;font:700 14px inherit;cursor:pointer}
+button.alt{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button:disabled{opacity:.5;cursor:wait}
+.soal{border-left:5px solid var(--ind);background:color-mix(in srgb,var(--ind) 10%,transparent);padding:12px 16px;border-radius:0 12px 12px 0}
+#ggb{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;min-height:540px;margin-top:12px}
+.kirim{display:grid;grid-template-columns:1fr auto;gap:10px;margin-top:12px;align-items:end}
+.muted{color:var(--mut)}.err{color:var(--rose)}.ok{color:var(--em)}
+.post{border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+.post .g{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+@media(max-width:700px){.post .g{grid-template-columns:1fr}}
+.post img{width:100%;border-radius:10px;border:1px solid var(--line);background:#fff}
+.post h4{margin:0}.post small{color:var(--mut)}
+.bal{border-left:3px solid var(--line);padding:2px 10px;margin:6px 0;font-size:14px}
+.bl{display:flex;gap:8px;margin-top:8px}.bl button{white-space:nowrap}
+.post .buka{margin-top:10px;padding:6px 12px;font-size:13px}
+footer{text-align:center;color:var(--mut);font-size:13px;padding-bottom:30px}
+</style>
+</head>
+<body>
+<header>
+  <h1>📐 Diskusi GeoGebra Classic</h1>
+  <p>Selesaikan masalah di GeoGebra, kirim solusimu, lalu diskusikan bersama teman.</p>
+</header>
+<main>
+
+<div class="card">
+  <div class="bar">
+    <div><label for="pilih">Pilih masalah</label><select id="pilih"></select></div>
+    <div><label for="nama">Nama kamu</label><input id="nama" maxlength="40" placeholder="Nama"></div>
+  </div>
+  <div id="boxdb" style="display:none;margin-top:10px">
+    <label for="dburl">URL Firebase Realtime Database</label>
+    <input style="display:none" id="dburl" placeholder="https://xxxx-default-rtdb.firebaseio.com">
+  </div>
+</div>
+
+<div class="card">
+  <h2 id="jdl"></h2>
+  <div class="soal" id="soal"></div>
+  <div id="banner" class="ok" style="margin-top:10px"></div>
+  <div id="ggb"></div>
+  <div class="kirim">
+    <div><label for="teks">Penjelasan solusimu</label>
+      <textarea id="teks" maxlength="1500" placeholder="Jelaskan langkah dan kesimpulanmu..."></textarea></div>
+    <button id="kirim">Kirim solusi</button>
+  </div>
+  <div id="msg" class="muted" style="min-height:22px;margin-top:6px"></div>
+</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+    <h2 style="margin:0">💬 Diskusi</h2>
+    <button class="alt" id="muat">🔄 Muat ulang</button>
+  </div>
+  <div id="feed"></div>
+</div>
+</main>
+<footer>Disusun oleh Martin Bernard, M.Pd. · IKIP Siliwangi</footer>
+
+<script src="https://www.geogebra.org/apps/deployggb.js"></script>
+<script>
+/* ============ KONFIGURASI ============ */
+const DB_URL = 'https://diskusimatematika-7a30c-default-rtdb.firebaseio.com';   // contoh: 'https://xxxx-default-rtdb.firebaseio.com'
+const BATAS = 20;    // jumlah kiriman terbaru yang ditampilkan
+
+/* Daftar masalah: ubah, tambah, atau hapus sesuai kebutuhan.
+   "perintah" = perintah GeoGebra yang dijalankan saat applet dimuat (boleh kosong). */
+const MASALAH = {
+  'luas-segitiga': {
+    judul: 'Luas Segitiga dari Koordinat',
+    soal: 'Diketahui segitiga ABC dengan A(1, 1), B(7, 2), dan C(3, 6). Tentukan luasnya dengan dua cara berbeda, lalu cocokkan dengan hasil dari GeoGebra.',
+    perintah: []
+  },
+  'persamaan-lingkaran': {
+    judul: 'Persamaan Lingkaran dan Kedudukan Titik',
+    soal: 'Lingkaran L berpusat di (2, 1) dengan jari-jari 3. Tentukan persamaannya, lalu periksa kedudukan titik P(5, 1), Q(4, 3), dan R(6, 4) terhadap L.',
+    perintah: []
+  },
+  'grafik-sinus': {
+    judul: 'Eksplorasi Grafik y = a sin(bx + c) + d',
+    soal: 'Ubah slider a, b, c, dan d. Tentukan pengaruh masing-masing terhadap amplitudo, periode, pergeseran fase, dan garis tengah. Lalu buat grafik dengan amplitudo 2, periode π, dan garis tengah y = 1.',
+    perintah: ['a = Slider(-3, 3, 0.5, 1)', 'b = Slider(0.5, 4, 0.5, 1)', 'c = Slider(-pi, pi, pi/12, 0)',
+              'd = Slider(-3, 3, 0.5, 0)', 'f(x) = a sin(b x + c) + d']
+  }
+};
+
+/* ============ UTILITAS ============ */
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const simpan = {
+  ambil: k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } },
+  tulis: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} }
+};
+const waktu = ts => ts ? new Date(ts).toLocaleString('id-ID',
+  {timeZone:'Asia/Jakarta', day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit'}) + ' WIB' : '';
+function pesan(t, kelas) { const m = $('#msg'); m.textContent = t; m.className = kelas || 'muted'; }
+
+let db = (DB_URL || simpan.ambil('dg_db')).replace(/\/+$/, '');
+async function fb(metode, path, data, query) {
+  if (!db) throw new Error('URL Firebase belum diisi');
+  const r = await fetch(db + '/' + path + '.json' + (query ? '?' + new URLSearchParams(query) : ''), {
+    method: metode,
+    headers: data !== undefined ? {'Content-Type': 'application/json'} : {},
+    body: data !== undefined ? JSON.stringify(data) : undefined
+  });
+  if (!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+/* ============ GEOGEBRA CLASSIC ============ */
+let api = null, pid = Object.keys(MASALAH)[0], cache = {};
+
+function pasangApplet(b64) {
+  const el = $('#ggb'); el.innerHTML = ''; api = null;
+  const params = {
+    appName: 'classic', perspective: 'AG',          // Aljabar + Grafik
+    width: Math.max(320, el.clientWidth), height: 540,
+    showToolBar: true, showAlgebraInput: true, showMenuBar: false,
+    enableRightClick: true, useBrowserForJS: true,
+    appletOnLoad: a => { api = a; if (!b64) MASALAH[pid].perintah.forEach(c => a.evalCommand(c)); }
+  };
+  if (b64) params.ggbBase64 = b64;
+  new GGBApplet(params, true).inject('ggb');
+}
+addEventListener('resize', () => { if (api) api.setSize(Math.max(320, $('#ggb').clientWidth), 540); });
+
+function tampilMasalah(b64, dari) {
+  $('#jdl').textContent = MASALAH[pid].judul;
+  $('#soal').textContent = MASALAH[pid].soal;
+  $('#banner').textContent = dari ? 'Menampilkan konstruksi milik ' + dari + '. Kamu boleh mengubahnya.' : '';
+  pesan('');
+  pasangApplet(b64);
+}
+
+$('#pilih').innerHTML = Object.keys(MASALAH).map(k => `<option value="${esc(k)}">${esc(MASALAH[k].judul)}</option>`).join('');
+$('#pilih').onchange = e => {
+  if (api && api.getObjectNumber() > 0 && !confirm('Pekerjaan yang belum dikirim akan hilang. Lanjutkan?')) {
+    e.target.value = pid; return;
+  }
+  pid = e.target.value; tampilMasalah(); muat();
+};
+
+/* ============ KIRIM SOLUSI ============ */
+$('#kirim').onclick = async () => {
+  const nama = $('#nama').value.trim(), teks = $('#teks').value.trim();
+  if (!api) return pesan('Applet belum siap, tunggu sebentar.', 'err');
+  if (!db) return pesan('Isi URL Firebase terlebih dahulu.', 'err');
+  if (!nama || !teks) return pesan('Isi nama dan penjelasan solusi terlebih dahulu.', 'err');
+  const tombol = $('#kirim'); tombol.disabled = true; pesan('Mengirim...');
+  try {
+    const png = api.getPNGBase64(0.6, false, 72);
+    const ggb = await new Promise(res => {
+      try { const r = api.getBase64(x => res(x)); if (typeof r === 'string') res(r); } catch (e) { res(''); }
+    });
+    const objek = api.getAllObjectNames().slice(0, 40).map(n => n + ' = ' + api.getValueString(n));
+    await fb('POST', 'diskusi/' + pid + '/posts', {nama, teks, png, ggb, objek, suka: 0, ts: {'.sv': 'timestamp'}});
+    $('#teks').value = ''; pesan('Terkirim. Lihat di bagian Diskusi.', 'ok'); muat();
+  } catch (e) { pesan('Gagal mengirim: ' + e.message, 'err'); }
+  finally { tombol.disabled = false; }
+};
+
+/* ============ DISKUSI ============ */
+async function muat() {
+  const feed = $('#feed');
+  if (!db) { feed.innerHTML = '<p class="muted">Isi URL Firebase untuk mulai berdiskusi.</p>'; return; }
+  try {
+    cache = await fb('GET', 'diskusi/' + pid + '/posts', undefined, {orderBy: '"$key"', limitToLast: BATAS}) || {};
+    const kunci = Object.keys(cache).sort().reverse();
+    if (!kunci.length) { feed.innerHTML = '<p class="muted">Belum ada solusi. Jadilah yang pertama.</p>'; return; }
+    feed.innerHTML = kunci.map(k => {
+      const p = cache[k], bal = p.balasan || {};
+      const gambar = p.png && /^[A-Za-z0-9+\/=]+$/.test(p.png)
+        ? `<img alt="Konstruksi ${esc(p.nama)}" src="data:image/png;base64,${p.png}">` : '';
+      return `<article class="post">
+        <h4>${esc(p.nama || 'Tanpa nama')}</h4><small>${waktu(p.ts)}</small>
+        <div class="g"><div>${gambar}</div><div style="white-space:pre-wrap">${esc(p.teks)}</div></div>
+        ${p.ggb ? `<button class="alt buka" data-k="${esc(k)}">Buka konstruksi ini di GeoGebra</button>` : ''}
+        ${Object.keys(bal).sort().map(b => `<div class="bal"><b>${esc(bal[b].nama)}</b>: ${esc(bal[b].teks)} <small>· ${waktu(bal[b].ts)}</small></div>`).join('')}
+        <form class="bl" data-k="${esc(k)}"><input name="t" maxlength="500" placeholder="Balas / beri tanggapan"><button>Kirim</button></form>
+      </article>`;
+    }).join('');
+  } catch (e) { feed.innerHTML = '<p class="err">Gagal memuat diskusi: ' + esc(e.message) + '</p>'; }
+}
+$('#muat').onclick = muat;
+
+$('#feed').addEventListener('click', e => {
+  const b = e.target.closest('.buka'); if (!b) return;
+  const p = cache[b.dataset.k]; if (!p || !p.ggb) return;
+  if (api && api.getObjectNumber() > 0 && !confirm('Pekerjaan yang belum dikirim akan diganti konstruksi ini. Lanjutkan?')) return;
+  tampilMasalah(p.ggb, p.nama || 'teman');
+  $('#jdl').scrollIntoView({behavior: 'smooth'});
+});
+
+$('#feed').addEventListener('submit', async e => {
+  e.preventDefault();
+  const f = e.target, t = f.t.value.trim(), nama = $('#nama').value.trim();
+  if (!nama || !t) return alert('Isi nama (di bagian atas) dan tanggapanmu.');
+  try {
+    await fb('POST', 'diskusi/' + pid + '/posts/' + f.dataset.k + '/balasan', {nama, teks: t, ts: {'.sv': 'timestamp'}});
+    muat();
+  } catch (err) { alert('Gagal mengirim balasan: ' + err.message); }
+});
+
+/* ============ INISIALISASI ============ */
+$('#nama').value = simpan.ambil('dg_nama');
+$('#nama').onchange = e => simpan.tulis('dg_nama', e.target.value.trim());
+if (!DB_URL) {
+  $('#boxdb').style.display = 'block'; $('#dburl').value = db;
+  $('#dburl').onchange = e => {
+    const v = e.target.value.trim().replace(/\/+$/, '');
+    if (v && !/^https:\/\//.test(v)) return alert('URL harus diawali https://');
+    db = v; simpan.tulis('dg_db', v); muat();
+  };
+}
+window.addEventListener('load', () => { tampilMasalah(); muat(); });
+</script>
+</body>
+</html>
