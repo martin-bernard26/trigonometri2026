@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blockly × GeoGebra (Buatan Martin Bernard, M.Pd)</title>
+<style>
+  :root { --bg:#f4f6f9; --card:#fff; --line:#d9dee6; --ink:#1f2933; --accent:#2563eb; --err:#c62828; }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+
+  body { display: grid; grid-template-rows: auto 1fr; background: var(--bg); color: var(--ink);
+         font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  header { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between;
+           padding: 8px 14px; background: var(--card); border-bottom: 1px solid var(--line); }
+  h1 { font-size: 17px; margin: 0; }
+  .actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  button { font: inherit; padding: 6px 12px; border: 1px solid var(--line); border-radius: 6px;
+           background: #fff; cursor: pointer; }
+  button:hover { background: #eef2f7; }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.primary:hover { background: #1d4ed8; }
+  label.chk { display: flex; align-items: center; gap: 4px; margin-right: 6px; }
+  main { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; min-height: 0; }
+  #blockly { min-height: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
+  .right { display: grid; grid-template-rows: 1fr 200px; gap: 10px; min-height: 0; min-width: 0; }
+  #ggb-box { position: relative; overflow: hidden; min-height: 0; background: var(--card);
+             border: 1px solid var(--line); border-radius: 8px; }
+  .panel { display: flex; flex-direction: column; min-height: 0; background: var(--card);
+           border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .tabs { display: flex; border-bottom: 1px solid var(--line); }
+  .tabs button { border: 0; border-radius: 0; background: transparent; }
+  .tabs button.on { border-bottom: 2px solid var(--accent); font-weight: 600; }
+  pre { flex: 1; margin: 0; padding: 8px 10px; overflow: auto; font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace; }
+  pre .err { color: var(--err); }
+  @media (max-width: 800px) {
+    body { height: auto; }
+    main { grid-template-columns: 1fr; }
+    #blockly { height: 65vh; }
+    .right { grid-template-rows: 60vh 200px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Blockly × GeoGebra (Oleh: Martin Bernard, M.Pd)</h1>
+  <div class="actions">
+    <label class="chk"><input type="checkbox" id="autoClear" checked> Bersihkan sebelum jalan</label>
+    <button id="btnExample">Contoh</button>
+    <button id="btnSave">Simpan</button>
+    <button id="btnLoad">Muat</button>
+    <input type="file" id="fileLoad" accept=".json" hidden>
+    <button id="btnRun" class="primary">▶ Jalankan</button>
+  </div>
+</header>
+
+<main>
+  <section id="blockly"></section>
+  <section class="right">
+    <div id="ggb-box"></div>
+    <div class="panel">
+      <div class="tabs">
+        <button id="tabCode" class="on">Kode JavaScript</button>
+        <button id="tabLog">Log</button>
+      </div>
+      <pre id="code"></pre>
+      <pre id="log" hidden></pre>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/blockly_compressed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/blocks_compressed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/javascript_compressed.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/blockly@10.4.3/msg/id.js"></script>
+<script src="https://www.geogebra.org/apps/deployggb.js"></script>
+<script>
+/* ---------- Utilitas ---------- */
+const $ = id => document.getElementById(id);
+const gen = Blockly.JavaScript;
+let ggbReady = false;
+
+function log(msg, isErr) {
+  const el = $('log');
+  const line = document.createElement('div');
+  if (isErr) line.className = 'err';
+  line.textContent = (isErr ? '✗ ' : '✓ ') + msg;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+function ggb() {
+  if (!ggbReady) throw new Error('GeoGebra belum siap, tunggu sebentar.');
+  return window.ggbApplet;
+}
+function ev(cmd) {
+  const ok = ggb().evalCommand(cmd);
+  log(cmd, !ok);
+  return ok;
+}
+
+/* ---------- API yang dipanggil oleh kode hasil blok ---------- */
+const gg = {
+  point:    (n, x, y)   => ev(`${n}=(${x}, ${y})`),
+  move:     (n, x, y)   => { ggb().setCoords(n, x, y); log(`pindah ${n} ke (${x}, ${y})`); },
+  segment:  (n, a, b)   => ev(`${n}=Segment(${a}, ${b})`),
+  line:     (n, a, b)   => ev(`${n}=Line(${a}, ${b})`),
+  circle:   (n, c, r)   => ev(`${n}=Circle(${c}, ${r})`),
+  polygon:  (n, a, b, c)=> ev(`${n}=Polygon(${a}, ${b}, ${c})`),
+  midpoint: (n, a, b)   => ev(`${n}=Midpoint(${a}, ${b})`),
+  bisector: (n, a, v, c)=> ev(`${n}=AngleBisector(${a}, ${v}, ${c})`),
+  perp:     (n, p, l)   => ev(`${n}=PerpendicularLine(${p}, ${l})`),
+  func:     (n, expr)   => ev(`${n}(x)=${expr}`),
+  cmd:      c           => ev(c),
+  color:    (n, hex)    => {
+    const v = parseInt(hex.slice(1), 16);
+    ggb().setColor(n, (v >> 16) & 255, (v >> 8) & 255, v & 255);
+    log(`warna ${n} = ${hex}`);
+  },
+  clear:    ()          => { ggb().reset(); log('kanvas dibersihkan'); },
+  coord:    (n, ax)     => ax === 'x' ? ggb().getXcoord(n) : ggb().getYcoord(n),
+  text: (n, s, x, y, latex) => {
+  	const ok = ev(`${n}=Text("${s}", (${x}, ${y}))`);
+  		if (ok && latex) {
+    		ggb().evalXML(`<element type="text" label="${n}"><isLaTeX val="true"/></element>`);
+   		 log(`${n} ditandai sebagai LaTeX`);
+  		}
+	}
+};
+
+/* ---------- Definisi blok ---------- */
+const S = n => ({ type: 'input_value', name: n, check: 'String' });
+const N = n => ({ type: 'input_value', name: n, check: 'Number' });
+const D = (type, msg, args, colour) => ({
+  type, message0: msg, args0: args, previousStatement: null, nextStatement: null, colour
+});
+
+Blockly.defineBlocksWithJsonArray([
+  D('gg_point',   'titik %1 di x %2 y %3',                         [S('NAME'), N('X'), N('Y')], 200),
+  D('gg_move',    'pindahkan %1 ke x %2 y %3',                     [S('NAME'), N('X'), N('Y')], 200),
+  D('gg_segment', 'ruas garis %1 dari %2 ke %3',                   [S('NAME'), S('A'), S('B')], 260),
+  D('gg_line',    'garis %1 melalui %2 dan %3',                    [S('NAME'), S('A'), S('B')], 260),
+  D('gg_circle',  'lingkaran %1 pusat %2 jari-jari %3',            [S('NAME'), S('A'), N('R')], 260),
+  D('gg_polygon', 'segitiga %1 titik %2 %3 %4',                    [S('NAME'), S('A'), S('B'), S('C')], 260),
+  D('gg_midpoint','titik tengah %1 dari %2 dan %3',                [S('NAME'), S('A'), S('B')], 260),
+  D('gg_bisector','garis sudut bagi %1 : titik %2, titik sudut %3, titik %4',
+                                                                   [S('NAME'), S('A'), S('V'), S('C')], 260),
+  D('gg_perp',    'garis tegak lurus %1 melalui titik %2 terhadap %3', [S('NAME'), S('A'), S('L')], 260),
+  D('gg_func',    'fungsi %1 (x) = %2',                            [S('NAME'), S('EXPR')], 260),
+  D('gg_color',   'warna %1 menjadi %2',
+                  [S('NAME'), { type: 'field_colour', name: 'C', colour: '#e53935' }], 30),
+  D('gg_cmd',     'perintah GeoGebra %1',                          [S('CMD')], 30),
+  D('gg_text', 'teks %1 isi %2 di x %3 y %4 LaTeX %5',
+  [S('NAME'), S('TXT'), N('X'), N('Y'),
+   { type: 'field_checkbox', name: 'LATEX', checked: false }], 200),
+  D('gg_clear',   'bersihkan kanvas',                              [], 30),
+  { type: 'gg_coord', message0: '%1 dari titik %2',
+    args0: [{ type: 'field_dropdown', name: 'AX', options: [['x', 'x'], ['y', 'y']] }, S('NAME')],
+    output: 'Number', colour: 200 }
+]);
+
+/* ---------- Generator kode ---------- */
+const NUM_INPUTS = new Set(['X', 'Y', 'R']);
+function stmt(type, fn, inputs) {
+  gen.forBlock[type] = (b, g) => {
+    const args = inputs.map(i => g.valueToCode(b, i, g.ORDER_NONE) || (NUM_INPUTS.has(i) ? '0' : "''"));
+    return `gg.${fn}(${args.join(', ')});\n`;
+  };
+}
+stmt('gg_point',    'point',    ['NAME', 'X', 'Y']);
+stmt('gg_move',     'move',     ['NAME', 'X', 'Y']);
+stmt('gg_segment',  'segment',  ['NAME', 'A', 'B']);
+stmt('gg_line',     'line',     ['NAME', 'A', 'B']);
+stmt('gg_circle',   'circle',   ['NAME', 'A', 'R']);
+stmt('gg_polygon',  'polygon',  ['NAME', 'A', 'B', 'C']);
+stmt('gg_midpoint', 'midpoint', ['NAME', 'A', 'B']);
+stmt('gg_bisector', 'bisector', ['NAME', 'A', 'V', 'C']);
+stmt('gg_perp',     'perp',     ['NAME', 'A', 'L']);
+stmt('gg_func',     'func',     ['NAME', 'EXPR']);
+stmt('gg_cmd',      'cmd',      ['CMD']);
+gen.forBlock['gg_text'] = (b, g) => {
+  const v = k => g.valueToCode(b, k, g.ORDER_NONE);
+  return `gg.text(${v('NAME') || "''"}, ${v('TXT') || "''"}, ${v('X') || 0}, ${v('Y') || 0}, ${b.getFieldValue('LATEX') === 'TRUE'});\n`;
+};
+gen.forBlock['gg_color'] = (b, g) =>
+  `gg.color(${g.valueToCode(b, 'NAME', g.ORDER_NONE) || "''"}, ${JSON.stringify(b.getFieldValue('C'))});\n`;
+gen.forBlock['gg_clear'] = () => 'gg.clear();\n';
+gen.forBlock['gg_coord'] = (b, g) =>
+  [`gg.coord(${g.valueToCode(b, 'NAME', g.ORDER_NONE) || "''"}, '${b.getFieldValue('AX')}')`, g.ORDER_FUNCTION_CALL];
+
+/* ---------- Toolbox (dibangun dari helper XML) ---------- */
+const sh  = (t, f, v) => `<shadow type="${t}"><field name="${f}">${v}</field></shadow>`;
+const num = v => sh('math_number', 'NUM', v);
+const txt = v => sh('text', 'TEXT', v);
+const val = (n, s) => `<value name="${n}">${s}</value>`;
+const tx  = (k, v) => val(k, txt(v));
+const nn  = (k, v) => val(k, num(v));
+const blk = (type, ...inner) => `<block type="${type}">${inner.join('')}</block>`;
+const cat = (name, colour, ...b) => `<category name="${name}" colour="${colour}">${b.join('')}</category>`;
+
+const toolbox = `<xml xmlns="https://developers.google.com/blockly/xml">` + [
+  cat('Objek', 200,
+    blk('gg_point', tx('NAME', 'A'), nn('X', 0), nn('Y', 0)),
+    blk('gg_move',  tx('NAME', 'A'), nn('X', 1), nn('Y', 1)),
+    blk('gg_coord', tx('NAME', 'A')),
+    blk('gg_text',  tx('NAME', 'teks1'), tx('TXT', 'Halo'), nn('X', 1), nn('Y', 2))),
+  cat('Konstruksi', 260,
+    blk('gg_segment',  tx('NAME', 's'), tx('A', 'A'), tx('B', 'B')),
+    blk('gg_line',     tx('NAME', 'l'), tx('A', 'A'), tx('B', 'B')),
+    blk('gg_circle',   tx('NAME', 'c'), tx('A', 'A'), nn('R', 3)),
+    blk('gg_polygon',  tx('NAME', 't'), tx('A', 'A'), tx('B', 'B'), tx('C', 'C')),
+    blk('gg_midpoint', tx('NAME', 'M'), tx('A', 'A'), tx('B', 'B')),
+    blk('gg_bisector', tx('NAME', 'g'), tx('A', 'B'), tx('V', 'A'), tx('C', 'C')),
+    blk('gg_perp',     tx('NAME', 'p'), tx('A', 'C'), tx('L', 'l')),
+    blk('gg_func',     tx('NAME', 'f'), tx('EXPR', 'x^2'))),
+  cat('Tampilan', 30,
+    blk('gg_color', tx('NAME', 'A')),
+    blk('gg_cmd',   tx('CMD', 'A=(2,3)')),
+    blk('gg_clear')),
+  '<sep></sep>',
+  cat('Logika', 210, blk('controls_if'), blk('logic_compare'), blk('logic_operation'), blk('logic_boolean')),
+  cat('Perulangan', 120,
+    blk('controls_repeat_ext', val('TIMES', num(5))),
+    blk('controls_for', '<field name="VAR">i</field>', val('FROM', num(1)), val('TO', num(5)), val('BY', num(1))),
+    blk('controls_whileUntil')),
+  cat('Matematika', 230,
+    blk('math_number'),
+    blk('math_arithmetic', val('A', num(1)), val('B', num(1))),
+    blk('math_single', val('NUM', num(9))),
+    blk('math_trig', val('NUM', num(45))),
+    blk('math_constant'),
+    blk('math_random_int', val('FROM', num(1)), val('TO', num(10)))),
+  cat('Teks', 160, blk('text'), '<block type="text_join"><mutation items="2"></mutation></block>'),
+  cat('Variabel', 330).replace('<category ', '<category custom="VARIABLE" ')
+].join('') + '</xml>';
+
+/* ---------- Workspace Blockly ---------- */
+const ws = Blockly.inject('blockly', {
+  toolbox,
+  grid: { spacing: 20, length: 3, colour: '#d0d6de', snap: true },
+  zoom: { controls: true, wheel: true, startScale: 0.95 },
+  trashcan: true
+});
+new ResizeObserver(() => Blockly.svgResize(ws)).observe($('blockly'));
+
+function refreshCode() { $('code').textContent = gen.workspaceToCode(ws); }
+ws.addChangeListener(e => { if (!e.isUiEvent) refreshCode(); });
+
+/* ---------- GeoGebra ---------- */
+function initGGB() {
+  const box = $('ggb-box');
+  const applet = new GGBApplet({
+    appName: 'classic',
+    perspective: 'G',
+    width: box.clientWidth,
+    height: box.clientHeight,
+    showToolBar: false,
+    showAlgebraInput: false,
+    showMenuBar: false,
+    showResetIcon: true,
+    enableRightClick: false,
+    language: 'id',
+    appletOnLoad: () => { ggbReady = true; log('GeoGebra siap'); }
+  }, true);
+  applet.inject('ggb-box');
+  new ResizeObserver(() => {
+    if (ggbReady) window.ggbApplet.setSize(box.clientWidth, box.clientHeight);
+  }).observe(box);
+}
+window.addEventListener('load', initGGB);
+
+/* ---------- Tombol ---------- */
+$('btnRun').onclick = () => {
+  $('tabLog').click();
+  const code = gen.workspaceToCode(ws);
+  try {
+    if ($('autoClear').checked) gg.clear();
+    new Function('gg', code)(gg);
+  } catch (err) {
+    log(err.message, true);
+  }
+};
+
+$('tabCode').onclick = () => { $('code').hidden = false; $('log').hidden = true;
+  $('tabCode').classList.add('on'); $('tabLog').classList.remove('on'); };
+$('tabLog').onclick = () => { $('code').hidden = true; $('log').hidden = false;
+  $('tabLog').classList.add('on'); $('tabCode').classList.remove('on'); };
+
+$('btnSave').onclick = () => {
+  const data = JSON.stringify(Blockly.serialization.workspaces.save(ws), null, 2);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([data], { type: 'application/json' }));
+  a.download = 'blockly-geogebra.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+};
+$('btnLoad').onclick = () => $('fileLoad').click();
+$('fileLoad').onchange = async e => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try { Blockly.serialization.workspaces.load(JSON.parse(await f.text()), ws); refreshCode(); }
+  catch (err) { log('Gagal memuat file: ' + err.message, true); }
+  e.target.value = '';
+};
+
+/* ---------- Contoh: segitiga + garis sudut bagi ---------- */
+function chain(blocks) {
+  return blocks.reduceRight((acc, b) => acc ? b.replace(/<\/block>$/, `<next>${acc}</next></block>`) : b, '');
+}
+$('btnExample').onclick = () => {
+  const first = chain([
+    blk('gg_clear'),
+    blk('gg_point', tx('NAME', 'A'), nn('X', 0), nn('Y', 0)),
+    blk('gg_point', tx('NAME', 'B'), nn('X', 6), nn('Y', 0)),
+    blk('gg_point', tx('NAME', 'C'), nn('X', 2), nn('Y', 4)),
+    blk('gg_polygon', tx('NAME', 't'), tx('A', 'A'), tx('B', 'B'), tx('C', 'C')),
+    blk('gg_bisector', tx('NAME', 'g'), tx('A', 'B'), tx('V', 'A'), tx('C', 'C')),
+    blk('gg_color', tx('NAME', 'g'), '<field name="C">#e53935</field>')
+  ]).replace('<block ', '<block x="20" y="20" ');
+  ws.clear();
+  Blockly.Xml.domToWorkspace(
+    Blockly.utils.xml.textToDom(`<xml xmlns="https://developers.google.com/blockly/xml">${first}</xml>`), ws);
+  refreshCode();
+};
+</script>
+</body>
+</html>
