@@ -154,7 +154,7 @@ function pasangApplet(b64) {
   menunda = false;
   const params = {
     appName: 'classic', perspective: 'AG',          // Aljabar + Grafik
-    width: w, height: 540,
+    width: 540, height: 540,
     showToolBar: true, showAlgebraInput: true, showMenuBar: false,
     enableRightClick: true, useBrowserForJS: true,
     appletOnLoad: a => { api = a; if (!b64) MASALAH[pid].perintah.forEach(c => a.evalCommand(c)); }
