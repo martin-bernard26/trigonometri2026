@@ -64,7 +64,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding-bottom:30px}
   </div>
   <div id="boxdb" style="display:none;margin-top:10px">
     <label for="dburl">URL Firebase Realtime Database</label>
-    <input style="display:none" id="dburl" placeholder="https://xxxx-default-rtdb.firebaseio.com">
+    <input id="dburl" placeholder="https://xxxx-default-rtdb.firebaseio.com">
   </div>
 </div>
 
@@ -94,7 +94,7 @@ footer{text-align:center;color:var(--mut);font-size:13px;padding-bottom:30px}
 <script src="https://www.geogebra.org/apps/deployggb.js"></script>
 <script>
 /* ============ KONFIGURASI ============ */
-const DB_URL = 'https://diskusimatematika-7a30c-default-rtdb.firebaseio.com';   // contoh: 'https://xxxx-default-rtdb.firebaseio.com'
+const DB_URL = '';   // contoh: 'https://xxxx-default-rtdb.firebaseio.com'
 const BATAS = 20;    // jumlah kiriman terbaru yang ditampilkan
 
 /* Daftar masalah: ubah, tambah, atau hapus sesuai kebutuhan.
@@ -144,12 +144,17 @@ async function fb(metode, path, data, query) {
 
 /* ============ GEOGEBRA CLASSIC ============ */
 let api = null, pid = Object.keys(MASALAH)[0], cache = {};
+let menunda = false, tertunda = '';   // applet menunggu wadah terlihat (mis. tab Streamlit belum aktif)
+const lebarWadah = () => Math.floor($('#ggb').getBoundingClientRect().width);
 
 function pasangApplet(b64) {
-  const el = $('#ggb'); el.innerHTML = ''; api = null;
+  const el = $('#ggb'); el.innerHTML = ''; api = null; tertunda = b64 || '';
+  const w = lebarWadah();
+  if (w < 50) { menunda = true; return; }           // wadah tersembunyi: pasang nanti saat sudah terlihat
+  menunda = false;
   const params = {
     appName: 'classic', perspective: 'AG',          // Aljabar + Grafik
-    width: Math.max(320, el.clientWidth), height: 540,
+    width: w, height: 540,
     showToolBar: true, showAlgebraInput: true, showMenuBar: false,
     enableRightClick: true, useBrowserForJS: true,
     appletOnLoad: a => { api = a; if (!b64) MASALAH[pid].perintah.forEach(c => a.evalCommand(c)); }
@@ -157,7 +162,11 @@ function pasangApplet(b64) {
   if (b64) params.ggbBase64 = b64;
   new GGBApplet(params, true).inject('ggb');
 }
-addEventListener('resize', () => { if (api) api.setSize(Math.max(320, $('#ggb').clientWidth), 540); });
+// Pantau ukuran wadah: pasang applet saat wadah mulai terlihat, dan sesuaikan ukuran bila lebar berubah
+new ResizeObserver(() => {
+  const w = lebarWadah(); if (w < 50) return;
+  if (menunda) pasangApplet(tertunda); else if (api) api.setSize(w, 540);
+}).observe($('#ggb').parentElement);
 
 function tampilMasalah(b64, dari) {
   $('#jdl').textContent = MASALAH[pid].judul;
